@@ -189,19 +189,6 @@ function DirectoryItem({
         </div>
       </div>
 
-      {/* PROGRESS BAR: shown if an item is in queue or actively uploading */}
-      {isUploadingItem && (
-        <div className="rounded-[4px] mt-[5px] mb-[8px] overflow-hidden relative mx-[10px]" style={{ backgroundColor: '#D1DCE5' }}>
-          <span className="absolute text-[12px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-white z-10">{Math.floor(uploadProgress)}%</span>
-          <div
-            className="rounded-[4px] h-[16px] transition-all duration-300"
-            style={{
-              width: `${uploadProgress}%`,
-              backgroundColor: uploadProgress === 100 ? "#10B981" : "#66B2D6",
-            }}
-          ></div>
-        </div>
-      )}
 
       {/* Context menu, if active */}
       {activeContextMenu === item.id && (

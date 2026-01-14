@@ -9,6 +9,7 @@ import ShareModal from "./components/ShareModal";
 import DetailsPopup from "./components/DetailsPopup";
 import ImportFromDrive from "./components/ImportFromDrive";
 import { Alert, AlertTitle, AlertDescription } from "./components/lightswind/alert";
+import UploadToast from "./components/UploadToast";
 import { 
   Upload, 
   FolderPlus, 
@@ -1377,6 +1378,14 @@ function DirectoryView() {
            </Alert>
         </div>
       )}
+
+      {/* Upload Progress Toast */}
+      <UploadToast
+        uploadQueue={uploadQueue}
+        progressMap={progressMap}
+        isUploading={isUploading}
+        onCancel={handleCancelUpload}
+      />
     </div>
   );
 }
