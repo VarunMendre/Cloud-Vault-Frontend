@@ -902,7 +902,11 @@ function UserSettings() {
                               ? "bg-orange-500" 
                               : "bg-gradient-to-r from-blue-500 to-blue-600"
                           }`}
-                          style={{ width: usagePercentage === 0 ? "2%" : `${Math.min(usagePercentage, 100)}%` }}
+                          style={{ 
+                            width: usedStorageInBytes === 0 
+                              ? "0%" 
+                              : `${Math.max(usagePercentage, 0.5)}%` 
+                          }}
                         ></div>
                       </div>
                       <div className="flex justify-between items-center mt-2">
@@ -911,7 +915,11 @@ function UserSettings() {
                         </span>
                         <span className={`text-xs font-semibold ${
                           usagePercentage > 90 ? "text-red-600" : usagePercentage > 75 ? "text-orange-600" : "text-blue-600"
-                        }`}>{usagePercentage.toFixed(1)}%</span>
+                        }`}>
+                          {usedStorageInBytes > 0 && usagePercentage < 0.1 
+                            ? "< 0.1%" 
+                            : `${usagePercentage.toFixed(1)}%`}
+                        </span>
                       </div>
                     </div>
 
