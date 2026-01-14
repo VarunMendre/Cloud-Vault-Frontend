@@ -87,13 +87,15 @@ function UserSettings() {
   // Calculate storage stats
   const usagePercentage = (usedStorageInBytes / maxStorageLimit) * 100;
 
-  // Fetch user data on mount (only for non-global data like password status)
+  // Refresh storage usage on mount
+  useEffect(() => {
+    refreshUser();
+  }, []);
+
+  // Fetch non-global user data (password status, connected provider)
   useEffect(() => {
     async function fetchAdditionalUserData() {
       if (!user) return;
-
-      // Refresh global user state to get latest storage info
-      refreshUser();
 
       try {
         // Check password status from backend
@@ -137,7 +139,7 @@ function UserSettings() {
     }
 
     fetchAdditionalUserData();
-  }, [user]);
+  }, [user?.email]); // Use email as dependency to avoid loops from refreshUser
 
   // Sync profile state when user data is available
   useEffect(() => {
