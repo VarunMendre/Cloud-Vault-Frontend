@@ -487,6 +487,7 @@ function DirectoryView() {
       // Reset allUploads after a delay to allow success state to be visible
       setTimeout(() => {
         setAllUploads([]);
+        setProgressMap({}); // Global cleanup of progress map
         getDirectoryItems();
         if (refreshStorageRef.current) {
           refreshStorageRef.current();
@@ -523,11 +524,6 @@ function DirectoryView() {
 
       console.log(`Successfully uploaded: ${currentItem.name}`);
 
-      setProgressMap((prev) => {
-        const { [tempId]: _, ...rest } = prev;
-        return rest;
-      });
-
       processUploadQueue();
     } catch (error) {
       console.error(`Upload failed for ${currentItem.name}:`, error);
@@ -538,10 +534,7 @@ function DirectoryView() {
         )
       );
 
-      setProgressMap((prev) => {
-        const { [tempId]: _, ...rest } = prev;
-        return rest;
-      });
+      setProgressMap((prev) => ({ ...prev, [tempId]: 0 }));
 
       setErrorMessage(
         `Upload failed for ${currentItem.name}: ${error.message}`
