@@ -92,6 +92,9 @@ function UserSettings() {
     async function fetchAdditionalUserData() {
       if (!user) return;
 
+      // Refresh global user state to get latest storage info
+      refreshUser();
+
       try {
         // Check password status from backend
         const passwordResponse = await fetch(`${BASE_URL}/user/has-password`, {
@@ -890,7 +893,13 @@ function UserSettings() {
                       </div>
                       <div className="relative w-full bg-slate-200 rounded-full h-2 overflow-hidden">
                         <div
-                          className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full transition-all duration-1000"
+                          className={`h-full rounded-full transition-all duration-1000 ${
+                            usagePercentage > 90 
+                              ? "bg-red-500" 
+                              : usagePercentage > 75 
+                              ? "bg-orange-500" 
+                              : "bg-gradient-to-r from-blue-500 to-blue-600"
+                          }`}
                           style={{ width: usagePercentage === 0 ? "2%" : `${Math.min(usagePercentage, 100)}%` }}
                         ></div>
                       </div>
@@ -898,13 +907,27 @@ function UserSettings() {
                         <span className="text-xs text-slate-500">
                           Free: {formatStorage(maxStorageLimit - usedStorageInBytes)}
                         </span>
-                        <span className="text-xs font-semibold text-blue-600">{usagePercentage.toFixed(1)}%</span>
+                        <span className={`text-xs font-semibold ${
+                          usagePercentage > 90 ? "text-red-600" : usagePercentage > 75 ? "text-orange-600" : "text-blue-600"
+                        }`}>{usagePercentage.toFixed(1)}%</span>
                       </div>
                     </div>
 
-                    <div className="p-3 sm:p-4 bg-blue-50 rounded-lg border border-blue-200">
-                      <p className="text-xs sm:text-sm text-blue-900">
-                        You have plenty of storage available. Upgrade your plan to get more space.
+                    <div className={`p-3 sm:p-4 rounded-lg border ${
+                      usagePercentage > 90 
+                        ? "bg-red-50 border-red-200" 
+                        : usagePercentage > 75 
+                        ? "bg-orange-50 border-orange-200" 
+                        : "bg-blue-50 border-blue-200"
+                    }`}>
+                      <p className={`text-xs sm:text-sm font-medium ${
+                        usagePercentage > 90 ? "text-red-900" : usagePercentage > 75 ? "text-orange-900" : "text-blue-900"
+                      }`}>
+                        {usagePercentage > 90 
+                          ? "Storage Unhealthy: You are almost out of space! Please upgrade or delete some files." 
+                          : usagePercentage > 75 
+                          ? "Storage Warning: You are using most of your storage." 
+                          : "Storage Healthy: You have plenty of storage available."}
                       </p>
                     </div>
 
