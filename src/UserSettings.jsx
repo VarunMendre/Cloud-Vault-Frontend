@@ -15,7 +15,6 @@ import {
   Shield,
   User,
   Lock,
-  Bell,
   HardDrive,
   ChevronDown,
 } from "lucide-react";
@@ -437,7 +436,6 @@ function UserSettings() {
     { id: "profile", label: "Profile", icon: User },
     { id: "security", label: "Security", icon: Lock },
     { id: "storage", label: "Storage", icon: HardDrive },
-    { id: "notifications", label: "Notifications", icon: Bell },
   ];
 
   if (loading) {
@@ -831,21 +829,6 @@ function UserSettings() {
                   </form>
                 </div>
 
-                {/* Two-Factor Authentication */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div className="flex items-start gap-4">
-                      <Lock className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-                      <div>
-                        <h3 className="text-base sm:text-lg font-semibold text-slate-900">Two-Factor Authentication</h3>
-                        <p className="text-xs sm:text-sm text-slate-500 mt-1">Add an extra layer of security</p>
-                      </div>
-                    </div>
-                    <button className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors duration-200 text-xs sm:text-sm">
-                      Enable
-                    </button>
-                  </div>
-                </div>
 
                 {/* Logout Options */}
                 <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -931,68 +914,9 @@ function UserSettings() {
                   </div>
                 </div>
 
-                {/* Storage Breakdown */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4 sm:mb-6">Storage Breakdown</h3>
-
-                  <div className="space-y-3">
-                    {[
-                      { label: "Documents", value: "2.5 GB", color: "bg-blue-500" },
-                      { label: "Media", value: "5.2 GB", color: "bg-cyan-500" },
-                      { label: "Archives", value: "1.8 GB", color: "bg-teal-500" },
-                      { label: "Other", value: "0.5 GB", color: "bg-slate-400" },
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2 sm:p-3">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full ${item.color}`}></div>
-                          <span className="text-xs sm:text-sm text-slate-700">{item.label}</span>
-                        </div>
-                        <span className="text-xs sm:text-sm font-semibold text-slate-900">{item.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </div>
             )}
 
-            {/* Notifications Tab - Responsive */}
-            {activeTab === "notifications" && (
-              <div className="space-y-4 sm:space-y-6">
-                <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4 sm:mb-6">
-                    Notification Preferences
-                  </h3>
-
-                  <div className="space-y-3">
-                    {[
-                      { label: "Account Updates", description: "Get notified about important account changes" },
-                      { label: "Security Alerts", description: "Be alerted of suspicious activity" },
-                      { label: "Storage Warnings", description: "Notify when storage is running low" },
-                      { label: "Marketing Emails", description: "Receive updates about new features" },
-                    ].map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-start sm:items-center justify-between p-3 sm:p-4 border border-slate-200 rounded-lg hover:border-slate-300 transition-colors duration-200 gap-3"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <p className="text-xs sm:text-sm font-medium text-slate-900">{item.label}</p>
-                          <p className="text-xs text-slate-500 mt-0.5 hidden sm:block">{item.description}</p>
-                        </div>
-                        <input
-                          type="checkbox"
-                          defaultChecked={idx < 3}
-                          className="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer flex-shrink-0 mt-1 sm:mt-0"
-                        />
-                      </div>
-                    ))}
-                  </div>
-
-                  <button className="w-full mt-4 sm:mt-6 px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors duration-200 text-sm sm:text-base">
-                    Save Preferences
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
