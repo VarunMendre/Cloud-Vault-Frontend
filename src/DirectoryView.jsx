@@ -87,6 +87,7 @@ function DirectoryView() {
   // Uploading states
   const fileInputRef = useRef(null);
   const [uploadQueue, setUploadQueue] = useState([]);
+  const [allUploads, setAllUploads] = useState([]); // Track full batch for the toast
   const uploadQueueRef = useRef([]);
   const [uploadXhrMap, setUploadXhrMap] = useState({});
   const [progressMap, setProgressMap] = useState({});
@@ -459,6 +460,7 @@ function DirectoryView() {
     });
 
     setFilesList((prev) => [...newItems, ...prev]);
+    setAllUploads((prev) => [...newItems, ...prev]);
 
     newItems.forEach((item) => {
       setProgressMap((prev) => ({ ...prev, [item.id]: 0 }));
@@ -482,18 +484,21 @@ function DirectoryView() {
     if (uploadQueueRef.current.length === 0) {
       setIsUploading(false);
       setUploadQueue([]);
+      // Reset allUploads after a delay to allow success state to be visible
       setTimeout(() => {
+        setAllUploads([]);
         getDirectoryItems();
         if (refreshStorageRef.current) {
           refreshStorageRef.current();
         }
-      }, 1000);
+      }, 3000);
       return;
     }
 
     const currentItem = uploadQueueRef.current[0];
     uploadQueueRef.current = uploadQueueRef.current.slice(1);
     setUploadQueue((prev) => prev.slice(1));
+    // Don't remove from allUploads yet; toast uses it for full context
 
     const tempId = currentItem.id;
 
@@ -591,6 +596,10 @@ function DirectoryView() {
 
     setFilesList((prev) =>
       prev.filter((f) => f.id !== fileId && f.realFileId !== fileId)
+    );
+
+    setAllUploads((prev) =>
+      prev.filter((item) => item.id !== fileId && item.realFileId !== fileId)
     );
 
     setProgressMap((prev) => {
@@ -1381,7 +1390,7 @@ function DirectoryView() {
 
       {/* Upload Progress Toast */}
       <UploadToast
-        uploadQueue={uploadQueue}
+        uploadQueue={allUploads}
         progressMap={progressMap}
         isUploading={isUploading}
         onCancel={handleCancelUpload}
