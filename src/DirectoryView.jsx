@@ -1244,7 +1244,9 @@ function DirectoryView() {
                 key={item.id}
                 className="bg-white rounded-xl border-2 hover:shadow-medium transition-all duration-200 cursor-pointer group flex flex-col justify-between overflow-hidden"
                 style={{ borderColor: '#D1DCE5' }}
-                onClick={() => handleRowClick(item)}
+                onClick={() =>
+                  !(activeContextMenu || isUploading) && handleRowClick(item)
+                }
                 onContextMenu={(e) => handleContextMenu(e, item.id)}
               >
                 <div className="p-4 flex-1 flex flex-col">
