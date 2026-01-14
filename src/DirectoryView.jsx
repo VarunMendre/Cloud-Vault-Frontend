@@ -10,6 +10,7 @@ import DetailsPopup from "./components/DetailsPopup";
 import ImportFromDrive from "./components/ImportFromDrive";
 import { Alert, AlertTitle, AlertDescription } from "./components/lightswind/alert";
 import UploadToast from "./components/UploadToast";
+import ContextMenu from "./components/ContextMenu";
 import { 
   Upload, 
   FolderPlus, 
@@ -1244,7 +1245,7 @@ function DirectoryView() {
                 className="bg-white rounded-xl border-2 hover:shadow-medium transition-all duration-200 cursor-pointer group flex flex-col justify-between overflow-hidden"
                 style={{ borderColor: '#D1DCE5' }}
                 onClick={() => handleRowClick(item)}
-                onContextMenu={(e) => handleContextMenu(e, item)}
+                onContextMenu={(e) => handleContextMenu(e, item.id)}
               >
                 <div className="p-4 flex-1 flex flex-col">
                   {/* Top Row: Icon and 3 Dots */}
@@ -1261,7 +1262,7 @@ function DirectoryView() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (!isRenaming) handleContextMenu(e, item);
+                        if (!isRenaming) handleContextMenu(e, item.id);
                       }}
                       disabled={isRenaming}
                       className={`p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors ${isRenaming ? 'opacity-50 cursor-not-allowed' : ''}`}
@@ -1335,6 +1336,24 @@ function DirectoryView() {
                     <div className="flex-1 bg-gray-50/50"></div>
                   )}
                 </div>
+
+                {/* Context menu for grid view */}
+                {activeContextMenu === item.id && (
+                  <ContextMenu
+                    item={item}
+                    contextMenuPos={contextMenuPos}
+                    isUploadingItem={item.id.toString().startsWith("temp-")}
+                    handleCancelUpload={handleCancelUpload}
+                    handleDeleteFile={handleDeleteFile}
+                    handleDeleteDirectory={handleDeleteDirectory}
+                    openRenameModal={openRenameModal}
+                    handleShare={handleShare}
+                    openDetailsPopup={openDetailsPopup}
+                    BASE_URL={BASE_URL}
+                    subscriptionStatus={user?.subscriptionStatus}
+                    showToast={showToast}
+                  />
+                )}
               </div>
             ))}
           </div>
