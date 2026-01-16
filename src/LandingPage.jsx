@@ -17,8 +17,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    // Redirect to the login page on the main domain
-    window.location.href = 'https://cloudvault.cloud/login';
+    navigate('/login');
   };
 
   return (
