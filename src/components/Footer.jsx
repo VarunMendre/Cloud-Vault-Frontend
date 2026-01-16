@@ -54,7 +54,7 @@ const Footer = () => {
 
                 {/* Bottom Section */}
                 <div className="pt-8 border-t border-gray-50 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[#A3C5D9]">
-                    <p>© {currentYear} CloudVault. All rights reserved.</p>
+                    <p>© {currentYear}  CloudVault. All rights reserved.</p>
                     <div className="flex items-center gap-1">
                         Made with <Heart className="w-4 h-4 text-red-400 fill-current" /> by Varun Mendre
                     </div>
