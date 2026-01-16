@@ -12,6 +12,7 @@ import { Alert, AlertTitle, AlertDescription } from "./components/lightswind/ale
 import UploadToast from "./components/UploadToast";
 import ContextMenu from "./components/ContextMenu";
 import { 
+  Upload,
   FolderPlus, 
   FilePlus, 
   AlertTriangle, 
