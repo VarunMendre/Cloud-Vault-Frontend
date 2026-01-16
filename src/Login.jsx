@@ -7,6 +7,7 @@ import { loginWithGoogle } from "../src/apis/loginWithGoogle";
 import DOMPurify from "dompurify";
 import { Cloud, Mail, Lock, AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "./components/lightswind/alert";
+import Footer from "./components/Footer";
 import { useAuth } from "./context/AuthContext";
 
 const Login = () => {
@@ -285,6 +286,11 @@ const Login = () => {
             </button>
           </div>
         </div>
+      </div>
+      <div className="fixed bottom-0 left-0 right-0 pointer-events-none">
+          <div className="pointer-events-auto">
+             <Footer />
+          </div>
       </div>
     </div>
   );

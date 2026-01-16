@@ -17,6 +17,10 @@ import ManagePermissionsPage from "./ManagePermissionsPage";
 import Plans from "./Plans";
 import SubscriptionDetails from "./SubscriptionDetails";
 import ChangePlan from "./ChangePlan";
+import PrivacyPolicy from "./PrivacyPolicy";
+import TermsOfService from "./TermsOfService";
+import RefundPolicy from "./RefundPolicy";
+import ContactUs from "./ContactUs";
 import { useAuth } from "./context/AuthContext";
 import LoadingOverlay from "./components/LoadingOverlay";
 
@@ -89,6 +93,22 @@ const router = createBrowserRouter([
   {
     path: "/share/manage/:resourceType/:resourceId",
     element: <ManagePermissionsPage />,
+  },
+  {
+    path: "/privacy-policy",
+    element: <PrivacyPolicy />,
+  },
+  {
+    path: "/terms-of-service",
+    element: <TermsOfService />,
+  },
+  {
+    path: "/refund-policy",
+    element: <RefundPolicy />,
+  },
+  {
+    path: "/contact-us",
+    element: <ContactUs />,
   },
 ]);
 
