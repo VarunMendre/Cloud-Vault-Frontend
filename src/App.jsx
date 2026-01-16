@@ -21,13 +21,16 @@ import PrivacyPolicy from "./PrivacyPolicy";
 import TermsOfService from "./TermsOfService";
 import RefundPolicy from "./RefundPolicy";
 import ContactUs from "./ContactUs";
+import LandingPage from "./LandingPage";
 import { useAuth } from "./context/AuthContext";
 import LoadingOverlay from "./components/LoadingOverlay";
+
+const isLandingDomain = window.location.hostname === "home.cloudvault.cloud";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <DirectoryView />,
+    element: isLandingDomain ? <LandingPage /> : <DirectoryView />,
   },
   {
     path: "/register",
@@ -109,6 +112,10 @@ const router = createBrowserRouter([
   {
     path: "/contact-us",
     element: <ContactUs />,
+  },
+  {
+    path: "/landing",
+    element: <LandingPage />,
   },
 ]);
 

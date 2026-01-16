@@ -11,9 +11,7 @@ import ImportFromDrive from "./components/ImportFromDrive";
 import { Alert, AlertTitle, AlertDescription } from "./components/lightswind/alert";
 import UploadToast from "./components/UploadToast";
 import ContextMenu from "./components/ContextMenu";
-import Footer from "./components/Footer";
 import { 
-  Upload, 
   FolderPlus, 
   FilePlus, 
   AlertTriangle, 
@@ -1410,7 +1408,6 @@ function DirectoryView() {
         isUploading={isUploading}
         onCancel={handleCancelUpload}
       />
-      <Footer />
     </div>
   );
 }

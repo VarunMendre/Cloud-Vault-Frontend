@@ -9,7 +9,6 @@ import { Alert, AlertTitle, AlertDescription } from "./components/lightswind/ale
 import { CheckCircle } from "lucide-react";
 import { PasswordStrengthIndicator } from "./components/lightswind/password-strength-indicator";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "./components/lightswind/input-otp";
-import Footer from "./components/Footer";
 
 const Register = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -513,11 +512,6 @@ const Register = () => {
             </div>
           )}
         </div>
-      </div>
-      <div className="fixed bottom-0 left-0 right-0 pointer-events-none">
-          <div className="pointer-events-auto">
-             <Footer />
-          </div>
       </div>
     </div>
   );

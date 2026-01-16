@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { createSubscription, getSubscriptionDetails } from "./apis/subscriptionApi";
 import SubscriptionAlert from "./components/SubscriptionAlert";
 import DirectoryHeader from "./components/DirectoryHeader";
-import Footer from "./components/Footer";
 import { useAuth } from "./context/AuthContext";
 
 const PLAN_CATALOG = {
@@ -484,7 +483,6 @@ export default function Plans() {
         start billing. You can prefill the plan IDs inside a static config.
       </p>
     </div>
-    <Footer />
     </div>
   );
 }
