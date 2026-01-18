@@ -130,7 +130,7 @@ function DirectoryItem({
           </div>
 
           {/* Size and Modified Date */}
-          <div className="flex items-center gap-3 text-xs" style={{ color: '#A3C5D9' }}>
+          <div className="flex items-center gap-3 text-xs" style={{ color: '#000000' }}>
             <span>Size: {formatSize(item.size || 0)}</span>
             <span>Modified: {formatDate(item.updatedAt || item.createdAt)}</span>
           </div>

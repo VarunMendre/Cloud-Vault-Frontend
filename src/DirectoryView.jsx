@@ -957,7 +957,7 @@ function DirectoryView() {
             <h2 className="text-xl font-bold mb-1" style={{ color: '#2C3E50' }}>
               Upload Files or Create Directory
             </h2>
-            <p className="text-sm" style={{ color: '#A3C5D9' }}>
+            <p className="text-sm" style={{ color: '#000000' }}>
               Drag and drop files here, or click to select files
             </p>
           </div>
@@ -1284,13 +1284,13 @@ function DirectoryView() {
                     </h3>
                     <div className="flex flex-col gap-1 mt-2">
                        <div className="flex justify-between items-center text-xs">
-                         <span style={{ color: '#A3C5D9' }}>Size</span>
+                         <span style={{ color: '#000000' }}>Size</span>
                          <span className="font-medium" style={{ color: '#2C3E50' }}>
                            {item.isDirectory ? `${item.fileCount || 0} items` : formatSize(item.size)}
                          </span>
                        </div>
                        <div className="flex justify-between items-center text-xs">
-                         <span style={{ color: '#A3C5D9' }}>Modified</span>
+                         <span style={{ color: '#000000' }}>Modified</span>
                          <span className="font-medium" style={{ color: '#2C3E50' }}>
                            {new Date(item.updatedAt || item.createdAt).toLocaleDateString('en-US', {
                              year: 'numeric',
