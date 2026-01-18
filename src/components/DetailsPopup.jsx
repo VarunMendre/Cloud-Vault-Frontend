@@ -207,26 +207,26 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             {/* Location */}
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <MapPin className="w-4 h-4" style={{ color: '#66B2D6' }} />
+                <MapPin className="w-4 h-4" style={{ color: '#F97316' }} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
                   Location
                 </div>
-                <div className="text-sm break-all" style={{ color: '#A3C5D9' }}>{path}</div>
+                <div className="text-sm break-all" style={{ color: '#000000' }}>{path}</div>
               </div>
             </div>
 
             {/* Size */}
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <Database className="w-4 h-4" style={{ color: '#66B2D6' }} />
+                <Database className="w-4 h-4" style={{ color: '#F97316' }} />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
                   Size
                 </div>
-                <div className="text-sm" style={{ color: '#A3C5D9' }}>{formatSize(size)}</div>
+                <div className="text-sm" style={{ color: '#000000' }}>{formatSize(size)}</div>
               </div>
             </div>
 
@@ -234,13 +234,13 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             {isDirectory && (
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                  <Folder className="w-4 h-4" style={{ color: '#66B2D6' }} />
+                  <Folder className="w-4 h-4" style={{ color: '#F97316' }} />
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
                     Contents
                   </div>
-                  <div className="flex gap-4 text-sm" style={{ color: '#A3C5D9' }}>
+                  <div className="flex gap-4 text-sm" style={{ color: '#000000' }}>
                     <span>
                       {numberOfFiles} {numberOfFiles === 1 ? "File" : "Files"}
                     </span>
@@ -257,13 +257,13 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             {/* Created At */}
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <Calendar className="w-4 h-4" style={{ color: '#66B2D6' }} />
+                <Calendar className="w-4 h-4" style={{ color: '#F97316' }} />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
                   Created
                 </div>
-                <div className="text-sm" style={{ color: '#A3C5D9' }}>
+                <div className="text-sm" style={{ color: '#000000' }}>
                   {new Date(createdAt).toLocaleString()}
                 </div>
               </div>
@@ -272,13 +272,13 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             {/* Updated At */}
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <Clock className="w-4 h-4" style={{ color: '#66B2D6' }} />
+                <Clock className="w-4 h-4" style={{ color: '#F97316' }} />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
                   Modified
                 </div>
-                <div className="text-sm" style={{ color: '#A3C5D9' }}>
+                <div className="text-sm" style={{ color: '#000000' }}>
                   {new Date(updatedAt).toLocaleString()}
                 </div>
               </div>
