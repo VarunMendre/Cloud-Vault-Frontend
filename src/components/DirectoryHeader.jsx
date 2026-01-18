@@ -70,7 +70,7 @@ function DirectoryHeader({
                 }}
               >
                 <Crown className="w-4 h-4" />
-                <span className="text-sm font-semibold">
+                <span className="text-sm font-semibold hidden md:inline">
                   {subscriptionId ? "Subscription" : "Upgrade"}
                 </span>
               </button>
@@ -92,7 +92,7 @@ function DirectoryHeader({
                 }}
               >
                 <Share2 className="w-4 h-4" />
-                <span className="text-sm font-semibold">Share</span>
+                <span className="text-sm font-semibold hidden md:inline">Share</span>
               </button>
 
               {/* Users Link - Only for Owner/Admin/Manager */}
@@ -113,7 +113,7 @@ function DirectoryHeader({
                   }}
                 >
                   <Users className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Users</span>
+                  <span className="text-sm font-semibold hidden md:inline">Users</span>
                 </button>
               )}
             </div>

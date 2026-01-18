@@ -160,7 +160,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-strong max-w-lg w-full animate-scaleIn"
+        className="bg-white rounded-2xl shadow-strong max-w-lg w-full max-h-[90vh] flex flex-col animate-scaleIn"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -186,7 +186,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
         </div>
 
         {/* Content */}
-        <div className="px-6 py-5">
+        <div className="px-6 py-5 overflow-y-auto">
           {/* Item Preview */}
           <div className="flex items-center gap-4 mb-6 pb-5 border-b" style={{ borderColor: '#D1DCE5' }}>
             <div className="flex-shrink-0">{getIcon(itemType)}</div>
@@ -207,7 +207,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             {/* Location */}
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <MapPin className="w-4 h-4" style={{ color: '#F97316' }} />
+                <MapPin className="w-4 h-4" style={{ color: '#DC2626' }} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
@@ -220,7 +220,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             {/* Size */}
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <Database className="w-4 h-4" style={{ color: '#F97316' }} />
+                <Database className="w-4 h-4" style={{ color: '#9333EA' }} />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
@@ -234,7 +234,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             {isDirectory && (
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                  <Folder className="w-4 h-4" style={{ color: '#F97316' }} />
+                  <Folder className="w-4 h-4" style={{ color: '#F59E0B' }} />
                 </div>
                 <div className="flex-1">
                   <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
@@ -257,7 +257,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             {/* Created At */}
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <Calendar className="w-4 h-4" style={{ color: '#F97316' }} />
+                <Calendar className="w-4 h-4" style={{ color: '#059669' }} />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
@@ -272,7 +272,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             {/* Updated At */}
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <Clock className="w-4 h-4" style={{ color: '#F97316' }} />
+                <Clock className="w-4 h-4" style={{ color: '#2563EB' }} />
               </div>
               <div className="flex-1">
                 <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
