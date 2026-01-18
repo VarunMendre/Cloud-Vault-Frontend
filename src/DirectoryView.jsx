@@ -962,7 +962,7 @@ function DirectoryView() {
             </p>
           </div>
 
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center gap-4">
             {/* Upload Files Button */}
             <div className="relative group/btn cursor-not-allowed">
               <button
@@ -1033,7 +1033,7 @@ function DirectoryView() {
                 <ImportFromDrive
                   onFilesSelected={handleDriveFileImport}
                   disabled={["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) || isRenaming}
-                  className={`flex items-center gap-2 px-5 py-3 text-gray-700 border border-gray-300 rounded-lg shadow-sm transition-all duration-200 font-semibold text-sm ${
+                  className={`flex items-center justify-center gap-2 px-5 py-3 text-gray-700 border border-gray-300 rounded-lg shadow-sm transition-all duration-200 font-semibold text-sm ${
                     user?.subscriptionStatus?.toLowerCase() === "paused" || isRenaming
                       ? "bg-gray-100 cursor-not-allowed opacity-50 grayscale pointer-events-none"
                       : "bg-white hover:bg-gray-50 hover:border-gray-400 hover:shadow-lg hover:scale-105"
