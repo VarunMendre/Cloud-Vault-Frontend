@@ -345,3 +345,9 @@ body {
 .shadow-strong {
   box-shadow: 0 8px 24px rgba(13, 36, 64, 0.16);
 }
+
+/* Scroll-triggered reveal animation */
+.revealed {
+  opacity: 1 !important;
+  transform: translateY(0) translateX(0) !important;
+}

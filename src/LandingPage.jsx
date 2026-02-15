@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Cloud, 
@@ -6,7 +6,13 @@ import {
   Zap, 
   Share2, 
   Globe, 
-  ArrowRight
+  ArrowRight,
+  UserPlus,
+  Upload,
+  FolderSync,
+  Link,
+  HardDrive,
+  ChevronRight
 } from 'lucide-react';
 import Footer from './components/Footer';
 
@@ -30,6 +36,53 @@ const LandingPage = () => {
 
   // Double the images array for seamless infinite loop
   const scrollImages = [...screenshotData, ...screenshotData];
+
+  // Scroll-triggered reveal animation
+  const revealRefs = useRef([]);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -50px 0px' }
+    );
+    revealRefs.current.forEach((el) => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
+  const addRevealRef = (el) => {
+    if (el && !revealRefs.current.includes(el)) {
+      revealRefs.current.push(el);
+    }
+  };
+
+  const featureHighlights = [
+    {
+      icon: <FolderSync className="w-8 h-8 text-[#66B2D6]" />,
+      title: 'Import from Google Drive',
+      description: 'Seamlessly import your existing files directly from Google Drive with our one-click integration. No manual downloads needed — just pick and import.',
+      image: dashboardImg,
+      imageAlt: 'Google Drive Import',
+    },
+    {
+      icon: <Link className="w-8 h-8 text-[#66B2D6]" />,
+      title: 'Seamless File Sharing',
+      description: 'Share files and folders via public links or directly with specific users. Assign Viewer or Editor roles for granular control over who sees what.',
+      image: settingsImg,
+      imageAlt: 'File Sharing',
+    },
+    {
+      icon: <HardDrive className="w-8 h-8 text-[#66B2D6]" />,
+      title: 'Expand Your Storage',
+      description: 'Upgrade your plan anytime to unlock more storage, connect more devices, and enjoy priority upload speeds. Flexible monthly billing via Razorpay.',
+      image: subscriptionImg,
+      imageAlt: 'Subscription Plans',
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[#fafdff] flex flex-col overflow-x-hidden">
@@ -113,6 +166,109 @@ const LandingPage = () => {
             {/* Decorative Blobs */}
             <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#A7DDE9] rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#66B2D6] rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════ How It Works ════════ */}
+      <section className="py-24 px-4 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-16" ref={addRevealRef} style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+            <span className="inline-block px-4 py-1.5 rounded-full bg-[#E6FAF5] text-[#66B2D6] font-bold text-sm mb-4 tracking-wide">SIMPLE & FAST</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#2C3E50]">How It Works</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 relative">
+            {/* Connecting Lines (desktop only) */}
+            <div className="hidden md:block absolute top-16 left-[calc(33.33%+0.5rem)] w-[calc(33.33%-2.5rem)] h-[2px] bg-gradient-to-r from-[#66B2D6] to-[#A7DDE9] z-0"></div>
+            <div className="hidden md:block absolute top-16 right-[calc(33.33%+0.5rem)] w-[calc(33.33%-2.5rem)] h-[2px] bg-gradient-to-r from-[#A7DDE9] to-[#66B2D6] z-0"></div>
+
+            {/* Step 1 */}
+            <div ref={addRevealRef} style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)', transitionDelay: '0.1s' }} className="relative z-10 flex flex-col items-center text-center p-8 rounded-2xl hover:bg-[#fafdff] transition-colors group">
+              <div className="w-20 h-20 rounded-2xl bg-[#E6FAF5] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative">
+                <UserPlus className="w-9 h-9 text-[#66B2D6]" />
+                <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-[#66B2D6] text-white text-xs font-bold flex items-center justify-center shadow-md">1</span>
+              </div>
+              <h3 className="text-lg font-bold text-[#2C3E50] mb-2">Create Account</h3>
+              <p className="text-[#A3C5D9] text-sm leading-relaxed">Sign up for free in seconds with email, Google, or GitHub.</p>
+            </div>
+
+            {/* Step 2 */}
+            <div ref={addRevealRef} style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)', transitionDelay: '0.25s' }} className="relative z-10 flex flex-col items-center text-center p-8 rounded-2xl hover:bg-[#fafdff] transition-colors group">
+              <div className="w-20 h-20 rounded-2xl bg-[#E6FAF5] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative">
+                <Upload className="w-9 h-9 text-[#66B2D6]" />
+                <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-[#66B2D6] text-white text-xs font-bold flex items-center justify-center shadow-md">2</span>
+              </div>
+              <h3 className="text-lg font-bold text-[#2C3E50] mb-2">Upload Your Files</h3>
+              <p className="text-[#A3C5D9] text-sm leading-relaxed">Drag & drop or import directly from Google Drive. It's that easy.</p>
+            </div>
+
+            {/* Step 3 */}
+            <div ref={addRevealRef} style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)', transitionDelay: '0.4s' }} className="relative z-10 flex flex-col items-center text-center p-8 rounded-2xl hover:bg-[#fafdff] transition-colors group">
+              <div className="w-20 h-20 rounded-2xl bg-[#E6FAF5] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 relative">
+                <Share2 className="w-9 h-9 text-[#66B2D6]" />
+                <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-[#66B2D6] text-white text-xs font-bold flex items-center justify-center shadow-md">3</span>
+              </div>
+              <h3 className="text-lg font-bold text-[#2C3E50] mb-2">Share & Manage</h3>
+              <p className="text-[#A3C5D9] text-sm leading-relaxed">Share with anyone, set permissions, and manage everything from one dashboard.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════ Feature Highlights — Alternating Rows ════════ */}
+      <section className="py-24 px-4 bg-[#fafdff]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-20" ref={addRevealRef} style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+            <span className="inline-block px-4 py-1.5 rounded-full bg-[#E6FAF5] text-[#66B2D6] font-bold text-sm mb-4 tracking-wide">FEATURES</span>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#2C3E50]">Powerful Features, Built for You</h2>
+          </div>
+
+          <div className="space-y-24">
+            {featureHighlights.map((feature, index) => {
+              const isReversed = index % 2 !== 0;
+              return (
+                <div
+                  key={index}
+                  ref={addRevealRef}
+                  style={{
+                    opacity: 0,
+                    transform: isReversed ? 'translateX(40px)' : 'translateX(-40px)',
+                    transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
+                  }}
+                  className={`flex flex-col ${
+                    isReversed ? 'md:flex-row-reverse' : 'md:flex-row'
+                  } items-center gap-10 md:gap-16`}
+                >
+                  {/* Image */}
+                  <div className="w-full md:w-1/2 flex-shrink-0">
+                    <div className="bg-white rounded-2xl shadow-medium p-3 border border-gray-100 overflow-hidden group">
+                      <img
+                        src={feature.image}
+                        alt={feature.imageAlt}
+                        className="w-full h-auto rounded-xl object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        loading="lazy"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Text */}
+                  <div className="w-full md:w-1/2">
+                    <div className="w-14 h-14 rounded-xl bg-[#E6FAF5] flex items-center justify-center mb-5">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-bold text-[#2C3E50] mb-4">{feature.title}</h3>
+                    <p className="text-[#A3C5D9] text-lg leading-relaxed mb-6">{feature.description}</p>
+                    <button
+                      onClick={handleGetStarted}
+                      className="inline-flex items-center gap-2 text-[#66B2D6] font-bold hover:gap-3 transition-all"
+                    >
+                      Learn More <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
