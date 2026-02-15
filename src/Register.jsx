@@ -361,26 +361,28 @@ const Register = () => {
 
               {/* OAuth Buttons */}
               <div className="space-y-3">
-                <div className="flex justify-center">
-                  <GoogleLogin
-                    onSuccess={async (credentialResponse) => {
-                      const data = await loginWithGoogle(credentialResponse.credential);
-                      if (data && data.error) {
-                        console.error("Google login error:", data.error);
-                        setServerError(typeof data.error === "string" ? data.error : "Google login failed");
-                        return;
-                      }
-                      if (data && data.success) {
-                        navigate("/");
-                      }
-                    }}
-                    shape="rectangular"
-                    theme="outline"
-                    text="continue_with"
-                    width="320"
-                    onError={() => console.log("Login Failed")}
-                    useOneTap
-                  />
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <div style={{ width: '100%', maxWidth: '100%' }}>
+                    <GoogleLogin
+                      onSuccess={async (credentialResponse) => {
+                        const data = await loginWithGoogle(credentialResponse.credential);
+                        if (data && data.error) {
+                          console.error("Google login error:", data.error);
+                          setServerError(typeof data.error === "string" ? data.error : "Google login failed");
+                          return;
+                        }
+                        if (data && data.success) {
+                          navigate("/");
+                        }
+                      }}
+                      shape="rectangular"
+                      theme="outline"
+                      text="continue_with"
+                      width="400"
+                      onError={() => console.log("Login Failed")}
+                      useOneTap
+                    />
+                  </div>
                 </div>
 
                 <button

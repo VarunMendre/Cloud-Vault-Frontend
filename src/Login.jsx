@@ -238,26 +238,28 @@ const Login = () => {
           {/* OAuth Buttons */}
           <div className="space-y-3">
             {/* Google Login */}
-            <div className="flex justify-center">
-              <GoogleLogin
-                onSuccess={async (credentialResponse) => {
-                  const data = await loginWithGoogle(credentialResponse.credential);
-                  if (data.error) {
-                    console.log(data);
-                    return;
-                  }
-                  await refreshUser();
-                  navigate("/");
-                }}
-                shape="rectangular"
-                theme="outline"
-                text="continue_with"
-                width="320"
-                onError={() => {
-                  console.log("Login Failed");
-                }}
-                useOneTap
-              />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ width: '100%', maxWidth: '100%' }}>
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    const data = await loginWithGoogle(credentialResponse.credential);
+                    if (data.error) {
+                      console.log(data);
+                      return;
+                    }
+                    await refreshUser();
+                    navigate("/");
+                  }}
+                  shape="rectangular"
+                  theme="outline"
+                  text="continue_with"
+                  width="400"
+                  onError={() => {
+                    console.log("Login Failed");
+                  }}
+                  useOneTap
+                />
+              </div>
             </div>
 
             {/* GitHub Login Button */}
