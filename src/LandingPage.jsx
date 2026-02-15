@@ -65,22 +65,76 @@ const LandingPage = () => {
       icon: <FolderSync className="w-8 h-8 text-[#66B2D6]" />,
       title: 'Import from Google Drive',
       description: 'Seamlessly import your existing files directly from Google Drive with our one-click integration. No manual downloads needed — just pick and import.',
-      image: dashboardImg,
-      imageAlt: 'Google Drive Import',
+      illustration: (
+        <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-[#E6FAF5] to-[#f0f9ff] rounded-2xl flex items-center justify-center overflow-hidden group">
+          {/* Central icon */}
+          <div className="relative z-10 w-24 h-24 bg-white rounded-2xl shadow-medium flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+            <FolderSync className="w-12 h-12 text-[#66B2D6]" />
+          </div>
+          {/* Floating elements */}
+          <div className="absolute top-6 right-8 w-12 h-12 bg-white/80 rounded-xl shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '3s' }}>
+            <Upload className="w-6 h-6 text-[#A7DDE9]" />
+          </div>
+          <div className="absolute bottom-8 left-8 w-10 h-10 bg-white/80 rounded-lg shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }}>
+            <Cloud className="w-5 h-5 text-[#66B2D6]" />
+          </div>
+          <div className="absolute top-10 left-12 w-8 h-8 bg-[#66B2D6]/10 rounded-full animate-pulse" style={{ animationDuration: '2.5s' }}></div>
+          <div className="absolute bottom-12 right-12 w-6 h-6 bg-[#A7DDE9]/20 rounded-full animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }}></div>
+          {/* Connection lines */}
+          <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#66B2D6]/20 to-transparent"></div>
+          <div className="absolute top-0 left-1/2 w-[1px] h-full bg-gradient-to-b from-transparent via-[#66B2D6]/20 to-transparent"></div>
+        </div>
+      ),
     },
     {
       icon: <Link className="w-8 h-8 text-[#66B2D6]" />,
       title: 'Seamless File Sharing',
       description: 'Share files and folders via public links or directly with specific users. Assign Viewer or Editor roles for granular control over who sees what.',
-      image: settingsImg,
-      imageAlt: 'File Sharing',
+      illustration: (
+        <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-[#f0f9ff] to-[#E6FAF5] rounded-2xl flex items-center justify-center overflow-hidden group">
+          {/* Central icon */}
+          <div className="relative z-10 w-24 h-24 bg-white rounded-2xl shadow-medium flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+            <Share2 className="w-12 h-12 text-[#66B2D6]" />
+          </div>
+          {/* User avatars */}
+          <div className="absolute top-8 left-10 w-11 h-11 bg-[#66B2D6] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-soft animate-pulse" style={{ animationDuration: '3s' }}>A</div>
+          <div className="absolute top-6 right-10 w-11 h-11 bg-[#A7DDE9] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-soft animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }}>B</div>
+          <div className="absolute bottom-8 right-16 w-11 h-11 bg-[#2C3E50] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-soft animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }}>C</div>
+          {/* Link icon */}
+          <div className="absolute bottom-10 left-12 w-10 h-10 bg-white/80 rounded-lg shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '2.5s' }}>
+            <Link className="w-5 h-5 text-[#66B2D6]" />
+          </div>
+          {/* Connecting dots */}
+          <div className="absolute top-1/3 left-1/4 w-2 h-2 bg-[#66B2D6]/30 rounded-full"></div>
+          <div className="absolute top-2/3 right-1/4 w-2 h-2 bg-[#A7DDE9]/30 rounded-full"></div>
+        </div>
+      ),
     },
     {
       icon: <HardDrive className="w-8 h-8 text-[#66B2D6]" />,
       title: 'Expand Your Storage',
       description: 'Upgrade your plan anytime to unlock more storage, connect more devices, and enjoy priority upload speeds. Flexible monthly billing via Razorpay.',
-      image: subscriptionImg,
-      imageAlt: 'Subscription Plans',
+      illustration: (
+        <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-[#E6FAF5] to-[#f0f9ff] rounded-2xl flex items-center justify-center overflow-hidden group">
+          {/* Central icon */}
+          <div className="relative z-10 w-24 h-24 bg-white rounded-2xl shadow-medium flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+            <HardDrive className="w-12 h-12 text-[#66B2D6]" />
+          </div>
+          {/* Storage bars */}
+          <div className="absolute bottom-8 left-8 right-8 space-y-2">
+            <div className="h-2 bg-white/60 rounded-full overflow-hidden"><div className="h-full w-[30%] bg-[#66B2D6] rounded-full"></div></div>
+            <div className="h-2 bg-white/60 rounded-full overflow-hidden"><div className="h-full w-[60%] bg-[#A7DDE9] rounded-full"></div></div>
+            <div className="h-2 bg-white/60 rounded-full overflow-hidden"><div className="h-full w-[85%] bg-gradient-to-r from-[#66B2D6] to-[#A7DDE9] rounded-full"></div></div>
+          </div>
+          {/* Floating elements */}
+          <div className="absolute top-6 right-8 w-12 h-12 bg-white/80 rounded-xl shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '3s' }}>
+            <Zap className="w-6 h-6 text-[#66B2D6]" />
+          </div>
+          <div className="absolute top-8 left-10 w-10 h-10 bg-white/80 rounded-lg shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }}>
+            <Shield className="w-5 h-5 text-[#A7DDE9]" />
+          </div>
+        </div>
+      ),
     },
   ];
 
@@ -240,16 +294,9 @@ const LandingPage = () => {
                     isReversed ? 'md:flex-row-reverse' : 'md:flex-row'
                   } items-center gap-10 md:gap-16`}
                 >
-                  {/* Image */}
+                  {/* Illustration */}
                   <div className="w-full md:w-1/2 flex-shrink-0">
-                    <div className="bg-white rounded-2xl shadow-medium p-3 border border-gray-100 overflow-hidden group">
-                      <img
-                        src={feature.image}
-                        alt={feature.imageAlt}
-                        className="w-full h-auto rounded-xl object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                        loading="lazy"
-                      />
-                    </div>
+                    {feature.illustration}
                   </div>
 
                   {/* Text */}
