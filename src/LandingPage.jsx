@@ -5,13 +5,21 @@ import {
   Shield, 
   Zap, 
   Share2, 
-  Lock, 
   Globe, 
-  ArrowRight,
-  HardDrive,
-  Layers
+  ArrowRight
 } from 'lucide-react';
 import Footer from './components/Footer';
+
+// Application screenshots
+import dashboardImg from './assets/screenshots/dashboard.png';
+import settingsImg from './assets/screenshots/settings.png';
+import subscriptionImg from './assets/screenshots/subscription.png';
+
+const screenshotData = [
+  { src: dashboardImg, alt: 'File Sharing Dashboard' },
+  { src: settingsImg, alt: 'Storage Settings' },
+  { src: subscriptionImg, alt: 'Subscription Management' },
+];
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -19,6 +27,9 @@ const LandingPage = () => {
   const handleGetStarted = () => {
     navigate('/login');
   };
+
+  // Double the images array for seamless infinite loop
+  const scrollImages = [...screenshotData, ...screenshotData];
 
   return (
     <div className="min-h-screen bg-[#fafdff] flex flex-col overflow-x-hidden">
@@ -65,16 +76,40 @@ const LandingPage = () => {
             </button>
           </div>
 
-          {/* Hero Image Mockup (Visual abstraction) */}
-          <div className="mt-20 relative max-w-5xl mx-auto animate-scaleIn">
-            <div className="relative z-10 bg-white rounded-3xl shadow-strong p-4 border border-gray-100 overflow-hidden">
-               <div className="aspect-[16/9] bg-[#f8fafc] rounded-2xl flex items-center justify-center overflow-hidden border border-dashed border-gray-200">
-                  <div className="flex flex-col items-center gap-4 text-[#A3C5D9]">
-                    <Layers className="w-20 h-20 opacity-20" />
-                    <p className="font-semibold italic">Live Product Preview Coming Soon</p>
+          {/* Infinite Scrolling App Screenshots */}
+          <div className="mt-20 relative animate-scaleIn">
+            {/* Gradient fade edges */}
+            <div className="absolute left-0 top-0 bottom-0 w-24 md:w-40 z-20 pointer-events-none" style={{ background: 'linear-gradient(to right, #fafdff 0%, transparent 100%)' }}></div>
+            <div className="absolute right-0 top-0 bottom-0 w-24 md:w-40 z-20 pointer-events-none" style={{ background: 'linear-gradient(to left, #fafdff 0%, transparent 100%)' }}></div>
+            
+            {/* Scrolling track */}
+            <div 
+              className="overflow-hidden py-4"
+              style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}
+            >
+              <div 
+                className="flex gap-8 w-max hover:[animation-play-state:paused]"
+                style={{ animation: 'marquee 25s linear infinite' }}
+              >
+                {scrollImages.map((img, index) => (
+                  <div 
+                    key={index}
+                    className="flex-shrink-0 w-[500px] md:w-[600px] lg:w-[700px] group"
+                  >
+                    <div className="bg-white rounded-2xl shadow-medium p-3 border border-gray-100 transition-all duration-300 group-hover:shadow-strong group-hover:-translate-y-1">
+                      <img 
+                        src={img.src} 
+                        alt={img.alt}
+                        className="w-full h-auto rounded-xl object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                    <p className="text-sm text-[#A3C5D9] font-medium mt-3 text-center">{img.alt}</p>
                   </div>
-               </div>
+                ))}
+              </div>
             </div>
+
             {/* Decorative Blobs */}
             <div className="absolute -top-10 -left-10 w-40 h-40 bg-[#A7DDE9] rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#66B2D6] rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
