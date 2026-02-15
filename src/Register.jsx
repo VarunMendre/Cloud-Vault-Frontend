@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import DOMPurify from "dompurify";
@@ -34,6 +34,22 @@ const Register = () => {
   const [countdown, setCountdown] = useState(0);
 
   const navigate = useNavigate();
+
+  // Measure OAuth container width for Google button
+  const oauthContainerRef = useRef(null);
+  const [googleBtnWidth, setGoogleBtnWidth] = useState(300);
+
+  useEffect(() => {
+    const el = oauthContainerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setGoogleBtnWidth(Math.floor(entry.contentRect.width));
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // GitHub login function
   const loginWithGitHubHandler = () => {
@@ -360,30 +376,26 @@ const Register = () => {
               </div>
 
               {/* OAuth Buttons */}
-              <div className="space-y-3">
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <div style={{ width: '100%', maxWidth: '100%' }}>
-                    <GoogleLogin
-                      onSuccess={async (credentialResponse) => {
-                        const data = await loginWithGoogle(credentialResponse.credential);
-                        if (data && data.error) {
-                          console.error("Google login error:", data.error);
-                          setServerError(typeof data.error === "string" ? data.error : "Google login failed");
-                          return;
-                        }
-                        if (data && data.success) {
-                          navigate("/");
-                        }
-                      }}
-                      shape="rectangular"
-                      theme="outline"
-                      text="continue_with"
-                      width="400"
-                      onError={() => console.log("Login Failed")}
-                      useOneTap
-                    />
-                  </div>
-                </div>
+              <div className="space-y-3" ref={oauthContainerRef}>
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    const data = await loginWithGoogle(credentialResponse.credential);
+                    if (data && data.error) {
+                      console.error("Google login error:", data.error);
+                      setServerError(typeof data.error === "string" ? data.error : "Google login failed");
+                      return;
+                    }
+                    if (data && data.success) {
+                      navigate("/");
+                    }
+                  }}
+                  shape="rectangular"
+                  theme="outline"
+                  text="continue_with"
+                  width={googleBtnWidth}
+                  onError={() => console.log("Login Failed")}
+                  useOneTap
+                />
 
                 <button
                   onClick={loginWithGitHubHandler}

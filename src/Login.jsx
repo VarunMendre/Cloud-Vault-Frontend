@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { GoogleLogin } from "@react-oauth/google";
 import { loginWithGoogle } from "../src/apis/loginWithGoogle";
@@ -22,6 +22,22 @@ const Login = () => {
   const [notification, setNotification] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Measure OAuth container width for Google button
+  const oauthContainerRef = useRef(null);
+  const [googleBtnWidth, setGoogleBtnWidth] = useState(300);
+
+  useEffect(() => {
+    const el = oauthContainerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setGoogleBtnWidth(Math.floor(entry.contentRect.width));
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // Clear eviction reason when user is on login page or navigates away
   useEffect(() => {
@@ -236,31 +252,27 @@ const Login = () => {
           </div>
 
           {/* OAuth Buttons */}
-          <div className="space-y-3">
+          <div className="space-y-3" ref={oauthContainerRef}>
             {/* Google Login */}
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <div style={{ width: '100%', maxWidth: '100%' }}>
-                <GoogleLogin
-                  onSuccess={async (credentialResponse) => {
-                    const data = await loginWithGoogle(credentialResponse.credential);
-                    if (data.error) {
-                      console.log(data);
-                      return;
-                    }
-                    await refreshUser();
-                    navigate("/");
-                  }}
-                  shape="rectangular"
-                  theme="outline"
-                  text="continue_with"
-                  width="400"
-                  onError={() => {
-                    console.log("Login Failed");
-                  }}
-                  useOneTap
-                />
-              </div>
-            </div>
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                const data = await loginWithGoogle(credentialResponse.credential);
+                if (data.error) {
+                  console.log(data);
+                  return;
+                }
+                await refreshUser();
+                navigate("/");
+              }}
+              shape="rectangular"
+              theme="outline"
+              text="continue_with"
+              width={googleBtnWidth}
+              onError={() => {
+                console.log("Login Failed");
+              }}
+              useOneTap
+            />
 
             {/* GitHub Login Button */}
             <button
