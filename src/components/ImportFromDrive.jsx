@@ -56,18 +56,18 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
           callback: (tokenResponse) => {
             console.log("Token Response:", tokenResponse);
             setIsAuthenticating(false);
-
+            
             if (tokenResponse.error) {
               console.error("OAuth Error:", tokenResponse);
-              const errorMsg = tokenResponse.error === 'access_denied'
+              const errorMsg = tokenResponse.error === 'access_denied' 
                 ? 'Access denied. Please grant permission to access Google Drive.'
                 : tokenResponse.error === 'popup_closed_by_user'
-                  ? 'Authentication cancelled. Please try again.'
-                  : `Authentication failed: ${tokenResponse.error}`;
+                ? 'Authentication cancelled. Please try again.'
+                : `Authentication failed: ${tokenResponse.error}`;
               setError(errorMsg);
               return;
             }
-
+            
             if (tokenResponse && tokenResponse.access_token) {
               console.log("Access Token received:", tokenResponse.access_token.substring(0, 10) + "...");
               setError(null);
@@ -98,7 +98,7 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
       setError("Google API credentials not configured. Please check your environment variables.");
       return;
     }
-
+    
     if (tokenClient) {
       try {
         console.log("Requesting access token...");
@@ -131,7 +131,7 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
           .setOrigin(window.location.protocol + "//" + window.location.host)
           .setCallback((data) => pickerCallback(data, token))
           .build();
-
+        
         console.log("Google Picker created successfully");
         picker.setVisible(true);
       } catch (error) {
@@ -146,7 +146,7 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
 
   const pickerCallback = async (data, token) => {
     console.log("Picker callback:", data.action);
-
+    
     if (data.action === window.google.picker.Action.PICKED) {
       const file = data.docs[0];
       console.log("File selected:", file.name);
@@ -166,12 +166,14 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
         disabled={isAuthenticating || disabled}
         className={
           className ||
-          "group inline-flex items-center justify-center gap-3 px-4 py-2.5 " +
-          "text-sm font-medium text-[#3c4043] font-roboto bg-white " +
-          "border border-[#dadce0] rounded-[4px] " +
-          "shadow-sm hover:bg-[#f8f9fa] hover:shadow hover:border-[#dadce0] " +
-          "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a73e8] " +
-          "transition-all duration-200 ease-in-out " +
+          "group inline-flex items-center justify-center gap-2 " +
+          "h-10 px-4 " +
+          "text-sm font-medium text-[#3c4043] font-roboto " +
+          "bg-white border border-[#dadce0] rounded " +
+          "shadow-sm " +
+          "hover:bg-[#f8f9fa] hover:shadow-md " +
+          "focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#1a73e8] " +
+          "transition-all duration-200 " +
           "disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
         }
         aria-label="Import files from Google Drive"
@@ -183,23 +185,41 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
           </>
         ) : (
           <>
-            {/* Official Google Drive SVG Logo */}
             <svg
-              className="w-5 h-5 min-w-[20px]"
-              xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 87.3 78"
+              className="w-5 h-5 flex-shrink-0"
+              xmlns="http://www.w3.org/2000/svg"
             >
-              <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H6.6v13.85z" fill="#0066DA" />
-              <path d="M43.65 25L29.9 1.2H16.15L2.4 25H43.65z" fill="#00AC47" />
-              <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.85-13.6c.8-1.4 1.25-2.95 1.25-4.5H60.4L73.55 76.8z" fill="#EA4335" />
-              <path d="M16.15 1.2L2.4 25h21.2L37.35 1.2H16.15z" fill="#00832D" />
-              <path d="M43.65 25L29.9 49h27.5L71.15 25H43.65z" fill="#FFBA00" />
-              <path d="M57.4 49H29.9L16.15 73h54.9L57.4 49z" fill="#2684FC" />
+              <path
+                d="M6.6 66.85l3.85 6.65c.8 1.4 1.9 2.5 3.2 3.3l12.3-21.3-6.5-11.3H4.35c-.5.15-1 .35-1.45.65-2.55 1.45-3.6 4.35-2.1 6.85l5.8 11.85z"
+                fill="#0066DA"
+              />
+              <path
+                d="M43.65 25l13.9-25H31.5l-6.55 11.35-7.1 12.3 9.4 16.3 16.4-14.95"
+                fill="#00AC47"
+              />
+              <path
+                d="M73.55 76.8c1.45-.8 2.5-1.9 3.2-3.3l9.45-16.35c1.45-2.55.45-5.45-2.1-6.85-.5-.3-1-.5-1.55-.65L61.2 25h-9.7l9.4 16.3 12.65 21.8z"
+                fill="#EA4335"
+              />
+              <path
+                d="M43.65 25L27.25 53.4l-7.1-12.3L37.1 13.65l6.55 11.35z"
+                fill="#00832D"
+              />
+              <path
+                d="M57.55 53.4H24.7l-9.4 16.3 9.7 16.8h46.1l-6.55-11.35H57.55z"
+                fill="#2684FC"
+              />
+              <path
+                d="M58.25 53.4h-31L14.6 79.5h33.6c2.8 0 5.3-1.5 6.65-4L67.6 53.4H58.25z"
+                fill="#FFBA00"
+              />
             </svg>
             <span>Import from Drive</span>
           </>
         )}
       </button>
+
 
       {error && (
         <div className="fixed top-24 right-6 z-[100] max-w-sm w-full md:w-[380px]">
