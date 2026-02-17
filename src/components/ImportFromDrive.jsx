@@ -75,6 +75,22 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
             
             if (tokenResponse && tokenResponse.access_token) {
               console.log("Access Token received:", tokenResponse.access_token.substring(0, 10) + "...");
+              
+              // VERIFICATION: Test the token against Drive API directly from frontend
+              fetch("https://www.googleapis.com/drive/v3/files?pageSize=1", {
+                headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+              })
+                .then(async (res) => {
+                  console.log("Frontend Drive API Test Status:", res.status);
+                  if (res.ok) {
+                    console.log("✅ Token is VALID for Drive API (Project B).");
+                  } else {
+                    const err = await res.json();
+                    console.error("❌ Token REJECTED by Drive API:", err);
+                  }
+                })
+                .catch((err) => console.error("Frontend verification failed:", err));
+
               setError(null);
               createPicker(tokenResponse.access_token);
             } else {
