@@ -56,18 +56,18 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
           callback: (tokenResponse) => {
             console.log("Token Response:", tokenResponse);
             setIsAuthenticating(false);
-            
+
             if (tokenResponse.error) {
               console.error("OAuth Error:", tokenResponse);
-              const errorMsg = tokenResponse.error === 'access_denied' 
+              const errorMsg = tokenResponse.error === 'access_denied'
                 ? 'Access denied. Please grant permission to access Google Drive.'
                 : tokenResponse.error === 'popup_closed_by_user'
-                ? 'Authentication cancelled. Please try again.'
-                : `Authentication failed: ${tokenResponse.error}`;
+                  ? 'Authentication cancelled. Please try again.'
+                  : `Authentication failed: ${tokenResponse.error}`;
               setError(errorMsg);
               return;
             }
-            
+
             if (tokenResponse && tokenResponse.access_token) {
               console.log("Access Token received:", tokenResponse.access_token.substring(0, 10) + "...");
               setError(null);
@@ -98,7 +98,7 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
       setError("Google API credentials not configured. Please check your environment variables.");
       return;
     }
-    
+
     if (tokenClient) {
       try {
         console.log("Requesting access token...");
@@ -131,7 +131,7 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
           .setOrigin(window.location.protocol + "//" + window.location.host)
           .setCallback((data) => pickerCallback(data, token))
           .build();
-        
+
         console.log("Google Picker created successfully");
         picker.setVisible(true);
       } catch (error) {
@@ -146,7 +146,7 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
 
   const pickerCallback = async (data, token) => {
     console.log("Picker callback:", data.action);
-    
+
     if (data.action === window.google.picker.Action.PICKED) {
       const file = data.docs[0];
       console.log("File selected:", file.name);
@@ -166,12 +166,12 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
         disabled={isAuthenticating || disabled}
         className={
           className ||
-          "group inline-flex items-center justify-center gap-3 px-4 py-2.5 " + 
-          "text-sm font-medium text-[#3c4043] font-roboto bg-white " + 
-          "border border-[#dadce0] rounded-[4px] " + 
-          "shadow-sm hover:bg-[#f8f9fa] hover:shadow hover:border-[#dadce0] " + 
-          "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a73e8] " + 
-          "transition-all duration-200 ease-in-out " + 
+          "group inline-flex items-center justify-center gap-3 px-4 py-2.5 " +
+          "text-sm font-medium text-[#3c4043] font-roboto bg-white " +
+          "border border-[#dadce0] rounded-[4px] " +
+          "shadow-sm hover:bg-[#f8f9fa] hover:shadow hover:border-[#dadce0] " +
+          "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a73e8] " +
+          "transition-all duration-200 ease-in-out " +
           "disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
         }
         aria-label="Import files from Google Drive"
@@ -185,31 +185,37 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
           <>
             <svg
               viewBox="0 0 87.3 78"
-              className="w-5 h-5 min-w-[20px]" 
+              className="w-5 h-5 min-w-[20px]"
               xmlns="http://www.w3.org/2000/svg"
             >
+              {/* Bottom-left: Blue */}
               <path
-                d="M6.6 66.85l3.85 6.65c.8 1.4 1.9 2.5 3.2 3.3l12.3-21.3-6.5-11.3H4.35c-.5.15-1 .35-1.45.65-2.55 1.45-3.6 4.35-2.1 6.85l5.8 11.85z"
+                d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H6.6v13.85z"
                 fill="#0066DA"
               />
+              {/* Top: Green */}
               <path
-                d="M43.65 25l13.9-25H31.5l-6.55 11.35-7.1 12.3 9.4 16.3 16.4-14.95"
+                d="M43.65 0L29.9 23.8H6.6l13.75 23.8 23.3-23.8L57.4 0z"
                 fill="#00AC47"
               />
+              {/* Bottom-right: Red/Yellow */}
               <path
-                d="M73.55 76.8c1.45-.8 2.5-1.9 3.2-3.3l9.45-16.35c1.45-2.55.45-5.45-2.1-6.85-.5-.3-1-.5-1.55-.65L61.2 25h-9.7l9.4 16.3 12.65 21.8z"
+                d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.55-2.75 7.9-13.65c.8-1.4 1.25-2.95 1.25-4.5H57.4L73.55 76.8z"
                 fill="#EA4335"
               />
+              {/* Left side: Dark Green */}
               <path
-                d="M43.65 25L27.25 53.4l-7.1-12.3L37.1 13.65l6.55 11.35z"
+                d="M43.65 0L29.9 23.8 6.6 23.8 20.35 47.6 43.65 23.8z"
                 fill="#00832D"
               />
+              {/* Bottom bar: Blue */}
               <path
-                d="M57.55 53.4H24.7l-9.4 16.3 9.7 16.8h46.1l-6.55-11.35H57.55z"
+                d="M57.4 52.6H20.35L6.6 76.4h74.1L57.4 52.6z"
                 fill="#2684FC"
               />
+              {/* Bottom bar: Yellow */}
               <path
-                d="M58.25 53.4h-31L14.6 79.5h33.6c2.8 0 5.3-1.5 6.65-4L67.6 53.4H58.25z"
+                d="M43.65 52.6H20.35L6.6 76.4h23.3c2.85 0 5.3-1.5 6.65-3.95L57.4 52.6z"
                 fill="#FFBA00"
               />
             </svg>
