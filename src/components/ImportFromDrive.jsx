@@ -163,9 +163,8 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
     <div className="relative">
       <button
         onClick={handleAuth}
-        disabled={true}
-        className={className || "flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed hidden md:flex"}
-        title="Coming Soon"
+        disabled={isAuthenticating || disabled}
+        className={className || "flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 hidden md:flex disabled:opacity-50 disabled:cursor-not-allowed"}
       >
         {isAuthenticating ? (
           <>
@@ -174,8 +173,8 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
           </>
         ) : (
           <>
-            <FaGoogleDrive className="w-4 h-4 text-gray-400" />
-            Import from Drive (Coming Soon)
+            <FaGoogleDrive className="w-4 h-4 text-gray-600" />
+            Import from Drive
           </>
         )}
       </button>

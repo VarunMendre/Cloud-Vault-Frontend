@@ -55,3 +55,32 @@ jobs:
         run: |
           echo "🎉 Frontend Deployed Successfully!"
           echo "📝 Commit: ${{ github.sha }}"
+
+      - name: 📢 Telegram Notification (Success)
+        if: success()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🚀 **Frontend Deployment Successful!**
+            
+            📦 **Repo:** ${{ github.repository }}
+            🌿 **Branch:** ${{ github.ref_name }}
+            📝 **Commit:** ${{ github.event.head_commit.message }}
+            👤 **Author:** ${{ github.actor }}
+            
+            ✅ Site is live!
+
+      - name: 🚨 Telegram Notification (Failure)
+        if: failure()
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🔴 **Frontend Deployment FAILED**
+            
+            📦 **Repo:** ${{ github.repository }}
+            🌿 **Branch:** ${{ github.ref_name }}
+            ❌ **Error:** Check GitHub Actions logs.
