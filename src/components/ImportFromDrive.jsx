@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaGoogleDrive } from "react-icons/fa";
+
 import axios from "axios";
 import { Alert, AlertDescription } from "./lightswind/alert";
 
@@ -164,21 +164,59 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
       <button
         onClick={handleAuth}
         disabled={isAuthenticating || disabled}
-        className={className || "flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 hidden md:flex disabled:opacity-50 disabled:cursor-not-allowed"}
+        className={
+          className ||
+          "group inline-flex items-center justify-center gap-3 px-4 py-2.5 " + 
+          "text-sm font-medium text-[#3c4043] font-roboto bg-white " + 
+          "border border-[#dadce0] rounded-[4px] " + 
+          "shadow-sm hover:bg-[#f8f9fa] hover:shadow hover:border-[#dadce0] " + 
+          "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1a73e8] " + 
+          "transition-all duration-200 ease-in-out " + 
+          "disabled:opacity-60 disabled:cursor-not-allowed disabled:shadow-none"
+        }
+        aria-label="Import files from Google Drive"
       >
         {isAuthenticating ? (
           <>
-            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-            Authenticating...
+            <div className="w-5 h-5 border-2 border-[#1a73e8] border-t-transparent rounded-full animate-spin" />
+            <span className="text-[#3c4043]">Connecting...</span>
           </>
         ) : (
           <>
-            <FaGoogleDrive className="w-4 h-4 text-gray-600" />
-            Import from Drive
+            <svg
+              viewBox="0 0 87.3 78"
+              className="w-5 h-5 min-w-[20px]" 
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6.6 66.85l3.85 6.65c.8 1.4 1.9 2.5 3.2 3.3l12.3-21.3-6.5-11.3H4.35c-.5.15-1 .35-1.45.65-2.55 1.45-3.6 4.35-2.1 6.85l5.8 11.85z"
+                fill="#0066DA"
+              />
+              <path
+                d="M43.65 25l13.9-25H31.5l-6.55 11.35-7.1 12.3 9.4 16.3 16.4-14.95"
+                fill="#00AC47"
+              />
+              <path
+                d="M73.55 76.8c1.45-.8 2.5-1.9 3.2-3.3l9.45-16.35c1.45-2.55.45-5.45-2.1-6.85-.5-.3-1-.5-1.55-.65L61.2 25h-9.7l9.4 16.3 12.65 21.8z"
+                fill="#EA4335"
+              />
+              <path
+                d="M43.65 25L27.25 53.4l-7.1-12.3L37.1 13.65l6.55 11.35z"
+                fill="#00832D"
+              />
+              <path
+                d="M57.55 53.4H24.7l-9.4 16.3 9.7 16.8h46.1l-6.55-11.35H57.55z"
+                fill="#2684FC"
+              />
+              <path
+                d="M58.25 53.4h-31L14.6 79.5h33.6c2.8 0 5.3-1.5 6.65-4L67.6 53.4H58.25z"
+                fill="#FFBA00"
+              />
+            </svg>
+            <span>Import from Drive</span>
           </>
         )}
       </button>
-      
 
       {error && (
         <div className="fixed top-24 right-6 z-[100] max-w-sm w-full md:w-[380px]">
