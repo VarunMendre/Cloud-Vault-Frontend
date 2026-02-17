@@ -183,41 +183,18 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
           </>
         ) : (
           <>
+            {/* Official Google Drive SVG Logo */}
             <svg
-              viewBox="0 0 87.3 78"
               className="w-5 h-5 min-w-[20px]"
               xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 87.3 78"
             >
-              {/* Bottom-left: Blue */}
-              <path
-                d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H6.6v13.85z"
-                fill="#0066DA"
-              />
-              {/* Top: Green */}
-              <path
-                d="M43.65 0L29.9 23.8H6.6l13.75 23.8 23.3-23.8L57.4 0z"
-                fill="#00AC47"
-              />
-              {/* Bottom-right: Red/Yellow */}
-              <path
-                d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.55-2.75 7.9-13.65c.8-1.4 1.25-2.95 1.25-4.5H57.4L73.55 76.8z"
-                fill="#EA4335"
-              />
-              {/* Left side: Dark Green */}
-              <path
-                d="M43.65 0L29.9 23.8 6.6 23.8 20.35 47.6 43.65 23.8z"
-                fill="#00832D"
-              />
-              {/* Bottom bar: Blue */}
-              <path
-                d="M57.4 52.6H20.35L6.6 76.4h74.1L57.4 52.6z"
-                fill="#2684FC"
-              />
-              {/* Bottom bar: Yellow */}
-              <path
-                d="M43.65 52.6H20.35L6.6 76.4h23.3c2.85 0 5.3-1.5 6.65-3.95L57.4 52.6z"
-                fill="#FFBA00"
-              />
+              <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8H6.6v13.85z" fill="#0066DA" />
+              <path d="M43.65 25L29.9 1.2H16.15L2.4 25H43.65z" fill="#00AC47" />
+              <path d="M73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.85-13.6c.8-1.4 1.25-2.95 1.25-4.5H60.4L73.55 76.8z" fill="#EA4335" />
+              <path d="M16.15 1.2L2.4 25h21.2L37.35 1.2H16.15z" fill="#00832D" />
+              <path d="M43.65 25L29.9 49h27.5L71.15 25H43.65z" fill="#FFBA00" />
+              <path d="M57.4 49H29.9L16.15 73h54.9L57.4 49z" fill="#2684FC" />
             </svg>
             <span>Import from Drive</span>
           </>
