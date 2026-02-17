@@ -186,18 +186,12 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
           </>
         ) : (
           <>
-            <svg
-              viewBox="0 0 87.3 78"
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/1/12/Google_Drive_icon_%282020%29.svg"
+              alt="Google Drive"
               className="w-[18px] h-[18px] flex-shrink-0"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M6.6 66.85l3.85 6.65c.8 1.4 1.9 2.5 3.2 3.3l12.3-21.3-6.5-11.3H4.35c-.5.15-1 .35-1.45.65-2.55 1.45-3.6 4.35-2.1 6.85l5.8 11.85z" fill="#0066DA" />
-              <path d="M43.65 25l13.9-25H31.5l-6.55 11.35-7.1 12.3 9.4 16.3 16.4-14.95" fill="#00AC47" />
-              <path d="M73.55 76.8c1.45-.8 2.5-1.9 3.2-3.3l9.45-16.35c1.45-2.55.45-5.45-2.1-6.85-.5-.3-1-.5-1.55-.65L61.2 25h-9.7l9.4 16.3 12.65 21.8z" fill="#EA4335" />
-              <path d="M43.65 25L27.25 53.4l-7.1-12.3L37.1 13.65l6.55 11.35z" fill="#00832D" />
-              <path d="M57.55 53.4H24.7l-9.4 16.3 9.7 16.8h46.1l-6.55-11.35H57.55z" fill="#2684FC" />
-              <path d="M58.25 53.4h-31L14.6 79.5h33.6c2.8 0 5.3-1.5 6.65-4L67.6 53.4H58.25z" fill="#FFBA00" />
-            </svg>
+            />
+
 
             <span className="relative -top-[1px]">
               Import from Drive
