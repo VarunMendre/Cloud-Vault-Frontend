@@ -5,13 +5,18 @@ import { Alert, AlertDescription } from "./lightswind/alert";
 
 // Ideally these should be in a config file or env variables
 // But for now we use process.env as per React standard
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || process.env.REACT_APP_GOOGLE_CLIENT_ID;
-const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY || process.env.REACT_APP_GOOGLE_API_KEY;
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 const SCOPE = "https://www.googleapis.com/auth/drive.readonly";
 
 export default function ImportFromDrive({ onFilesSelected, className, disabled }) {
   const [pickerApiLoaded, setPickerApiLoaded] = useState(false);
   const [gisLoaded, setGisLoaded] = useState(false);
+  
+  // Debugging: Log the Client ID being used (should start with 558...)
+  useEffect(() => {
+    console.log("ImportFromDrive: Using Client ID:", CLIENT_ID);
+  }, []);
   const [tokenClient, setTokenClient] = useState(null);
   const [error, setError] = useState(null);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
