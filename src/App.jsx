@@ -25,10 +25,12 @@ import LandingPage from "./LandingPage";
 import { useAuth } from "./context/AuthContext";
 import LoadingOverlay from "./components/LoadingOverlay";
 
+const isLandingSubdomain = window.location.hostname === "landing.cloudvault.cloud";
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <DirectoryView />,
+    element: isLandingSubdomain ? <LandingPage /> : <DirectoryView />,
   },
   {
     path: "/register",
