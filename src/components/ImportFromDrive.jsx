@@ -23,33 +23,60 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   useEffect(() => {
+    let gapiScript;
+    let gisScript;
+
     const loadGapi = () => {
-      const script = document.createElement("script");
-      script.src = "https://apis.google.com/js/api.js";
-      script.onload = () => {
+      if (window.gapi) {
         window.gapi.load("picker", () => {
+          console.log("Picker API loaded from window.gapi");
+          setPickerApiLoaded(true);
+        });
+        return;
+      }
+
+      gapiScript = document.createElement("script");
+      gapiScript.src = "https://apis.google.com/js/api.js";
+      gapiScript.async = true;
+      gapiScript.defer = true;
+      gapiScript.onload = () => {
+        window.gapi.load("picker", () => {
+          console.log("Picker API loaded successfully");
           setPickerApiLoaded(true);
         });
       };
-      document.body.appendChild(script);
+      gapiScript.onerror = () => {
+        console.error("Failed to load GAPI script");
+        setError("Failed to load Google Picker library. Please check your internet connection.");
+      };
+      document.body.appendChild(gapiScript);
     };
 
     const loadGis = () => {
-      const script = document.createElement("script");
-      script.src = "https://accounts.google.com/gsi/client";
-      script.onload = () => {
+      if (window.google?.accounts?.oauth2) {
+        setGisLoaded(true);
+        return;
+      }
+
+      gisScript = document.createElement("script");
+      gisScript.src = "https://accounts.google.com/gsi/client";
+      gisScript.async = true;
+      gisScript.defer = true;
+      gisScript.onload = () => {
         setGisLoaded(true);
       };
-      document.body.appendChild(script);
+      gisScript.onerror = () => {
+        console.error("Failed to load GIS script");
+        setError("Failed to load Google Authentication library.");
+      };
+      document.body.appendChild(gisScript);
     };
 
     loadGapi();
     loadGis();
 
     return () => {
-      // Cleanup scripts if needed, though usually not necessary for single page apps
-      // avoiding strict mode double load issues by checking if scripts exist could be better
-      // but for now simple append is fine as per previous implementation style
+      // Don't remove scripts as they might be needed for rest of session
     };
   }, []);
 
@@ -139,30 +166,53 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
   };
 
   const createPicker = (token) => {
-    if (pickerApiLoaded && token) {
-      try {
-        console.log("Creating Google Picker...");
-        const view = new window.google.picker.DocsView(window.google.picker.ViewId.DOCS)
-          .setIncludeFolders(true)
-          .setSelectFolderEnabled(false);
+    // If picker API is not loaded, try to load it one last time before failing
+    if (!pickerApiLoaded && window.gapi) {
+      console.log("Picker not loaded yet, attempting late load...");
+      window.gapi.load("picker", {
+        callback: () => {
+          setPickerApiLoaded(true);
+          createPickerInstance(token);
+        },
+        onerror: () => {
+          setError("Google Picker failed to load. Please try again.");
+        },
+        timeout: 5000,
+        ontimeout: () => {
+          setError("Google Picker load timed out. Please check your connection.");
+        }
+      });
+      return;
+    }
 
-        const picker = new window.google.picker.PickerBuilder()
-          .addView(view)
-          .setOAuthToken(token)
-          .setDeveloperKey(API_KEY)
-          .setOrigin(window.location.protocol + "//" + window.location.host)
-          .setCallback((data) => pickerCallback(data, token))
-          .build();
-        
-        console.log("Google Picker created successfully");
-        picker.setVisible(true);
-      } catch (error) {
-        console.error("Failed to create picker:", error);
-        setError("Failed to open file picker. Please check your API key configuration.");
-      }
+    if (pickerApiLoaded && token) {
+      createPickerInstance(token);
     } else {
       console.error("Picker API not loaded or token missing", { pickerApiLoaded, hasToken: !!token });
-      setError("Google Picker is not ready. Please refresh the page and try again.");
+      setError("Google Picker is not ready. Please wait a few seconds and try again.");
+    }
+  };
+
+  const createPickerInstance = (token) => {
+    try {
+      console.log("Creating Google Picker...");
+      const view = new window.google.picker.DocsView(window.google.picker.ViewId.DOCS)
+        .setIncludeFolders(true)
+        .setSelectFolderEnabled(false);
+
+      const picker = new window.google.picker.PickerBuilder()
+        .addView(view)
+        .setOAuthToken(token)
+        .setDeveloperKey(API_KEY)
+        .setOrigin(window.location.protocol + "//" + window.location.host)
+        .setCallback((data) => pickerCallback(data, token))
+        .build();
+      
+      console.log("Google Picker created successfully");
+      picker.setVisible(true);
+    } catch (error) {
+      console.error("Failed to create picker:", error);
+      setError("Failed to open file picker. Please check your API key configuration.");
     }
   };
 
