@@ -280,10 +280,35 @@ function DirectoryView() {
    * Handle Import from Drive
    */
   async function handleDriveFileImport(file, token) {
+    const tempId = `import-${Date.now()}-${Math.random()}`;
+    const importItem = {
+      id: tempId,
+      name: file.name,
+      size: file.size || 0,
+      isUploading: true,
+      isImport: true, // Mark as import for potential logical differences
+      createdAt: new Date().toISOString(),
+    };
+
     try {
       console.log("Importing file from Drive:", file);
-      setIsImporting(true);
       
+      // Add to upload UI
+      setAllUploads((prev) => [importItem, ...prev]);
+      setProgressMap((prev) => ({ ...prev, [tempId]: 0 }));
+      setIsUploading(true);
+
+      // Simulate progress since we don't have real progress for server-side import
+      const progressInterval = setInterval(() => {
+        setProgressMap((prev) => {
+          const currentProgress = prev[tempId] || 0;
+          if (currentProgress < 90) {
+            return { ...prev, [tempId]: currentProgress + Math.random() * 10 };
+          }
+          return prev;
+        });
+      }, 1000);
+
       const response = await fetch(`${BASE_URL}/import/google-drive`, {
         method: "POST",
         headers: {
@@ -297,6 +322,8 @@ function DirectoryView() {
         }),
       });
 
+      clearInterval(progressInterval);
+
       if (response.status === 401) {
         navigate("/login");
         return;
@@ -306,18 +333,31 @@ function DirectoryView() {
       const data = await response.json();
       console.log("Import success:", data);
       
+      // Complete progress
+      setProgressMap((prev) => ({ ...prev, [tempId]: 100 }));
+      
       // Refresh directory items
       getDirectoryItems();
       if (refreshStorageRef.current) {
         refreshStorageRef.current();
       }
+
+      // Cleanup toast after short delay if no other uploads
+      setTimeout(() => {
+        if (uploadQueueRef.current.length === 0) {
+          setIsUploading(false);
+          setAllUploads((prev) => prev.filter(item => item.id !== tempId));
+        }
+      }, 3000);
       
     } catch (error) {
       console.error("Import from Drive failed:", error);
       setErrorMessage("Failed to import file from Google Drive: " + error.message);
       showToast("Failed to import from Drive: " + error.message, "error");
+      // Cleanup on error
+      setAllUploads((prev) => prev.filter(item => item.id !== tempId));
     } finally {
-      setIsImporting(false);
+      // isUploading will be handled by the timeout or processQueue
     }
   }
 
@@ -846,14 +886,7 @@ function DirectoryView() {
     <div className="min-h-screen pt-16">
 
 
-      {isImporting && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-xl flex items-center gap-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="text-gray-700 font-medium">Importing from Google Drive...</p>
-          </div>
-        </div>
-      )}
+      {/* Removed isImporting overlay to use unified UploadToast UI */}
 
       <DirectoryHeader
         directoryName={directoryName}
