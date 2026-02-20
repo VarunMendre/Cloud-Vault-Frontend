@@ -122,9 +122,13 @@ const router = createBrowserRouter([
 function App() {
   const { isAuthenticating } = useAuth();
 
+  // Define public routes that shouldn't show the "Authenticating" overlay
+  const publicRoutes = ["/landing", "/privacy-policy", "/terms-of-service", "/refund-policy", "/contact-us"];
+  const isPublicPage = publicRoutes.includes(window.location.pathname);
+
   return (
     <>
-      {isAuthenticating && <LoadingOverlay />}
+      {isAuthenticating && !isPublicPage && <LoadingOverlay />}
       <RouterProvider router={router} />
     </>
   );
