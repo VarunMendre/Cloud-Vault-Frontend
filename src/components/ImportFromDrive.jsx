@@ -6,7 +6,7 @@ import { Alert, AlertDescription } from "./lightswind/alert";
 // Ideally these should be in a config file or env variables
 // But for now we use process.env as per React standard
 // HARDCODED FIX: Environment variable VITE_GOOGLE_CLIENT_ID was not being picked up correctly.
-const CLIENT_ID = "558111947302-1lj4aj5u66vr5q8dutab1ag5tmsjmekk.apps.googleusercontent.com";
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 const SCOPE = "https://www.googleapis.com/auth/drive.readonly";
 
