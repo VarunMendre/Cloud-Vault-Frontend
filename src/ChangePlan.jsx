@@ -586,7 +586,7 @@ function openRazorPayPopup({
 }) {
   console.log("Opening Razorpay for upgrade:", subscriptionId);
   const rzp = new window.Razorpay({
-    key: "rzp_test_RnAnjbXG3sqHWQ",
+    key: import.meta.env.VITE_RAZORPAY_KEY,
     name: "Storage App",
     description: planName + " - " + planDescription,
     subscription_id: subscriptionId,

@@ -631,6 +631,9 @@ function CountdownModal({ countdown, onCancel }) {
             </svg>
             Secure connection
           </div>
+          <p className="text-xs text-slate-500 mb-6">
+            For assistance, please contact our support team at <a href={`mailto:${import.meta.env.VITE_SUPPORT_EMAIL}`} className="underline underline-offset-2 hover:text-red-800 transition-colors">{import.meta.env.VITE_SUPPORT_EMAIL}</a>.
+          </p>
           
           <button
             onClick={onCancel}
@@ -654,7 +657,7 @@ function openRazorPayPopup({
 }) {
   console.log("Opening Razorpay for:", subscriptionId);
   const rzp = new window.Razorpay({
-    key: "rzp_test_RnAnjbXG3sqHWQ",
+    key: import.meta.env.VITE_RAZORPAY_KEY,
     name: "Storage App",
     description: planName + " - " + planDescription,
     subscription_id: subscriptionId,
