@@ -26,7 +26,7 @@ const PLAN_CATALOG = {
       popular: false,
     },
     {
-      id: "plan_RuC1EiZlwurf5N",
+      id: "plan_SMPP6YUub7ZlMM ",
       name: "Standard",
       tagline: "For Students & Freelancers",
       description: "Students, freelancers, or small teams who need more space",
@@ -44,7 +44,7 @@ const PLAN_CATALOG = {
       popular: true,
     },
     {
-      id: "plan_RuC2evjqwSxHOH",
+      id: "plan_SMPQkwuHf1bQKr",
       name: "Premium",
       tagline: "For Professionals & Creators",
       description: "Professionals and creators handling large media files",
@@ -82,7 +82,7 @@ const PLAN_CATALOG = {
       popular: false,
     },
     {
-      id: "plan_RuC3yiXd7cecny",
+      id: "plan_SMPLOQNZuavDPZ",
       name: "Standard",
       tagline: "For Students & Freelancers",
       description: "Students, freelancers, or small teams who need more space",
@@ -100,7 +100,7 @@ const PLAN_CATALOG = {
       popular: true,
     },
     {
-      id: "plan_RuC5FeIwTTfUSh",
+      id: "plan_SMPHSrTBZSIPQl",
       name: "Premium",
       tagline: "For Professionals & Creators",
       description: "Professionals and creators handling large media files",
