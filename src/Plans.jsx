@@ -26,7 +26,7 @@ const PLAN_CATALOG = {
       popular: false,
     },
     {
-      id: "plan_SMPP6YUub7ZlMM ",
+      id: "plan_SMPP6YUub7ZlMM",
       name: "Standard",
       tagline: "For Students & Freelancers",
       description: "Students, freelancers, or small teams who need more space",
