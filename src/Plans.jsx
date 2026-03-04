@@ -287,7 +287,7 @@ export default function Plans() {
     async function checkExistingSubscription() {
       try {
         const res = await getSubscriptionDetails();
-        if (res && res.activePlan && ["active", "created", "past_due"].includes(res.activePlan.status)) {
+        if (res && res.activePlan && ["active", "past_due"].includes(res.activePlan.status)) {
           // User already has a plan, they should go to /change-plan instead
           navigate("/change-plan", { replace: true });
         }

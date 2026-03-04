@@ -40,13 +40,13 @@ export default function ChangePlan() {
           getEligiblePlans()
         ]);
         
-        if (details && details.activePlan && ["active", "created"].includes(details.activePlan.status)) {
+        if (details && details.activePlan && details.activePlan.status === "active") {
           setCurrentPlan(details);
           setEligiblePlans(eligible?.eligiblePlans || []);
           setEmptyMessage(eligible?.message || "");
         } else {
-          // If no active plan, they shouldn't be here
-          navigate("/plans");
+          // If no active plan (or it's just 'created'), they shouldn't be here
+          navigate("/plans", { replace: true });
         }
       } catch (err) {
         console.error("Failed to fetch upgrade data:", err);
