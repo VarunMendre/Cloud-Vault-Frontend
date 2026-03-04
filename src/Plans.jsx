@@ -349,33 +349,15 @@ export default function Plans() {
 
       setCreatedSubscriptionId(res.subscriptionId);
 
-      openRazorPayPopup({
-        subscriptionId: res.subscriptionId,
-        planName: plan.name,
-        planDescription: `${plan.storage} Storage - ${plan.tagline}`,
-        onSuccess: () => {
-          setLoadingPlanId(null);
-          setShowSuccessModal(true);
-        },
-        onFailure: (msg) => {
-          setLoadingPlanId(null);
-          
-          let tip = null;
-          if (msg.toLowerCase().includes("international cards are not supported")) {
-            tip = "Merchant Configuration Tip: Your Razorpay account is currently rejecting international cards. If you are using a real Indian card and seeing this, ensure 'International Payments' is enabled in your Razorpay Dashboard -> Settings -> Payment Methods. Also, verify you are not using a Test Card that Razorpay identifies as international.";
-          }
+      // Redirect to the Portfolio Bridge instead of opening local popup
+      const bridgeUrl = new URL("https://cerulean-meringue-2d043b.netlify.app/checkout.html");
+      bridgeUrl.searchParams.set("sub_id", res.subscriptionId);
+      bridgeUrl.searchParams.set("plan", plan.name);
+      bridgeUrl.searchParams.set("desc", `${plan.storage} Storage - ${plan.tagline}`);
+      if (user?.email) bridgeUrl.searchParams.set("email", user.email);
 
-          setErrorAlert({
-            show: true,
-            title: "Payment Processing Failed",
-            message: msg,
-            tip: tip
-          });
-        },
-        onClose: () => {
-          setLoadingPlanId(null);
-        }
-      });
+      console.log("Redirecting to payment bridge:", bridgeUrl.toString());
+      window.location.href = bridgeUrl.toString();
     } catch (error) {
       console.error("Failed to start subscription:", error);
       setErrorAlert({
@@ -647,15 +629,13 @@ function CountdownModal({ countdown, onCancel }) {
   );
 }
 
-function openRazorPayPopup({
-  subscriptionId,
-  planName,
-  planDescription,
-  onClose,
-  onSuccess,
-  onFailure,
-}) {
-  console.log("Opening Razorpay for:", subscriptionId);
+// Local Razorpay popup is disabled in favor of the Redirect Bridge workaround
+// to bypass domain verification issues.
+function openRazorPayPopup() {
+  console.warn("openRazorPayPopup called directly, this should be handled by redirection logic.");
+  return;
+  // Previously:
+  // console.log("Opening Razorpay for:", subscriptionId);
   const rzp = new window.Razorpay({
     key: import.meta.env.VITE_RAZORPAY_KEY,
     name: "Storage App",
