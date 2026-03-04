@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   BsLightningChargeFill, 
   BsInboxesFill, 
@@ -28,21 +28,7 @@ export default function SubscriptionDetails() {
   const [cancelling, setCancelling] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const status = searchParams.get("status");
-    if (status === "success") {
-      setSuccessMessage("Your payment was successful! Your subscription is now active.");
-      // Clear the URL parameters
-      navigate("/subscription", { replace: true });
-    } else if (status === "failed") {
-      setErrorMessage(searchParams.get("reason") || "Payment failed. Please try again.");
-      navigate("/subscription", { replace: true });
-    }
-  }, [searchParams, navigate]);
 
   async function handleViewInvoice() {
     try {
@@ -138,17 +124,6 @@ export default function SubscriptionDetails() {
           <Alert variant="destructive" withIcon duration={4000} dismissible onDismiss={() => setErrorMessage(null)} className="bg-white/95 backdrop-blur-md shadow-2xl border-red-100">
             <AlertDescription className="font-bold text-sm tracking-wide">
               {errorMessage}
-            </AlertDescription>
-          </Alert>
-        </div>
-      )}
-
-      {/* Custom Success Toast */}
-      {successMessage && (
-        <div className="fixed top-24 right-6 z-[100] max-w-sm w-full md:w-[380px]">
-          <Alert variant="success" withIcon duration={5000} dismissible onDismiss={() => setSuccessMessage(null)} className="bg-white/95 backdrop-blur-md shadow-2xl border-green-100">
-            <AlertDescription className="font-bold text-sm tracking-wide text-green-700">
-              {successMessage}
             </AlertDescription>
           </Alert>
         </div>

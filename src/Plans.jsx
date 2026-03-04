@@ -349,12 +349,33 @@ export default function Plans() {
 
       setCreatedSubscriptionId(res.subscriptionId);
 
-      // Redirect to the approved Netlify domain for secure payment
-      const netlifyDomain = "https://cerulean-meringue-2d043b.netlify.app";
-      const checkoutUrl = `${netlifyDomain}/checkout?subscriptionId=${res.subscriptionId}&planName=${encodeURIComponent(plan.name)}&planDescription=${encodeURIComponent(`${plan.storage} Storage - ${plan.tagline}`)}&isUpgrade=false`;
-      
-      console.log("Redirecting to secure checkout:", checkoutUrl);
-      window.location.href = checkoutUrl;
+      openRazorPayPopup({
+        subscriptionId: res.subscriptionId,
+        planName: plan.name,
+        planDescription: `${plan.storage} Storage - ${plan.tagline}`,
+        onSuccess: () => {
+          setLoadingPlanId(null);
+          setShowSuccessModal(true);
+        },
+        onFailure: (msg) => {
+          setLoadingPlanId(null);
+          
+          let tip = null;
+          if (msg.toLowerCase().includes("international cards are not supported")) {
+            tip = "Merchant Configuration Tip: Your Razorpay account is currently rejecting international cards. If you are using a real Indian card and seeing this, ensure 'International Payments' is enabled in your Razorpay Dashboard -> Settings -> Payment Methods. Also, verify you are not using a Test Card that Razorpay identifies as international.";
+          }
+
+          setErrorAlert({
+            show: true,
+            title: "Payment Processing Failed",
+            message: msg,
+            tip: tip
+          });
+        },
+        onClose: () => {
+          setLoadingPlanId(null);
+        }
+      });
     } catch (error) {
       console.error("Failed to start subscription:", error);
       setErrorAlert({
