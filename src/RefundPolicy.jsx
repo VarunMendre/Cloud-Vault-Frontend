@@ -18,7 +18,7 @@ const RefundPolicy = () => {
                             <h2 className="text-xl font-bold">Refund Policy</h2>
                         </div>
                         <p className="leading-relaxed text-gray-600">
-                            At CloudVault, we provide a <strong>Free Tier</strong> for all users to explore and evaluate our premium storage services before making a purchase. 
+                            At CloudVault, we provide a <strong>Free Tier</strong> for all users to explore and evaluate our premium storage services before making a purchase.
                         </p>
                         <div className="mt-4 p-4 bg-amber-50 rounded-lg border border-amber-100 flex gap-3">
                             <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />

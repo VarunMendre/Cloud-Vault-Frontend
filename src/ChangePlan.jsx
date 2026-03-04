@@ -100,33 +100,13 @@ export default function ChangePlan() {
       
       if (res.subscriptionId) {
         setCreatedSubscriptionId(res.subscriptionId);
-        openRazorPayPopup({
-          subscriptionId: res.subscriptionId,
-          planName: plan.name,
-          planDescription: `${plan.storage} Storage - ${plan.tagline}`,
-          onSuccess: () => {
-            setProcessingId(null);
-            setShowSuccessModal(true);
-          },
-          onFailure: (msg) => {
-            setProcessingId(null);
-            
-            let tip = null;
-            if (msg.toLowerCase().includes("international cards are not supported")) {
-               tip = "Merchant Configuration Tip: Your Razorpay account is currently rejecting international cards. Ensure 'International Payments' is enabled in your Dashboard.";
-            }
 
-            setErrorAlert({
-              show: true,
-              title: "Upgrade Failed",
-              message: msg,
-              tip: tip
-            });
-          },
-          onClose: () => {
-            setProcessingId(null);
-          }
-        });
+        // Redirect to the approved Netlify domain for secure payment
+        const netlifyDomain = "https://cerulean-meringue-2d043b.netlify.app";
+        const checkoutUrl = `${netlifyDomain}/checkout?subscriptionId=${res.subscriptionId}&planName=${encodeURIComponent(plan.name)}&planDescription=${encodeURIComponent(`${plan.storage} Storage - ${plan.tagline}`)}&isUpgrade=true`;
+        
+        console.log("Redirecting to secure upgrade checkout:", checkoutUrl);
+        window.location.href = checkoutUrl;
       }
     } catch (err) {
       console.error("Detailed Upgrade Error Context:", {

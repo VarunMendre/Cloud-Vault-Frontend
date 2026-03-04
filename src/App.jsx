@@ -22,6 +22,7 @@ import TermsOfService from "./TermsOfService";
 import RefundPolicy from "./RefundPolicy";
 import ContactUs from "./ContactUs";
 import LandingPage from "./LandingPage";
+import Checkout from "./Checkout";
 import { useAuth } from "./context/AuthContext";
 import LoadingOverlay from "./components/LoadingOverlay";
 
@@ -114,6 +115,10 @@ const router = createBrowserRouter([
   {
     path: "/landing",
     element: <LandingPage />,
+  },
+  {
+    path: "/checkout",
+    element: <Checkout />,
   },
 ]);
 
