@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "./lightswind/alert";
 // HARDCODED FIX: Environment variable VITE_GOOGLE_CLIENT_ID was not being picked up correctly.
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
-const SCOPE = "https://www.googleapis.com/auth/drive.readonly";
+const SCOPE = "https://www.googleapis.com/auth/drive.file";
 
 export default function ImportFromDrive({ onFilesSelected, className, disabled }) {
   const [pickerApiLoaded, setPickerApiLoaded] = useState(false);
@@ -202,6 +202,7 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
 
       const picker = new window.google.picker.PickerBuilder()
         .addView(view)
+        .enableFeature(window.google.picker.Feature.MULTISELECT_ENABLED)
         .setOAuthToken(token)
         .setDeveloperKey(API_KEY)
         .setOrigin(window.location.protocol + "//" + window.location.host)
@@ -220,11 +221,13 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
     console.log("Picker callback:", data.action);
     
     if (data.action === window.google.picker.Action.PICKED) {
-      const file = data.docs[0];
-      console.log("File selected:", file.name);
+      console.log(`Selected ${data.docs.length} files`);
       setError(null);
       if (onFilesSelected) {
-        onFilesSelected(file, token);
+        // Handle multiple files sequentially or as needed by the parent
+        for (const file of data.docs) {
+          onFilesSelected(file, token);
+        }
       }
     } else if (data.action === window.google.picker.Action.CANCEL) {
       console.log("User cancelled file selection");
