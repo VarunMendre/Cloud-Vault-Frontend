@@ -209,10 +209,26 @@ export default function SubscriptionDetails() {
         </div>
       )}
 
-      <header className="mb-10">
+      <header className="mb-8">
         <h1 className="text-3xl font-extrabold" style={{ color: '#2C3E50' }}>Your Subscription</h1>
         <p className="mt-1" style={{ color: '#A3C5D9' }}>Manage your plan and view usage details</p>
       </header>
+
+      {/* ⚠️ Auto-pay advisory banner */}
+      <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-8 shadow-sm">
+        <div className="flex-shrink-0 mt-0.5 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center">
+          <svg className="w-4 h-4 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+          </svg>
+        </div>
+        <div>
+          <p className="text-sm font-bold text-amber-800">💡 Heads up — keep your auto-pay enabled</p>
+          <p className="text-xs text-amber-700 mt-0.5 leading-relaxed">
+            Please <strong>do not disable or cancel your auto-pay</strong> from your UPI / bank app. 
+            If the auto-debit mandate is revoked, your subscription will be <strong>cancelled immediately</strong> and you will lose access to your upgraded storage.
+          </p>
+        </div>
+      </div>
       
       {/* Bonus Trial Banner */}
       {data.activePlan.isInTrial && (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Cloud, 
@@ -320,6 +320,9 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* ════════ Pricing / Plans Section ════════ */}
+      <LandingPlansSection onGetStarted={handleGetStarted} addRevealRef={addRevealRef} />
+
       {/* Features Grid */}
       <section className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
@@ -403,3 +406,261 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+
+// ─── Pricing data (mirrors Plans.jsx PLAN_CATALOG, monthly only for landing) ───
+const LANDING_PLANS = [
+  {
+    id: 'free',
+    name: 'Free',
+    tagline: 'Starter Plan',
+    description: 'Personal users who want to try the platform',
+    storage: '500 MB',
+    price: 0,
+    cta: 'Get Started Free',
+    popular: false,
+    isFree: true,
+    features: [
+      '500 MB secure storage',
+      'File upload limit: 100 MB per file',
+      'Access from 1 device',
+      'Standard download speed',
+      'Basic email support',
+    ],
+  },
+  {
+    id: 'standard',
+    name: 'Standard',
+    tagline: 'For Students & Freelancers',
+    description: 'Students, freelancers, or small teams who need more space',
+    storage: '100 GB',
+    price: 349,
+    yearlyPrice: 3999,
+    yearlyStorage: '200 GB',
+    cta: 'Get Started',
+    popular: true,
+    isFree: false,
+    features: [
+      '100 GB secure storage',
+      'File upload limit: 1 GB per file',
+      'Access from up to 2 devices',
+      'Priority upload/download speed',
+      'Email & chat support',
+    ],
+    yearlyFeatures: [
+      '200 GB secure storage',
+      'File upload limit: 1 GB per file',
+      'Access from up to 2 devices',
+      'Priority upload/download speed',
+      'Email & chat support',
+    ],
+  },
+  {
+    id: 'premium',
+    name: 'Premium',
+    tagline: 'For Professionals & Creators',
+    description: 'Professionals and creators handling large media files',
+    storage: '200 GB',
+    price: 999,
+    yearlyPrice: 7999,
+    yearlyStorage: '300 GB',
+    cta: 'Get Started',
+    popular: false,
+    isFree: false,
+    features: [
+      '200 GB secure storage',
+      'File upload limit: 2 GB per file',
+      'Access from up to 3 devices',
+      'Priority upload/download speed',
+      'Priority customer support',
+    ],
+    yearlyFeatures: [
+      '300 GB secure storage',
+      'File upload limit: 2 GB per file',
+      'Access from up to 3 devices',
+      'Priority upload/download speed',
+      'Priority customer support',
+    ],
+  },
+];
+
+function LandingPlanCard({ plan, mode, onGetStarted }) {
+  const isYearly = mode === 'yearly';
+  const displayPrice = isYearly && !plan.isFree ? Math.floor(plan.yearlyPrice / 12) : plan.price;
+  const displayFeatures = isYearly && !plan.isFree && plan.yearlyFeatures ? plan.yearlyFeatures : plan.features;
+
+  return (
+    <div
+      className={[
+        'relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md',
+        plan.popular ? 'ring-1' : plan.isFree ? 'border-green-500 ring-1 ring-green-500/20' : 'border-slate-200',
+      ].join(' ')}
+      style={plan.popular ? { borderColor: '#66B2D6' } : undefined}
+    >
+      {/* Popular badge */}
+      {plan.popular && (
+        <div className="absolute -top-2 right-4 select-none rounded-full px-2 py-0.5 text-xs font-medium text-white shadow" style={{ backgroundColor: '#66B2D6' }}>
+          MOST POPULAR
+        </div>
+      )}
+      {/* Free badge */}
+      {plan.isFree && (
+        <div className="absolute -top-2 right-4 select-none rounded-sm bg-green-600 px-2 py-0.5 text-[10px] font-bold text-white shadow">
+          START HERE
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <div className={['p-1.5 rounded-lg', plan.isFree ? 'bg-green-50 text-green-600' : plan.popular ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-600'].join(' ')}>
+              {plan.isFree ? (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3l1.912 5.886h6.188l-5.007 3.638 1.913 5.887-5.006-3.639-5.006 3.639 1.913-5.887-5.007-3.638h6.188L12 3z" /></svg>
+              ) : plan.popular ? (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+              ) : (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+              )}
+            </div>
+            <h3 className="text-lg font-bold text-slate-900">{plan.name}</h3>
+          </div>
+          <p className="text-xs font-semibold" style={{ color: '#66B2D6' }}>{plan.tagline}</p>
+          <p className="text-[11px] text-slate-500 leading-tight">{plan.description}</p>
+        </div>
+      </div>
+
+      {/* Price */}
+      <div className="mb-6 mt-2 flex flex-col gap-0.5">
+        <div className="flex items-end gap-1">
+          {displayPrice === 0 ? (
+            <span className="text-4xl font-bold tracking-tight text-slate-900">Free</span>
+          ) : (
+            <>
+              <span className="text-lg font-semibold text-slate-700">₹</span>
+              <span className="text-4xl font-bold tracking-tight text-slate-900">{displayPrice}</span>
+              <span className="mb-[6px] text-sm text-slate-500">/month</span>
+            </>
+          )}
+        </div>
+        {isYearly && !plan.isFree && plan.yearlyPrice && (
+          <div className="flex flex-col">
+            <span className="text-[11px] text-slate-500 font-medium">Billed annually at ₹{plan.yearlyPrice}</span>
+            <span className="text-[11px] text-green-600 font-bold mt-0.5">
+              Save ₹{(plan.price * 12) - plan.yearlyPrice} per year
+            </span>
+          </div>
+        )}
+      </div>
+
+      <div className="h-px bg-slate-100 mb-6" />
+
+      {/* CTA Button */}
+      <button
+        onClick={onGetStarted}
+        className={[
+          'mb-6 cursor-pointer inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-bold transition focus:outline-none',
+          plan.isFree
+            ? 'bg-green-600 text-white hover:bg-green-700'
+            : plan.popular
+              ? 'text-white hover:opacity-90'
+              : 'bg-slate-900 text-white hover:bg-slate-800',
+        ].join(' ')}
+        style={plan.popular && !plan.isFree ? { backgroundColor: '#66B2D6' } : undefined}
+      >
+        {plan.cta}
+      </button>
+
+      {/* Features list */}
+      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">What's Included</div>
+      <ul className="space-y-3 text-[13px] text-slate-600">
+        {displayFeatures.map((f, i) => (
+          <li key={i} className="flex items-start gap-2.5">
+            <svg className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500" viewBox="0 0 24 24" fill="none" strokeWidth="3.5" stroke="currentColor">
+              <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function LandingPlansSection({ onGetStarted, addRevealRef }) {
+  const [mode, setMode] = useState('monthly');
+
+  return (
+    <section className="py-24 px-4 bg-[#fafdff]">
+      <div className="max-w-6xl mx-auto">
+        {/* Section header */}
+        <div
+          className="text-center mb-12"
+          ref={addRevealRef}
+          style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)' }}
+        >
+          <span className="inline-block px-4 py-1.5 rounded-full bg-[#E6FAF5] text-[#66B2D6] font-bold text-sm mb-4 tracking-wide">PRICING</span>
+          <h2 className="text-3xl md:text-4xl font-bold text-[#2C3E50] mb-4">Simple, Transparent Pricing</h2>
+          <p className="text-[#A3C5D9] text-lg max-w-2xl mx-auto">Start free and scale as you grow. No hidden fees, cancel anytime.</p>
+        </div>
+
+        {/* Monthly / Yearly toggle */}
+        <div
+          className="mb-10 flex justify-center"
+          ref={addRevealRef}
+          style={{ opacity: 0, transform: 'translateY(20px)', transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)', transitionDelay: '0.1s' }}
+        >
+          <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 shadow-sm">
+            <button
+              onClick={() => setMode('monthly')}
+              className={[
+                'rounded-lg px-8 py-2.5 text-sm font-bold transition-all cursor-pointer',
+                mode === 'monthly' ? 'text-white shadow-sm' : 'text-slate-600 hover:text-slate-900',
+              ].join(' ')}
+              style={mode === 'monthly' ? { backgroundColor: '#66B2D6' } : undefined}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setMode('yearly')}
+              className={[
+                'rounded-lg px-8 py-2.5 text-sm font-bold transition-all cursor-pointer flex items-center gap-2',
+                mode === 'yearly' ? 'text-white shadow-sm' : 'text-slate-600 hover:text-slate-900',
+              ].join(' ')}
+              style={mode === 'yearly' ? { backgroundColor: '#66B2D6' } : undefined}
+            >
+              Yearly
+              {mode !== 'yearly' && (
+                <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">SAVE</span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Plan cards */}
+        <div
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          ref={addRevealRef}
+          style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)', transitionDelay: '0.2s' }}
+        >
+          {LANDING_PLANS.map((plan) => (
+            <LandingPlanCard
+              key={plan.id}
+              plan={plan}
+              mode={mode}
+              onGetStarted={onGetStarted}
+            />
+          ))}
+        </div>
+
+        {/* Sub-note */}
+        <p
+          className="mt-8 text-center text-sm text-[#A3C5D9]"
+          ref={addRevealRef}
+          style={{ opacity: 0, transition: 'all 0.6s ease', transitionDelay: '0.3s' }}
+        >
+          All plans include a free trial period. No credit card required to sign up.
+        </p>
+      </div>
+    </section>
+  );
+}
