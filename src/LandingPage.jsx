@@ -492,9 +492,15 @@ function LandingPlanCard({ plan, mode, onGetStarted }) {
     <div
       className={[
         'relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md',
-        plan.popular ? 'ring-1' : plan.isFree ? 'border-green-500 ring-1 ring-green-500/20' : 'border-slate-200',
+        plan.popular ? 'ring-1' : plan.isFree ? 'border-green-500 ring-1 ring-green-500/20' : 'ring-1',
       ].join(' ')}
-      style={plan.popular ? { borderColor: '#66B2D6' } : undefined}
+      style={
+        plan.popular
+          ? { borderColor: '#66B2D6' }
+          : plan.isFree
+            ? undefined
+            : { borderColor: '#D4AF37', '--tw-ring-color': 'rgba(212,175,55,0.25)' }
+      }
     >
       {/* Popular badge */}
       {plan.popular && (

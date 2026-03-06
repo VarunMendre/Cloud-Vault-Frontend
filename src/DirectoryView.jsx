@@ -995,9 +995,9 @@ function DirectoryView() {
             </p>
           </div>
 
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center gap-4">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center gap-3 md:gap-4">
             {/* Upload Files Button */}
-            <div className="relative group/btn cursor-not-allowed">
+            <div className="relative group/btn cursor-not-allowed w-full md:w-auto">
               <button
                 onClick={() => {
                   if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
@@ -1007,7 +1007,7 @@ function DirectoryView() {
                   fileInputRef.current.click();
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
-                className="flex items-center gap-2 px-5 py-3 text-white rounded-lg transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg hover:transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-3 text-white rounded-lg transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg hover:transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   backgroundColor: ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) ? '#CBD5E0' : '#66B2D6',
                   cursor: ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) ? 'not-allowed' : 'pointer'
@@ -1027,7 +1027,7 @@ function DirectoryView() {
             </div>
 
             {/* Create Directory Button */}
-            <div className="relative group/btn cursor-not-allowed">
+            <div className="relative group/btn cursor-not-allowed w-full md:w-auto">
               <button
                 onClick={() => {
                   if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
@@ -1037,7 +1037,7 @@ function DirectoryView() {
                   setShowCreateDirModal(true);
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
-                className="flex items-center gap-2 px-5 py-3 text-white rounded-lg transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg hover:transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-3 text-white rounded-lg transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg hover:transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   backgroundColor: ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) ? '#CBD5E0' : '#10B981',
                   cursor: ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) ? 'not-allowed' : 'pointer'
@@ -1056,17 +1056,20 @@ function DirectoryView() {
               )}
             </div>
 
-            {/* Import from Drive Button - NEW */}
-            <div className="relative group/btn cursor-not-allowed">
-              <div onClick={() => {
-                if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
-                  showToast("Restricted: Import disabled.", "warning");
-                }
-              }}>
+            {/* Import from Drive Button */}
+            <div className="relative group/btn cursor-not-allowed w-full md:w-auto">
+              <div
+                className="w-full"
+                onClick={() => {
+                  if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
+                    showToast("Restricted: Import disabled.", "warning");
+                  }
+                }}
+              >
                 <ImportFromDrive
                   onFilesSelected={handleDriveFileImport}
                   disabled={["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) || isRenaming}
-                  className={`flex items-center justify-center gap-2 px-5 py-3 text-gray-700 border border-gray-300 rounded-lg shadow-sm transition-all duration-200 font-semibold text-sm ${
+                  className={`w-full flex items-center justify-center gap-2 px-5 py-3 text-gray-700 border border-gray-300 rounded-lg shadow-sm transition-all duration-200 font-semibold text-sm ${
                     user?.subscriptionStatus?.toLowerCase() === "paused" || isRenaming
                       ? "bg-gray-100 cursor-not-allowed opacity-50 grayscale pointer-events-none"
                       : "bg-white hover:bg-gray-50 hover:border-gray-400 hover:shadow-lg hover:scale-105"

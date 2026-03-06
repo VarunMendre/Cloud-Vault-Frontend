@@ -155,9 +155,15 @@ function PlanCard({ plan, onSelect, isLoading, isDisabled }) {
           ? "ring-1"
           : isFree 
             ? "border-green-500 ring-1 ring-green-500/20"
-            : "border-slate-200"
+            : "ring-1"
       )}
-      style={plan.popular ? { borderColor: '#66B2D6', borderOpacity: 0.6 } : undefined}
+      style={
+        plan.popular
+          ? { borderColor: '#66B2D6' }
+          : isFree
+            ? undefined
+            : { borderColor: '#D4AF37', '--tw-ring-color': 'rgba(212,175,55,0.25)' }
+      }
     >
           {plan.popular && (
             <div className="absolute -top-2 right-4 select-none rounded-full px-2 py-0.5 text-xs font-medium text-white shadow" style={{ backgroundColor: '#66B2D6' }}>
