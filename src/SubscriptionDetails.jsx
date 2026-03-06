@@ -79,15 +79,16 @@ export default function SubscriptionDetails() {
       try {
         setLoading(true);
         const res = await getSubscriptionDetails();
-        if (res && res.activePlan && ["active", "created", "past_due"].includes(res.activePlan.status)) {
+        // Only show this page for genuinely active plans
+        if (res && res.activePlan && ["active", "past_due"].includes(res.activePlan.status)) {
           setData(res);
         } else {
-          // If response is successful but status is not valid (e.g. 'halted'), kick them out
-          navigate("/plans");
+          // null, 'created', 'cancelled', 'halted', or any other status → go to /plans
+          navigate("/plans", { replace: true });
         }
       } catch (err) {
-        // Expected 404 when no subscription exists
-        navigate("/plans");
+        // 404 = no subscription exists, redirect cleanly
+        navigate("/plans", { replace: true });
       } finally {
         setLoading(false);
       }
@@ -244,10 +245,20 @@ export default function SubscriptionDetails() {
           <div className="flex justify-between items-start mb-8">
             <div className="space-y-1">
               <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700 uppercase tracking-wider">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>
-                  {data.activePlan.status}
-                </span>
+                {(() => {
+                  const s = data.activePlan.status;
+                  const cfg = {
+                    active:   { bg: 'bg-green-100',  text: 'text-green-700',  dot: 'bg-green-500',  pulse: true  },
+                    past_due: { bg: 'bg-amber-100',  text: 'text-amber-700',  dot: 'bg-amber-500',  pulse: true  },
+                    halted:   { bg: 'bg-red-100',    text: 'text-red-700',    dot: 'bg-red-500',    pulse: false },
+                  }[s] || { bg: 'bg-slate-100', text: 'text-slate-600', dot: 'bg-slate-400', pulse: false };
+                  return (
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold ${cfg.bg} ${cfg.text} uppercase tracking-wider`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot} mr-1.5 ${cfg.pulse ? 'animate-pulse' : ''}`}></span>
+                      {s === 'past_due' ? 'Payment Due' : s}
+                    </span>
+                  );
+                })()}
               </div>
               <h2 className="text-2xl font-bold text-slate-900">{data.activePlan.name}</h2>
               <p className="text-slate-500 text-sm">{data.activePlan.tagline}</p>
