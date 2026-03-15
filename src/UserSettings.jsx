@@ -558,7 +558,11 @@ function UserSettings() {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Member Since</p>
-                    <p className="text-sm font-semibold text-slate-900 mt-1">Jan 2024</p>
+                    <p className="text-sm font-semibold text-slate-900 mt-1">
+                      {user?.createdAt 
+                        ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+                        : "Jan 2024"}
+                    </p>
                   </div>
                 </div>
               </div>
