@@ -85,19 +85,19 @@ function RenameModal({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 p-4 animate-fadeIn modal-backdrop">
-      <div className="bg-white rounded-2xl shadow-strong max-w-md w-full animate-scaleIn">
+      <div className="bg-card rounded-2xl shadow-strong max-w-md w-full animate-scaleIn overflow-hidden border border-border">
         {/* Header */}
-        <div className="px-6 py-5 border-b" style={{ borderColor: '#D1D5DB' }}>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#E6FAF5' }}>
-              <Edit3 className="w-6 h-6" style={{ color: '#66B2D6' }} />
+        <div className="px-6 py-6 border-b border-border bg-secondary/30">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white shadow-sm ring-1 ring-border">
+              <Edit3 className="w-7 h-7 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-bold" style={{ color: '#2C3E50' }}>
+              <h3 className="text-xl font-bold text-text-main">
                 Rename {renameType === "file" ? "File" : "Folder"}
               </h3>
-              <p className="text-sm mt-1" style={{ color: '#A3C5D9' }}>
-                Change the name of this {renameType === "file" ? "file" : "folder"}
+              <p className="text-xs text-muted mt-0.5 font-medium">
+                Give your {renameType === "file" ? "file" : "folder"} a descriptive name
               </p>
             </div>
           </div>
@@ -105,68 +105,53 @@ function RenameModal({
 
         {/* Content */}
         <form onSubmit={onRenameSubmit}>
-          <div className="px-6 py-5">
+          <div className="px-6 py-8">
             {/* Current Item Info */}
-            <div className="flex items-center gap-3 mb-5 pb-4 border-b" style={{ borderColor: '#D1DCE5' }}>
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#E6FAF5' }}>
+            <div className="flex items-center gap-4 mb-8 p-4 bg-background border-2 border-border border-dashed rounded-xl">
+              <div className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center bg-white shadow-sm ring-1 ring-border">
                 {getIcon(itemType)}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold truncate" title={renameValue} style={{ color: '#2C3E50' }}>
+                <div className="font-bold text-text-main truncate text-sm" title={renameValue}>
                   {renameValue}
                 </div>
-                <div className="text-xs font-medium mt-0.5" style={{ color: '#A3C5D9' }}>
+                <div className="text-[10px] font-bold text-primary bg-secondary inline-block px-2 py-0.5 rounded-lg mt-1 tracking-widest">
                   {typeLabel}
                 </div>
               </div>
             </div>
 
             {/* Input Field */}
-            <div className="mb-5">
-              <label className="block text-sm font-semibold mb-2" style={{ color: '#2C3E50' }}>
-                New {renameType === "file" ? "File" : "Folder"} Name
+            <div className="mb-8">
+              <label className="block text-sm font-bold text-text-main mb-2.5 ml-1">
+                New Name
               </label>
               <input
                 ref={inputRef}
                 type="text"
                 value={renameValue}
                 onChange={(e) => setRenameValue(e.target.value)}
-                className="w-full px-4 py-3 bg-white border-2 rounded-lg transition-all focus:outline-none"
-                style={{
-                  borderColor: extensionError ? '#EF4444' : '#D1DCE5',
-                  color: '#2C3E50'
-                }}
-                onFocus={(e) => e.target.style.borderColor = extensionError ? '#EF4444' : '#66B2D6'}
-                onBlur={(e) => e.target.style.borderColor = extensionError ? '#EF4444' : '#D1DCE5'}
-                placeholder={`Enter new ${renameType === "file" ? "file" : "folder"} name`}
+                className={`w-full px-5 py-4 bg-background border-2 rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 text-text-main font-semibold ${
+                  extensionError 
+                    ? "border-red-500 focus:border-red-500 focus:ring-red-100" 
+                    : "border-border focus:border-primary focus:ring-primary/10"
+                }`}
+                placeholder={`Enter new name`}
               />
               {extensionError && (
-                <p className="mt-2 text-sm text-red-600 flex items-center gap-1 animate-fadeIn">
-                  <AlertCircle className="w-4 h-4" />
+                <div className="mt-3 text-[11px] font-bold text-red-600 flex items-center gap-1.5 px-3 py-2 bg-red-50 rounded-lg animate-fadeIn border border-red-100">
+                  <AlertCircle className="w-3.5 h-3.5" />
                   <span>{extensionError}</span>
-                </p>
+                </div>
               )}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 border-2"
-                style={{
-                  color: '#2C3E50',
-                  backgroundColor: '#FFFFFF',
-                  borderColor: '#D1DCE5'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = '#fafdff';
-                  e.target.style.borderColor = '#A7DDE9';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = '#FFFFFF';
-                  e.target.style.borderColor = '#D1DCE5';
-                }}
+                className="flex-1 px-6 py-4 text-sm font-bold text-text-main bg-white border-2 border-border rounded-xl transition-all duration-300 hover:bg-secondary hover:border-primary/30"
                 disabled={isProcessing}
               >
                 Cancel
@@ -174,10 +159,7 @@ function RenameModal({
               <button
                 type="submit"
                 disabled={!renameValue.trim() || !!extensionError || isProcessing}
-                className="flex-1 px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 hover:shadow-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                style={{ backgroundColor: '#66B2D6' }}
-                onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#5aa0c0')}
-                onMouseLeave={(e) => e.target.style.backgroundColor = '#66B2D6'}
+                className="flex-1 px-6 py-4 text-sm font-bold text-white bg-button rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-button/20 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
               >
                 {isProcessing ? (
                   <>

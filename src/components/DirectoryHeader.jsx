@@ -22,7 +22,7 @@ function DirectoryHeader({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40" style={{ backgroundColor: '#fafdff', boxShadow: '0 4px 20px -2px rgba(31, 62, 102, 0.15), 0 2px 8px -2px rgba(31, 62, 102, 0.1)' }}>
+    <header className="fixed top-0 left-0 right-0 z-40 bg-background border-b border-border shadow-soft">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side: Logo */}
@@ -30,13 +30,13 @@ function DirectoryHeader({
             className="flex items-center gap-2 sm:gap-3 cursor-pointer group flex-shrink-0"
             onClick={() => navigate("/")}
           >
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-all duration-200 group-hover:scale-105" style={{ backgroundColor: '#66B2D6' }}>
-              <Cloud className="w-5 h-5 sm:w-6 sm:h-6" style={{ color: '#FFFFFF' }} />
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center bg-primary transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/20">
+              <Cloud className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div>
-              <span className="text-base sm:text-lg font-bold" style={{ color: '#2C3E50' }}>CloudVault</span>
+              <span className="text-base sm:text-lg font-bold text-text-main">CloudVault</span>
               {/* Hide subtitle on very small screens to save space */}
-              <p className="text-xs hidden xs:block sm:block" style={{ color: '#A3C5D9' }}>Your Secure Storage</p>
+              <p className="text-[10px] sm:text-xs text-muted leading-tight hidden xs:block">Your Secure Storage</p>
             </div>
           </div>
 
@@ -57,21 +57,14 @@ function DirectoryHeader({
               {/* Upgrade/Subscription Link */}
               <button
                 onClick={() => navigate(subscriptionId ? "/subscription" : "/plans")}
-                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg transition-all duration-200 hover:transform hover:-translate-y-0.5"
-                style={{
-                  backgroundColor: subscriptionId ? '#A7DDE9' : '#FFFFFF',
-                  color: subscriptionId ? '#FFFFFF' : '#66B2D6',
-                  border: subscriptionId ? 'none' : '1px solid #D1DCE5'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.boxShadow = '0 4px 12px rgba(102, 178, 214, 0.3)';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.boxShadow = 'none';
-                }}
+                className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg transition-all duration-200 hover:-translate-y-0.5 font-semibold text-sm ${
+                  subscriptionId 
+                    ? "bg-button text-white shadow-sm hover:bg-button-hover hover:shadow-md" 
+                    : "bg-white text-primary border border-border hover:bg-secondary hover:border-primary/30"
+                }`}
               >
                 <Crown className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm font-semibold hidden md:inline">
+                <span className="hidden md:inline">
                   {subscriptionId ? "Subscription" : "Upgrade"}
                 </span>
               </button>
@@ -79,78 +72,51 @@ function DirectoryHeader({
               {/* Share Link */}
               <button
                 onClick={() => navigate("/share")}
-                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg transition-all duration-200"
-                style={{
-                  backgroundColor: '#FFFFFF',
-                  color: '#2C3E50',
-                  border: '1px solid #D1DCE5'
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = '#F8FAFC';
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = '#FFFFFF';
-                }}
+                className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg transition-all duration-200 bg-white text-text-main border border-border hover:bg-secondary hover:border-primary/30 hover:-translate-y-0.5 font-semibold text-sm"
               >
                 <Share2 className="w-4 h-4 flex-shrink-0" />
-                <span className="text-sm font-semibold hidden md:inline">Share</span>
+                <span className="hidden md:inline">Share</span>
               </button>
 
               {/* Users Link - Only for Owner/Admin/Manager */}
               {userRole !== "User" && (
                 <button
                   onClick={() => navigate("/users")}
-                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg transition-all duration-200"
-                  style={{
-                    backgroundColor: '#FFFFFF',
-                    color: '#2C3E50',
-                    border: '1px solid #D1DCE5'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#fafdff';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#FFFFFF';
-                  }}
+                  className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg transition-all duration-200 bg-white text-text-main border border-border hover:bg-secondary hover:border-primary/30 hover:-translate-y-0.5 font-semibold text-sm"
                 >
                   <Users className="w-4 h-4 flex-shrink-0" />
-                  <span className="text-sm font-semibold hidden md:inline">Users</span>
+                  <span className="hidden md:inline">Users</span>
                 </button>
               )}
             </div>
 
             {/* Divider — hidden on mobile */}
-            <div className="hidden sm:block h-8 w-px" style={{ backgroundColor: '#D1DCE5' }}></div>
+            <div className="hidden sm:block h-8 w-px bg-border mx-1"></div>
 
             {/* Profile Section — flex-shrink-0 so it NEVER gets hidden */}
             <div
               onClick={handleProfileClick}
-              className="flex items-center gap-2 cursor-pointer p-1.5 sm:p-2 rounded-lg transition-all duration-200 flex-shrink-0"
-              style={{ backgroundColor: 'transparent' }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#F8FAFC';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'transparent';
-              }}
+              className="flex items-center gap-2 cursor-pointer p-1.5 sm:p-2 rounded-xl transition-all duration-200 flex-shrink-0 hover:bg-secondary group"
             >
               {/* Name + email — hidden on mobile */}
               <div className="text-right hidden sm:block">
-                <div className="text-sm font-semibold" style={{ color: '#2C3E50' }}>
+                <div className="text-sm font-semibold text-text-main leading-none mb-0.5 group-hover:text-primary transition-colors">
                   {userName}
                 </div>
-                <div className="text-xs" style={{ color: '#A3C5D9' }}>{userEmail}</div>
+                <div className="text-xs text-muted leading-none">{userEmail}</div>
               </div>
               {/* Avatar — always visible */}
               {userPicture ? (
-                <img
-                  src={userPicture}
-                  alt={userName}
-                  className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border-2 flex-shrink-0"
-                  style={{ borderColor: '#FFFFFF' }}
-                />
+                <div className="relative">
+                  <img
+                    src={userPicture}
+                    alt={userName}
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-white ring-1 ring-border group-hover:ring-primary/30 transition-all"
+                  />
+                  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-accent border-2 border-white rounded-full"></div>
+                </div>
               ) : (
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold border-2 flex-shrink-0" style={{ backgroundColor: '#FFFFFF', borderColor: '#E6FAF5', color: '#66B2D6' }}>
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold border-2 border-secondary bg-white text-primary group-hover:border-primary/30 transition-all">
                   <span className="text-sm">
                     {userName.charAt(0).toUpperCase()}
                   </span>

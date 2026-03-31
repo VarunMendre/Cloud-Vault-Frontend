@@ -126,15 +126,15 @@ function classNames(...cls) {
 
 function Price({ value }) {
   return (
-    <div className="flex items-baseline gap-1">
+    <div className="flex items-baseline gap-1.5">
       {value === 0 ? (
-        <span className="text-4xl font-bold tracking-tight text-slate-900">
+        <span className="text-5xl font-black tracking-tighter text-text-main group-hover:scale-105 transition-transform">
           Free
         </span>
       ) : (
         <>
-          <span className="text-lg font-semibold text-slate-700">₹</span>
-          <span className="text-4xl font-bold tracking-tight text-slate-900">
+          <span className="text-xl font-black text-muted mb-1 opacity-50">₹</span>
+          <span className="text-5xl font-black tracking-tighter text-text-main group-hover:scale-105 transition-transform">
             {value}
           </span>
         </>
@@ -149,126 +149,134 @@ function PlanCard({ plan, onSelect, isLoading, isDisabled }) {
   return (
     <div
       className={classNames(
-        "relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition",
-        "hover:shadow-md",
+        "relative flex flex-col rounded-[32px] border-2 bg-card p-8 shadow-sm transition-all duration-500 overflow-hidden group",
+        "hover:shadow-2xl hover:-translate-y-2 hover:border-primary/20",
         plan.popular
-          ? "ring-1"
+          ? "border-primary/30 ring-4 ring-primary/5"
           : isFree 
-            ? "border-green-500 ring-1 ring-green-500/20"
-            : "ring-1"
+            ? "border-accent/30 ring-4 ring-accent/5"
+            : "border-border"
       )}
-      style={
-        plan.popular
-          ? { borderColor: '#66B2D6' }
-          : isFree
-            ? undefined
-            : { borderColor: '#D4AF37', '--tw-ring-color': 'rgba(212,175,55,0.25)' }
-      }
     >
-          {plan.popular && (
-            <div className="absolute -top-2 right-4 select-none rounded-full px-2 py-0.5 text-xs font-medium text-white shadow" style={{ backgroundColor: '#66B2D6' }}>
+        {plan.popular && (
+          <div className="absolute top-0 right-0">
+            <div className="bg-primary px-6 py-2 rounded-bl-3xl text-[10px] font-black text-white tracking-[0.2em] shadow-lg animate-pulse">
               MOST POPULAR
             </div>
-          )}
+          </div>
+        )}
       
       {isFree && (
-        <div className="absolute -top-2 right-4 select-none rounded-sm bg-green-600 px-2 py-0.5 text-[10px] font-bold text-white shadow">
-          ✓ CURRENT PLAN
+        <div className="absolute top-0 right-0">
+          <div className="bg-accent px-6 py-2 rounded-bl-3xl text-[10px] font-black text-white tracking-[0.2em] shadow-lg">
+            CURRENT PLAN
+          </div>
         </div>
       )}
 
-      <div className="mb-3 flex items-center justify-between">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-2">
+      <div className="mb-8 mt-2">
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
              <div className={classNames(
-               "p-1.5 rounded-lg",
-               isFree ? "bg-green-50 text-green-600" : plan.popular ? "bg-blue-50 text-blue-600" : "bg-slate-50 text-slate-600"
+               "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-inner",
+               isFree ? "bg-accent/10 text-accent" : plan.popular ? "bg-primary/10 text-primary" : "bg-secondary text-muted"
              )}>
                 {isFree ? (
-                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3l1.912 5.886h6.188l-5.007 3.638 1.913 5.887-5.006-3.639-5.006 3.639 1.913-5.887-5.007-3.638h6.188L12 3z" /></svg>
+                   <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 3l1.912 5.886h6.188l-5.007 3.638 1.913 5.887-5.006-3.639-5.006 3.639 1.913-5.887-5.007-3.638h6.188L12 3z" /></svg>
                 ) : plan.popular ? (
-                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+                   <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
                 ) : (
-                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+                   <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
                 )}
              </div>
-             <h3 className="text-lg font-bold text-slate-900">{plan.name}</h3>
+             <div>
+               <h3 className="text-2xl font-black text-text-main tracking-tight leading-none mb-1">{plan.name}</h3>
+               <p className="text-xs font-black text-primary uppercase tracking-widest opacity-80">{plan.tagline}</p>
+             </div>
           </div>
-              <p className="text-xs font-semibold" style={{ color: '#66B2D6' }}>{plan.tagline}</p>
-          <p className="text-[11px] text-slate-500 leading-tight">{plan.description}</p>
+          <p className="text-sm font-bold text-muted leading-relaxed min-h-[48px]">{plan.description}</p>
         </div>
       </div>
 
-      <div className="mb-6 mt-2 flex flex-col gap-0.5">
-        <div className="flex items-end gap-1">
+      <div className="mb-10 flex flex-col gap-2">
+        <div className="flex items-end gap-2">
           <Price value={plan.period === "/year" ? Math.floor(plan.price / 12) : plan.price} />
           {plan.price !== 0 && (
-            <span className="mb-[6px] text-sm text-slate-500">/month</span>
+            <span className="mb-2 text-sm font-black text-muted uppercase tracking-tighter">/month</span>
           )}
         </div>
         {plan.period === "/year" && plan.price !== 0 && (
-          <div className="flex flex-col">
-            <span className="text-[11px] text-slate-500 font-medium">
-              Billed annually at ₹{plan.price}
+          <div className="flex flex-col gap-1 p-3 rounded-xl bg-accent/5 border border-accent/10 border-dashed">
+            <span className="text-[11px] text-muted font-bold">
+              Annual billing total: ₹{plan.price}
             </span>
-            <span className="text-[11px] text-green-600 font-bold mt-0.5">
-              Save {Math.floor(((PLAN_CATALOG.monthly.find(p => p.name === plan.name).price * 12) - plan.price))} per year
+            <span className="text-[11px] text-accent font-black tracking-tight">
+              PROMO: Save ₹{Math.floor(((PLAN_CATALOG.monthly.find(p => p.name === plan.name).price * 12) - plan.price))} yearly
             </span>
           </div>
         )}
       </div>
 
-      <div className="h-px bg-slate-100 mb-6" />
+      <div className="h-px bg-border/50 mb-10 w-full" />
 
       <button
         onClick={() => !isFree && !isDisabled && onSelect?.(plan)}
         disabled={isDisabled || isFree}
             className={classNames(
-              "mb-6 cursor-pointer inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-bold transition focus:outline-none",
+              "mb-10 cursor-pointer inline-flex w-full items-center justify-center rounded-[20px] px-6 py-4.5 text-base font-black transition-all duration-300 shadow-lg active:scale-[0.98]",
               isFree 
-                ? "bg-green-600 text-white cursor-default" 
+                ? "bg-accent/10 border-2 border-accent/20 text-accent cursor-default shadow-none" 
                 : plan.popular
-                  ? "text-white disabled:cursor-not-allowed"
-                  : "bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-700 disabled:cursor-not-allowed"
+                  ? "bg-primary text-white hover:bg-button-hover shadow-primary/20 hover:shadow-primary/30"
+                  : "bg-text-main text-white hover:bg-slate-800 shadow-slate-900/10 hover:shadow-slate-900/20"
             )}
-            style={plan.popular ? { backgroundColor: '#66B2D6' } : undefined}
-            onMouseEnter={(e) => plan.popular && !isFree && !isLoading && !isDisabled && (e.target.style.backgroundColor = '#5aa0c0')}
-            onMouseLeave={(e) => plan.popular && !isFree && !isLoading && !isDisabled && (e.target.style.backgroundColor = '#66B2D6')}
       >
         {isFree ? (
-          <span className="flex items-center gap-1">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M5 13l4 4L19 7" /></svg>
-            Current Plan
+          <span className="flex items-center gap-2">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M5 13l4 4L19 7" /></svg>
+            Active Now
           </span>
         ) : isLoading ? (
-          <span className="flex items-center gap-2">
-            <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <span className="flex items-center gap-3">
+            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Processing...
+            Redirecting...
           </span>
-        ) : plan.cta}
+        ) : (
+          <span className="flex items-center gap-2 uppercase tracking-widest">
+            {plan.cta}
+          </span>
+        )}
       </button>
 
-      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">What's Included</div>
-      <ul className="space-y-3 text-[13px] text-slate-600">
+      <div className="text-[10px] font-black text-muted/60 uppercase tracking-[0.2em] mb-6 px-1 flex items-center gap-2">
+        <span className="w-8 h-[2px] bg-border transition-all duration-500 group-hover:w-12 group-hover:bg-primary/30"></span>
+        Features
+      </div>
+      <ul className="space-y-4 text-sm font-bold text-text-main/80 px-1">
         {plan.features.map((f, i) => (
-          <li key={i} className="flex items-start gap-2.5">
-            <svg
-              className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500"
-              viewBox="0 0 24 24"
-              fill="none"
-              strokeWidth="3.5"
-              stroke="currentColor"
-            >
-              <path
-                d="M5 13l4 4L19 7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span>{f}</span>
+          <li key={i} className="flex items-center gap-3 group/item">
+            <div className={classNames(
+              "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover/item:scale-110",
+              isFree ? "bg-accent/10 text-accent" : plan.popular ? "bg-primary/10 text-primary" : "bg-secondary text-muted"
+            )}>
+              <svg
+                className="h-3 w-3"
+                viewBox="0 0 24 24"
+                fill="none"
+                strokeWidth="4"
+                stroke="currentColor"
+              >
+                <path
+                  d="M5 13l4 4L19 7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+            <span className="transition-colors group-hover/item:text-text-main">{f}</span>
           </li>
         ))}
       </ul>
@@ -376,7 +384,7 @@ export default function Plans() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <DirectoryHeader
         userName={user?.name || "Guest User"}
         userEmail={user?.email || "guest@example.com"}
@@ -385,7 +393,7 @@ export default function Plans() {
         subscriptionId={user?.subscriptionId}
         subscriptionStatus={user?.subscriptionStatus || "active"}
       />
-      <div className="mx-auto max-w-6xl px-4 py-12 pt-24 relative">
+      <div className="mx-auto max-w-7xl px-4 py-20 pt-32 relative">
       {errorAlert.show && (
         <SubscriptionAlert 
           title={errorAlert.title}
@@ -407,53 +415,48 @@ export default function Plans() {
           onClose={() => window.location.href = "/subscription"} 
         />
       )}
-      {/* Rest of the UI remains the same */}
-      <header className="mb-12 text-center relative">
-        <h1 className="text-4xl font-extrabold text-slate-900 mb-3">
-          Choose Your Perfect Plan
+      
+      <header className="mb-16 text-center relative max-w-3xl mx-auto">
+        <h1 className="text-4xl sm:text-6xl font-black text-text-main mb-6 tracking-tighter leading-tight animate-fadeIn">
+          Select Your <span className="text-primary">Cloud Plan</span>
         </h1>
-        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-          Secure, reliable cloud storage for everyone. Start free, upgrade anytime.
+        <p className="text-lg font-bold text-muted leading-relaxed">
+          Unlock unlimited potential with secure, high-speed storage tailored for your digital life.
         </p>
       </header>
 
       {/* Tabs */}
-      <div className="mb-12 flex justify-center">
-        <div className="inline-flex rounded-xl border border-slate-200 bg-slate-50 p-1 shadow-sm">
+      <div className="mb-16 flex justify-center sticky top-28 z-30">
+        <div className="inline-flex rounded-[24px] border-2 border-border bg-white p-2 shadow-lg backdrop-blur-xl animate-scaleIn">
           <button
             onClick={() => setMode("monthly")}
             className={classNames(
-              "rounded-lg px-8 py-2.5 text-sm font-bold transition-all cursor-pointer",
-              mode === "monthly" ? "text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+              "rounded-[18px] px-10 py-3.5 text-sm font-black transition-all duration-300 cursor-pointer",
+              mode === "monthly" ? "bg-primary text-white shadow-md shadow-primary/20" : "text-muted hover:text-text-main"
             )}
-            style={mode === "monthly" ? { backgroundColor: '#66B2D6' } : undefined}
-            onMouseEnter={(e) => mode !== "monthly" && (e.target.style.color = '#2C3E50')}
-            onMouseLeave={(e) => mode !== "monthly" && (e.target.style.color = '#A3C5D9')}
           >
-            Monthly
+            Monthly Billing
           </button>
           <button
             onClick={() => setMode("yearly")}
             className={classNames(
-              "rounded-lg px-8 py-2.5 text-sm font-bold transition-all cursor-pointer flex items-center gap-2",
-              mode === "yearly" ? "text-white shadow-sm" : "text-slate-600 hover:text-slate-900"
+              "rounded-[18px] px-10 py-3.5 text-sm font-black transition-all duration-300 cursor-pointer flex items-center gap-3",
+              mode === "yearly" ? "bg-primary text-white shadow-md shadow-primary/20" : "text-muted hover:text-text-main"
             )}
-            style={mode === "yearly" ? { backgroundColor: '#66B2D6' } : undefined}
-            onMouseEnter={(e) => mode !== "yearly" && (e.target.style.color = '#2C3E50')}
-            onMouseLeave={(e) => mode !== "yearly" && (e.target.style.color = '#A3C5D9')}
           >
-            Yearly
-            {mode !== "yearly" && (
-              <span className="text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">
-                SALE
-              </span>
-            )}
+            Yearly Billing
+            <span className={classNames(
+              "text-[9px] font-black px-2 py-0.5 rounded-full tracking-widest",
+              mode === "yearly" ? "bg-white text-primary" : "bg-accent/10 text-accent"
+            )}>
+              SAVE 20%
+            </span>
           </button>
         </div>
       </div>
 
       {/* Cards grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 animate-fadeIn">
         {plans.map((plan) => (
           <PlanCard
             key={`${mode}-${plan.id}`}
@@ -466,10 +469,13 @@ export default function Plans() {
       </div>
 
       {/* Small helper text */}
-      <p className="mt-6 text-xs text-slate-500">
-        Prices are indicative for demo. Integrate with Razorpay Subscriptions to
-        start billing. You can prefill the plan IDs inside a static config.
-      </p>
+      <div className="mt-16 text-center">
+        <div className="inline-block p-4 rounded-2xl bg-secondary/30 border border-border/50 max-w-xl">
+          <p className="text-xs font-bold text-muted leading-relaxed">
+            Note: All transactions are processed through highly secure payment gateways. Plan limits are refreshed at the beginning of each billing cycle. Need custom storage? <span className="text-primary cursor-pointer hover:underline">Contact Sales</span>.
+          </p>
+        </div>
+      </div>
     </div>
     </div>
   );
@@ -488,11 +494,9 @@ function SuccessModal({ subscriptionId, onClose }) {
     const interval = setInterval(async () => {
       try {
         const status = await checkSubscriptionStatus(subscriptionId);
-        // Check both potential response formats
         if (status && (status.active || status.status === 'active')) {
           clearInterval(interval);
           setActivating(false);
-          // Small delay to show success state before redirecting
           setTimeout(() => {
              onClose();
           }, 1500);
@@ -500,49 +504,53 @@ function SuccessModal({ subscriptionId, onClose }) {
       } catch (err) {
         console.error("Polling error:", err);
       }
-    }, 2000); // Poll every 2 seconds
+    }, 2000);
 
     return () => clearInterval(interval);
   }, [subscriptionId, onClose]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"></div>
+      <div className="absolute inset-0 bg-text-main/60 backdrop-blur-md"></div>
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 text-center animate-in zoom-in-95 fade-in duration-300 border border-slate-100">
-        {/* Icon */}
-        <div className={`mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full transition-colors duration-500 ${activating ? 'bg-blue-50' : 'bg-green-50'}`}>
-          <div className={`flex h-12 w-12 items-center justify-center rounded-full text-white transition-colors duration-500`}
-            style={{ backgroundColor: activating ? '#66B2D6' : '#10B981' }}>
+      <div className="relative w-full max-w-md bg-card rounded-[40px] shadow-strong p-10 text-center animate-scaleIn border border-border overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-2 bg-secondary group overflow-hidden">
+           {activating && <div className="h-full bg-primary animate-progress-indeterminate opacity-40"></div>}
+        </div>
+
+        {/* Icon Container */}
+        <div className={`mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-[24px] shadow-inner transition-all duration-700 ${activating ? 'bg-secondary' : 'bg-green-50 animate-bounce'}`}>
+          <div className={`flex h-14 w-14 items-center justify-center rounded-[18px] text-white shadow-lg transition-colors duration-700`}
+            style={{ backgroundColor: activating ? 'var(--color-primary)' : 'var(--color-accent)' }}>
             {activating ? (
-               <svg className="w-6 h-6 animate-spin" fill="none" viewBox="0 0 24 24">
+               <svg className="w-7 h-7 animate-spin" fill="none" viewBox="0 0 24 24">
                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                </svg>
             ) : (
-              <svg className="w-6 h-6 animate-in zoom-in duration-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="w-8 h-8 animate-in zoom-in duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             )}
           </div>
         </div>
         
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">
-          {activating ? "Activating Subscription..." : "Payment Successful!"}
+        <h2 className="text-3xl font-black text-text-main mb-3 tracking-tight">
+          {activating ? "Verifying..." : "You're All Set!"}
         </h2>
-        <p className="text-sm text-slate-500 mb-8 max-w-xs mx-auto">
+        <p className="text-sm font-bold text-muted mb-10 max-w-[280px] mx-auto leading-relaxed">
           {activating 
-            ? "Please wait while we confirm your payment and set up your account." 
-            : "Your subscription is now active. Redirecting you to your dashboard..."}
+            ? "We are synchronizing your workspace with our high-speed cloud clusters." 
+            : "Your premium access is now live. Prepare for a seamless cloud experience."}
         </p>
 
-        {/* Loading bar only when activating */}
-        {activating && (
-           <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden mb-2">
-             <div className="h-full animate-progress-indeterminate" style={{ backgroundColor: '#66B2D6' }}></div>
-           </div>
+        {!activating && (
+          <div className="p-4 rounded-2xl bg-accent/10 border-2 border-accent/20 flex items-center justify-center gap-3">
+             <div className="w-2 h-2 rounded-full bg-accent animate-ping"></div>
+             <span className="text-xs font-black text-accent uppercase tracking-widest">Redirecting to Dashboard</span>
+          </div>
         )}
       </div>
     </div>
@@ -550,11 +558,9 @@ function SuccessModal({ subscriptionId, onClose }) {
 }
 
 function CountdownModal({ countdown, onCancel }) {
-  // Use local state for smooth progress animation
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Small delay to ensure the browser has painted the 0% width before transitioning
     const timer = setTimeout(() => {
       setProgress(100);
     }, 100);
@@ -562,73 +568,68 @@ function CountdownModal({ countdown, onCancel }) {
   }, []);
   
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300"></div>
+      <div className="absolute inset-0 bg-text-main/60 backdrop-blur-md"></div>
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-in zoom-in-95 fade-in duration-300 border border-slate-100">
-        {/* Progress Bar at Top - Continuous Smooth Animation */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-slate-100">
+      <div className="relative w-full max-w-md bg-white rounded-[40px] shadow-strong overflow-hidden animate-scaleIn border border-border">
+        {/* Progress Bar at Top */}
+        <div className="absolute top-0 left-0 right-0 h-2 bg-secondary">
           <div 
-            className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all ease-linear"
+            className="h-full bg-primary transition-all ease-linear shadow-[0_0_10px_2px_rgba(var(--color-primary-rgb),0.3)]"
             style={{ 
               width: `${progress}%`, 
-              transitionDuration: '3000ms' // Match exact countdown total time
+              transitionDuration: '3000ms'
             }}
           ></div>
         </div>
 
-        <div className="p-8 text-center">
+        <div className="p-10 text-center">
           {/* Close button */}
           <button
             onClick={onCancel}
-            className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition"
+            className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-secondary/50 text-muted hover:text-text-main hover:bg-secondary rounded-2xl transition-all"
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <X className="w-5 h-5" />
           </button>
 
           {/* Icon */}
-          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-blue-50">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full text-white" style={{ backgroundColor: '#66B2D6' }}>
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M7 17L17 7M17 7H7M17 7v10" />
-              </svg>
+          <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-[24px] bg-secondary shadow-inner">
+            <div className="flex h-14 w-14 items-center justify-center rounded-[18px] text-white bg-primary shadow-lg shadow-primary/20">
+              <ShieldCheck className="w-7 h-7" />
             </div>
           </div>
           
-          <h2 className="text-2xl font-bold text-slate-900 mb-2">Redirecting you now</h2>
-          <p className="text-sm text-slate-500 mb-8">
-            You are being redirected to a <strong className="text-slate-700">secure payment gateway</strong> for subscription
+          <h2 className="text-3xl font-black text-text-main mb-3 tracking-tight">Security Handshake</h2>
+          <p className="text-sm font-bold text-muted mb-10 leading-relaxed">
+            Establishing a <span className="text-primary">secure tunnel</span> to our encrypted payment gateway...
           </p>
           
-          {/* Countdown */}
-          <div className="mb-8">
-            <div className="text-6xl font-bold text-slate-900 mb-2 animate-pulse">
+          {/* Countdown Container */}
+          <div className="mb-10 relative">
+            <div className="text-8xl font-black text-text-main opacity-5 select-none absolute inset-0 flex items-center justify-center">
               {countdown}
             </div>
-            <div className="text-sm text-slate-500">seconds remaining</div>
+            <div className="text-7xl font-black text-text-main relative z-10 animate-bounce">
+              {countdown}
+            </div>
+            <div className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mt-2">Seconds remaining</div>
           </div>
 
-          {/* Security badge */}
-          <div className="flex items-center justify-center gap-2 text-xs text-slate-500 mb-6">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#66B2D6' }}>
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-            Secure connection
+          <div className="flex flex-col gap-4 text-center">
+            <div className="flex items-center justify-center gap-2.5 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl w-fit mx-auto border border-emerald-100">
+               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+               <span className="text-[10px] font-black uppercase tracking-widest">TLS 1.3 Encryption Active</span>
+            </div>
+            
+            <button
+              onClick={onCancel}
+              className="mt-4 text-xs font-black text-muted hover:text-red-500 transition-colors uppercase tracking-widest border-b-2 border-transparent hover:border-red-100 pb-1 w-fit mx-auto"
+            >
+              Cancel Transaction
+            </button>
           </div>
-          <p className="text-xs text-slate-500 mb-6">
-            For assistance, please contact our support team at <a href={`mailto:${import.meta.env.VITE_SUPPORT_EMAIL}`} className="underline underline-offset-2 hover:text-red-800 transition-colors">{import.meta.env.VITE_SUPPORT_EMAIL}</a>.
-          </p>
-          
-          <button
-            onClick={onCancel}
-            className="text-sm text-slate-500 hover:text-slate-700 transition font-medium"
-          >
-            Cancel and stay on this page
-          </button>
         </div>
       </div>
     </div>

@@ -160,125 +160,123 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-strong max-w-lg w-full max-h-[90vh] flex flex-col animate-scaleIn"
+        className="bg-card rounded-2xl shadow-strong max-w-lg w-full max-h-[90vh] flex flex-col animate-scaleIn overflow-hidden border border-border"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-5 border-b flex items-center justify-between" style={{ borderColor: '#D1DCE5' }}>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#E6FAF5' }}>
-              <Info className="w-6 h-6" style={{ color: '#66B2D6' }} />
+        <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-secondary/30">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-white shadow-sm ring-1 ring-border">
+              <Info className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-bold" style={{ color: '#2C3E50' }}>Details</h3>
-              <p className="text-sm mt-0.5" style={{ color: '#A3C5D9' }}>
+              <h3 className="text-xl font-bold text-text-main">Details</h3>
+              <p className="text-xs font-medium text-muted mt-0.5 uppercase tracking-wider">
                 {isDirectory ? "Folder" : "File"} information
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="hover:bg-opacity-10 transition-colors p-2 rounded-lg"
-            style={{ color: '#A3C5D9' }}
+            className="text-muted hover:text-text-main hover:bg-secondary/50 transition-all p-2 rounded-xl"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="px-6 py-5 overflow-y-auto">
+        <div className="px-6 py-8 overflow-y-auto custom-scrollbar">
           {/* Item Preview */}
-          <div className="flex items-center gap-4 mb-6 pb-5 border-b" style={{ borderColor: '#D1DCE5' }}>
-            <div className="flex-shrink-0">{getIcon(itemType)}</div>
+          <div className="flex items-center gap-5 mb-8 p-5 bg-background border-2 border-border border-dashed rounded-2xl">
+            <div className="flex-shrink-0 scale-110">{getIcon(itemType)}</div>
             <div className="flex-1 min-w-0">
               <div
-                className="font-medium truncate text-lg"
+                className="font-bold truncate text-xl text-text-main"
                 title={name}
-                style={{ color: '#2C3E50' }}
               >
                 {name}
               </div>
-              <div className="text-sm mt-1" style={{ color: '#A3C5D9' }}>{typeLabel}</div>
+              <div className="text-[10px] font-bold text-primary bg-secondary inline-block px-2 py-0.5 rounded-lg mt-1 tracking-widest">
+                {typeLabel}
+              </div>
             </div>
           </div>
 
           {/* Details Grid */}
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 gap-4">
             {/* Location */}
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <MapPin className="w-4 h-4" style={{ color: '#DC2626' }} />
+            <div className="flex items-start gap-4 p-4 rounded-xl border border-border bg-white hover:border-primary/30 transition-colors">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary/50">
+                <MapPin className="w-5 h-5 text-red-500" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
+                <div className="text-xs font-bold text-muted uppercase tracking-tighter mb-1">
                   Location
                 </div>
-                <div className="text-sm break-all" style={{ color: '#000000' }}>{path}</div>
+                <div className="text-[13px] font-medium text-text-main break-all leading-relaxed">{path}</div>
               </div>
             </div>
 
-            {/* Size */}
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <Database className="w-4 h-4" style={{ color: '#9333EA' }} />
-              </div>
-              <div className="flex-1">
-                <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
-                  Size
+            <div className="grid grid-cols-2 gap-4">
+              {/* Size */}
+              <div className="flex items-start gap-4 p-4 rounded-xl border border-border bg-white hover:border-primary/30 transition-colors">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary/50">
+                  <Database className="w-5 h-5 text-purple-600" />
                 </div>
-                <div className="text-sm" style={{ color: '#000000' }}>{formatSize(size)}</div>
-              </div>
-            </div>
-
-            {/* Folder Contents */}
-            {isDirectory && (
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                  <Folder className="w-4 h-4" style={{ color: '#F59E0B' }} />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
-                    Contents
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-bold text-muted uppercase tracking-tighter mb-1">
+                    Size
                   </div>
-                  <div className="flex gap-4 text-sm" style={{ color: '#000000' }}>
-                    <span>
-                      {numberOfFiles} {numberOfFiles === 1 ? "File" : "Files"}
-                    </span>
-                    <span>•</span>
-                    <span>
-                      {numberOfFolders}{" "}
-                      {numberOfFolders === 1 ? "Folder" : "Folders"}
-                    </span>
+                  <div className="text-[13px] font-bold text-text-main">{formatSize(size)}</div>
+                </div>
+              </div>
+
+              {/* Created At */}
+              <div className="flex items-start gap-4 p-4 rounded-xl border border-border bg-white hover:border-primary/30 transition-colors">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary/50">
+                  <Calendar className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-bold text-muted uppercase tracking-tighter mb-1">
+                    Created
+                  </div>
+                  <div className="text-[11px] font-bold text-text-main leading-tight">
+                    {new Date(createdAt).toLocaleDateString()}<br/>
+                    <span className="text-[10px] text-muted">{new Date(createdAt).toLocaleTimeString()}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Folder Contents Info */}
+            {isDirectory && (
+              <div className="flex items-center gap-4 p-4 rounded-xl border border-border bg-white hover:border-primary/30 transition-colors">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary/50">
+                  <Folder className="w-5 h-5 text-amber-500" />
+                </div>
+                <div className="flex-1 flex gap-6">
+                  <div>
+                    <div className="text-[10px] font-bold text-muted uppercase tracking-tighter mb-1">Files</div>
+                    <div className="text-sm font-bold text-text-main">{numberOfFiles}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-muted uppercase tracking-tighter mb-1">Folders</div>
+                    <div className="text-sm font-bold text-text-main">{numberOfFolders}</div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Created At */}
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <Calendar className="w-4 h-4" style={{ color: '#059669' }} />
+            {/* Modified At */}
+            <div className="flex items-start gap-4 p-4 rounded-xl border border-border bg-white hover:border-primary/30 transition-colors">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary/50">
+                <Clock className="w-5 h-5 text-blue-600" />
               </div>
-              <div className="flex-1">
-                <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
-                  Created
+              <div className="flex-1 min-w-0">
+                <div className="text-xs font-bold text-muted uppercase tracking-tighter mb-1">
+                  Last Modified
                 </div>
-                <div className="text-sm" style={{ color: '#000000' }}>
-                  {new Date(createdAt).toLocaleString()}
-                </div>
-              </div>
-            </div>
-
-            {/* Updated At */}
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ backgroundColor: '#E6FAF5' }}>
-                <Clock className="w-4 h-4" style={{ color: '#2563EB' }} />
-              </div>
-              <div className="flex-1">
-                <div className="text-sm font-medium mb-1" style={{ color: '#2C3E50' }}>
-                  Modified
-                </div>
-                <div className="text-sm" style={{ color: '#000000' }}>
+                <div className="text-[13px] font-bold text-text-main">
                   {new Date(updatedAt).toLocaleString()}
                 </div>
               </div>
@@ -287,34 +285,18 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t flex justify-end gap-3" style={{ borderColor: '#D1DCE5' }}>
+        <div className="px-6 py-5 border-t border-border bg-secondary/10 flex justify-end gap-3">
           {!isDirectory && (
              <button
-              className="flex items-center gap-2 px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 border-2"
-              style={{
-                color: '#2C3E50',
-                backgroundColor: '#FFFFFF',
-                borderColor: '#D1DCE5'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#fafdff';
-                e.target.style.borderColor = '#A7DDE9';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#FFFFFF';
-                e.target.style.borderColor = '#D1DCE5';
-              }}
+              className="flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded-xl transition-all duration-300 bg-white border-2 border-border text-text-main hover:bg-secondary hover:border-primary/30 shadow-sm active:scale-95"
               onClick={handleDownload}
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-4 h-4 text-primary" />
               Download
             </button>
           )}
           <button
-            className="px-4 py-3 text-sm font-semibold text-white rounded-lg transition-all duration-200 hover:shadow-medium"
-            style={{ backgroundColor: '#66B2D6' }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = '#5aa0c0'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#66B2D6'}
+            className="px-6 py-3.5 text-sm font-bold text-white bg-primary rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 shadow-md"
             onClick={onClose}
           >
             Close

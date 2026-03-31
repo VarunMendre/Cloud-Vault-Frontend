@@ -7,6 +7,10 @@ import {
   X,
 } from "lucide-react";
 
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
 function ContextMenu({
   item,
   contextMenuPos,
@@ -23,15 +27,14 @@ function ContextMenu({
 }) {
   const isPaused = subscriptionStatus?.toLowerCase() === "paused";
   
-  // Design system classes
-  const itemClass = "flex items-center gap-3 px-4 py-2.5 cursor-pointer whitespace-nowrap transition-all duration-200 text-sm font-medium hover:bg-[#fafdff]";
-  const disabledClass = "flex items-center gap-3 px-4 py-2.5 cursor-not-allowed whitespace-nowrap text-[#A3C5D9] bg-gray-50 opacity-60 text-sm font-medium";
-  const textPrimary = "text-[#2C3E50]";
-  const iconColor = "#66B2D6";
-  const dangerColor = "#DC2626";
+  // Design system constants
+  const itemBase = "flex items-center gap-3 px-4 py-3 cursor-pointer whitespace-nowrap transition-all duration-300 text-sm font-black tracking-tight group rounded-xl mx-1.5 my-0.5";
+  const itemActive = "text-text-main hover:bg-secondary hover:text-primary";
+  const itemDisabled = "text-muted hover:bg-secondary/50 cursor-not-allowed opacity-50";
+  const itemDanger = "text-red-500 hover:bg-red-50";
 
   // Determine position style
-  const MENU_HEIGHT_ESTIMATE = 250; 
+  const MENU_HEIGHT_ESTIMATE = 280; 
   const isNearBottom = typeof window !== 'undefined' && (contextMenuPos.y + MENU_HEIGHT_ESTIMATE > window.innerHeight);
 
   const menuStyle = {
@@ -40,101 +43,126 @@ function ContextMenu({
     bottom: isNearBottom ? (window.innerHeight - contextMenuPos.y) : "auto",
   };
 
+  const renderItem = (icon, label, onClick, variant = "default", disabled = false) => (
+    <div
+      key={label}
+      className={classNames(
+        itemBase,
+        disabled ? itemDisabled : variant === "danger" ? itemDanger : itemActive
+      )}
+      onClick={(e) => {
+        if (!disabled) {
+          e.stopPropagation();
+          onClick();
+        }
+      }}
+    >
+      <div className={classNames(
+        "w-8 h-8 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110",
+        disabled ? "bg-secondary" : variant === "danger" ? "bg-red-50" : "bg-secondary"
+      )}>
+        {icon}
+      </div>
+      <span className="flex-1">{label}</span>
+    </div>
+  );
+
+  const MenuContainer = ({ children }) => (
+    <div
+      className="fixed bg-white/95 backdrop-blur-xl shadow-strong rounded-2xl z-[1000] py-2 min-w-[220px] border border-border animate-scaleIn overflow-hidden"
+      style={menuStyle}
+    >
+       <div className="px-5 py-2 mb-1 border-b border-border/50">
+          <p className="text-[10px] font-black text-muted uppercase tracking-[0.2em]">{item.isDirectory ? "Folder Actions" : "File Actions"}</p>
+       </div>
+       {children}
+    </div>
+  );
+
   // Directory context menu
   if (item.isDirectory) {
     return (
-      <div
-        className="fixed bg-white shadow-strong rounded-xl z-[999] py-2 min-w-[180px] border animate-scaleIn"
-        style={{ ...menuStyle, borderColor: '#E6FAF5' }}
-      >
-        <div
-          className={isPaused ? disabledClass : `${itemClass} ${textPrimary}`}
-          onClick={() => !isPaused && openRenameModal("directory", item.id, item.name, item.__v)}
-        >
-          <Pencil className="w-4 h-4" style={{ color: isPaused ? '#A3C5D9' : iconColor }} />
-          <span>Rename</span>
-        </div>
-        <div
-          className={isPaused ? disabledClass : itemClass}
-          onClick={() => !isPaused && handleDeleteDirectory(item.id)}
-        >
-          <Trash2 className="w-4 h-4" style={{ color: isPaused ? '#A3C5D9' : dangerColor }} />
-          <span style={{ color: isPaused ? '#A3C5D9' : dangerColor }}>Delete</span>
-        </div>
-        <div className={`${itemClass} ${textPrimary}`} onClick={() => openDetailsPopup(item)}>
-          <Info className="w-4 h-4" style={{ color: iconColor }} />
-          <span>Details</span>
-        </div>
-      </div>
+      <MenuContainer>
+        {renderItem(
+          <Pencil className="w-4 h-4 transition-colors group-hover:text-primary" />, 
+          "Rename Folder", 
+          () => openRenameModal("directory", item.id, item.name, item.__v),
+          "default",
+          isPaused
+        )}
+        {renderItem(
+          <Trash2 className="w-4 h-4 transition-colors group-hover:text-red-600" />, 
+          "Delete Archive", 
+          () => handleDeleteDirectory(item.id),
+          "danger",
+          isPaused
+        )}
+        <div className="h-px bg-border/50 mx-4 my-1"></div>
+        {renderItem(
+          <Info className="w-4 h-4 transition-colors group-hover:text-primary" />, 
+          "Node Details", 
+          () => openDetailsPopup(item)
+        )}
+      </MenuContainer>
     );
   } else {
     // File context menu
     if (isUploadingItem && item.isUploading) {
-      // Only show "Cancel"
       return (
-        <div
-          className="fixed bg-white shadow-strong rounded-xl z-[999] py-2 min-w-[180px] border animate-scaleIn"
-          style={{ ...menuStyle, borderColor: '#E6FAF5' }}
-        >
-          <div
-            className={`${itemClass} text-red-600 font-semibold`}
-            onClick={() => handleCancelUpload(item.id)}
-          >
-            <X className="w-4 h-4 text-red-600" />
-            <span>Cancel Upload</span>
-          </div>
-        </div>
+        <MenuContainer>
+          {renderItem(
+            <X className="w-4 h-4 transition-colors group-hover:text-red-600" />, 
+            "Cancel Transmission", 
+            () => handleCancelUpload(item.id),
+            "danger"
+          )}
+        </MenuContainer>
       );
     } else {
       // Normal file
       return (
-        <div
-          className="fixed bg-white shadow-strong rounded-xl z-[999] py-2 min-w-[180px] border animate-scaleIn"
-          style={{ ...menuStyle, borderColor: '#E6FAF5' }}
-        >
-          {/* Share option */}
-          <div
-            className={isPaused ? disabledClass : `${itemClass} ${textPrimary}`}
-            onClick={() => !isPaused && handleShare("file", item.id, item.name)}
-          >
-            <Share2 className="w-4 h-4" style={{ color: isPaused ? '#A3C5D9' : iconColor }} />
-            <span>Share Link</span>
-          </div>
-          <div
-            className={isPaused ? disabledClass : `${itemClass} ${textPrimary}`}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              
+        <MenuContainer>
+          {renderItem(
+            <Share2 className="w-4 h-4 transition-colors group-hover:text-primary" />, 
+            "Share Access", 
+            () => handleShare("file", item.id, item.name),
+            "default",
+            isPaused
+          )}
+          {renderItem(
+            <Download className="w-4 h-4 transition-colors group-hover:text-primary" />, 
+            "Synchronize Local", 
+            () => {
               if (isPaused) {
-                showToast("Access Restricted: Your subscription is currently paused.", "warning");
+                showToast("Grid Access Paused: Upgrade required.", "warning");
                 return;
               }
               window.location.href = `${BASE_URL}/file/${item.id}?action=download`;
-            }}
-          >
-            <Download className="w-4 h-4" style={{ color: isPaused ? '#A3C5D9' : iconColor }} />
-            <span>Download</span>
-          </div>
-          <div
-            className={isPaused ? disabledClass : `${itemClass} ${textPrimary}`}
-            onClick={() => !isPaused && openRenameModal("file", item.id, item.name, item.__v)}
-          >
-            <Pencil className="w-4 h-4" style={{ color: isPaused ? '#A3C5D9' : iconColor }} />
-            <span>Rename</span>
-          </div>
-          <div
-            className={isPaused ? disabledClass : itemClass}
-            onClick={() => !isPaused && handleDeleteFile(item.id)}
-          >
-            <Trash2 className="w-4 h-4" style={{ color: isPaused ? '#A3C5D9' : dangerColor }} />
-            <span style={{ color: isPaused ? '#A3C5D9' : dangerColor }}>Delete</span>
-          </div>
-          <div className={`${itemClass} ${textPrimary}`} onClick={() => openDetailsPopup(item)}>
-            <Info className="w-4 h-4" style={{ color: iconColor }} />
-            <span>Details</span>
-          </div>
-        </div>
+            },
+            "default",
+            isPaused
+          )}
+          {renderItem(
+            <Pencil className="w-4 h-4 transition-colors group-hover:text-primary" />, 
+            "Modify Label", 
+            () => openRenameModal("file", item.id, item.name, item.__v),
+            "default",
+            isPaused
+          )}
+          {renderItem(
+            <Trash2 className="w-4 h-4 transition-colors group-hover:text-red-600" />, 
+            "Purge Instance", 
+            () => handleDeleteFile(item.id),
+            "danger",
+            isPaused
+          )}
+          <div className="h-px bg-border/50 mx-4 my-1"></div>
+          {renderItem(
+            <Info className="w-4 h-4 transition-colors group-hover:text-primary" />, 
+            "Metadata", 
+            () => openDetailsPopup(item)
+          )}
+        </MenuContainer>
       );
     }
   }

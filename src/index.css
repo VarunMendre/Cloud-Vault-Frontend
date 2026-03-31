@@ -2,25 +2,25 @@
 @import "tailwindcss";
 
 @theme {
-  /* Custom Color Palette - Cyan Turquoise Theme */
-  --color-mint-light: #E6FAF5;
-  --color-cyan-light: #A7DDE9;
-  --color-blue-medium: #66B2D6;
-  --color-alice-blue: #fafdff;
-  --color-gray-blue: #D1DCE5;
-  --color-blue-gray: #A3C5D9;
+  /* Core Palette */
+  --color-primary: #5FA8C6;
+  --color-secondary: #E6F2F7;
+  --color-accent: #22C55E;
+  --color-background: #F8FAFC;
+  --color-text-main: #1F2937;
   
-  /* Semantic Color Tokens */
-  --color-primary: #66B2D6;
-  --color-primary-hover: #5aa0c0;
-  --color-primary-light: #A7DDE9;
-  --color-secondary: #A3C5D9;
-  --color-background: #fafdff;
-  --color-surface: #FFFFFF;
-  --color-text-primary: #2C3E50;
-  --color-text-secondary: #66B2D6;
-  --color-border: #D1DCE5;
-  --color-border-light: #E6FAF5;
+  /* Supporting Colors */
+  --color-border: #D1E3EC;
+  --color-muted: #6B7280;
+  --color-card: #FFFFFF;
+  --color-button: #4F9FBC;
+  --color-button-hover: #3E8CA8;
+
+  /* Semantic Aliases */
+  --color-surface: var(--color-card);
+  --color-text-primary: var(--color-text-main);
+  --color-text-secondary: var(--color-muted);
+  --color-border-light: var(--color-secondary);
   
   /* Animation Keyframes */
   @keyframes fadeIn {

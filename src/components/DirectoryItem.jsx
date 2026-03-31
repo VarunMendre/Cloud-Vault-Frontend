@@ -94,8 +94,7 @@ function DirectoryItem({
 
   return (
     <div
-      className="flex flex-col relative gap-1 border rounded-lg bg-white cursor-pointer hover:bg-opacity-50 group transition-all duration-200"
-      style={{ borderColor: '#D1DCE5' }}
+      className="flex flex-col relative gap-1 border-2 border-border rounded-xl bg-card cursor-pointer group transition-all duration-300 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
       onClick={() =>
         !(activeContextMenu || isUploading)
           ? handleRowClick(item.isDirectory ? "directory" : "file", item.id)
@@ -105,10 +104,10 @@ function DirectoryItem({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex items-start gap-3 p-3">
+      <div className="flex items-center gap-4 p-4">
         {/* Icon */}
-        <div className="flex-shrink-0 mt-0.5">
-          <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#fafdff' }}>
+        <div className="flex-shrink-0">
+          <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-secondary transition-all group-hover:bg-primary/10">
             {renderIcon()}
           </div>
         </div>
@@ -117,80 +116,67 @@ function DirectoryItem({
         <div className="flex-1 min-w-0">
           {/* Name and Type Badge */}
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-semibold truncate" style={{ color: '#2C3E50' }}>{item.name}</span>
+            <span className="font-bold text-text-main truncate text-sm sm:text-base group-hover:text-primary transition-colors">{item.name}</span>
             {item.isDirectory ? (
-              <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded" style={{ backgroundColor: '#E6FAF5', color: '#66B2D6' }}>
+              <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-lg bg-secondary text-primary border border-primary/10">
                 Folder
               </span>
             ) : fileExtension ? (
-              <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded" style={{ backgroundColor: '#fafdff', color: '#66B2D6' }}>
+              <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-lg bg-background text-muted border border-border">
                 {fileExtension}
               </span>
             ) : null}
           </div>
 
           {/* Size and Modified Date */}
-          <div className="flex items-center gap-3 text-xs" style={{ color: '#000000' }}>
-            <span>Size: {formatSize(item.size || 0)}</span>
-            <span>Modified: {formatDate(item.updatedAt || item.createdAt)}</span>
+          <div className="flex items-center gap-4 text-xs font-medium text-muted">
+            <div className="flex items-center gap-1">
+              <span className="opacity-60 uppercase tracking-tighter">Size:</span>
+              <span className="text-text-main">{formatSize(item.size || 0)}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="opacity-60 uppercase tracking-tighter">Modified:</span>
+              <span className="text-text-main">{formatDate(item.updatedAt || item.createdAt)}</span>
+            </div>
           </div>
         </div>
 
-        {/* Hover Action Buttons - Show on hover */}
+        {/* Quick Actions & Menu */}
         <div className="flex items-center gap-1">
-          {isHovered && !isUploadingItem && (
-            <>
-              {/* Download button - only for files */}
-              {!item.isDirectory && (
-                <div className="relative group/tooltip">
-                  <button
-                    onClick={handleDownload}
-                    className="flex items-center justify-center p-2 rounded-full transition-colors hover:bg-opacity-10"
-                    style={{ color: '#66B2D6' }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = '#E6FAF5'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                    title="Download"
-                  >
-                    <Download className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
-              
-              {/* Details button - for both files and folders */}
+          <div className={`flex items-center gap-1 transition-all duration-300 ${isHovered && !isUploadingItem ? 'opacity-100' : 'opacity-0'}`}>
+            {!item.isDirectory && (
               <button
-                onClick={handleDetailsClick}
-                className="flex items-center justify-center p-2 rounded-full transition-colors hover:bg-opacity-10"
-                style={{ color: '#66B2D6' }}
-                onMouseEnter={(e) => e.target.style.backgroundColor = '#E6FAF5'}
-                onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-                title="Details"
+                onClick={handleDownload}
+                className="p-2.5 rounded-xl text-primary hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm hover:shadow-md"
+                title="Download"
               >
-                <Info className="w-4 h-4" />
+                <Download className="w-4 h-4" />
               </button>
-            </>
-          )}
+            )}
+            
+            <button
+              onClick={handleDetailsClick}
+              className="p-2.5 rounded-xl text-primary hover:bg-primary hover:text-white transition-all active:scale-95 shadow-sm hover:shadow-md"
+              title="Details"
+            >
+              <Info className="w-4 h-4" />
+            </button>
+          </div>
 
-          {/* Three dots for context menu - always visible */}
-          <div
-            className="flex items-center justify-center cursor-pointer rounded-full p-2 transition-colors"
-            style={{ color: '#A3C5D9' }}
-            onMouseEnter={(e) => {
-              e.target.style.color = '#66B2D6';
-              e.target.style.backgroundColor = '#E6FAF5';
+          {/* Context Menu Trigger */}
+          <button
+            className="p-2.5 rounded-xl text-muted hover:bg-secondary hover:text-text-main transition-all active:scale-95 ml-1"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleContextMenu(e, item.id);
             }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#A3C5D9';
-              e.target.style.backgroundColor = 'transparent';
-            }}
-            onClick={(e) => handleContextMenu(e, item.id)}
           >
             <MoreVertical className="w-5 h-5" />
-          </div>
+          </button>
         </div>
       </div>
 
-
-      {/* Context menu, if active */}
+      {/* Context menu overlay */}
       {activeContextMenu === item.id && (
         <ContextMenu
           item={item}

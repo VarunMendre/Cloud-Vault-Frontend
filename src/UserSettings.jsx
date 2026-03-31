@@ -455,28 +455,28 @@ function UserSettings() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+    <div className="min-h-screen bg-background">
       {/* Header - Responsive */}
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-border bg-white/80 backdrop-blur-md transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex items-center gap-2 sm:gap-4 min-w-0">
               <button 
                 onClick={() => navigate("/")}
-                className="p-2 rounded-lg hover:bg-slate-100 transition-colors duration-200 flex-shrink-0"
+                className="p-2.5 rounded-xl hover:bg-secondary hover:text-primary transition-all duration-300 flex-shrink-0 group ring-1 ring-border border-transparent hover:border-primary/20"
               >
-                <ArrowLeft className="w-5 h-5 text-slate-600" />
+                <ArrowLeft className="w-5 h-5 text-muted group-hover:text-primary" />
               </button>
               <div className="min-w-0">
-                <h1 className="text-lg sm:text-2xl font-semibold text-slate-900 truncate">Settings</h1>
-                <p className="text-xs sm:text-sm text-slate-500 mt-0.5 hidden sm:block">
-                  Manage your account and preferences
+                <h1 className="text-xl sm:text-2xl font-bold text-text-main truncate tracking-tight">Settings</h1>
+                <p className="text-xs sm:text-sm text-muted mt-0.5 hidden sm:block font-medium">
+                  Personalize your CloudVault experience
                 </p>
               </div>
             </div>
             <button 
               onClick={handleLogout}
-              className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors duration-200 flex items-center gap-1 sm:gap-2 flex-shrink-0"
+              className="px-4 py-2.5 text-sm font-bold text-muted hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300 flex items-center gap-2 flex-shrink-0 border-2 border-transparent hover:border-red-100"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>
@@ -485,24 +485,24 @@ function UserSettings() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 lg:gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Mobile/Tablet Navigation - Dropdown */}
           <div className="lg:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-white border border-slate-200 hover:border-slate-300 transition-colors duration-200"
+              className="w-full flex items-center justify-between px-5 py-4 rounded-2xl bg-card border-2 border-border hover:border-primary/30 transition-all duration-300 shadow-sm"
             >
-              <span className="font-medium text-slate-900 text-sm">
+              <span className="font-bold text-text-main">
                 {tabs.find((t) => t.id === activeTab)?.label || "Select Section"}
               </span>
               <ChevronDown
-                className={`w-4 h-4 text-slate-600 transition-transform duration-200 ${mobileMenuOpen ? "rotate-180" : ""}`}
+                className={`w-5 h-5 text-muted transition-transform duration-300 ${mobileMenuOpen ? "rotate-180" : ""}`}
               />
             </button>
 
             {mobileMenuOpen && (
-              <div className="mt-2 space-y-2 bg-white rounded-lg border border-slate-200 p-2">
+              <div className="mt-3 space-y-2 bg-card rounded-2xl border-2 border-border p-3 shadow-lg animate-fadeIn">
                 {tabs.map((tab) => {
                   const Icon = tab.icon;
                   return (
@@ -512,14 +512,14 @@ function UserSettings() {
                         setActiveTab(tab.id);
                         setMobileMenuOpen(false);
                       }}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-sm ${
+                      className={`w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-300 text-sm font-bold ${
                         activeTab === tab.id
-                          ? "bg-blue-50 text-blue-700 border border-blue-200"
-                          : "text-slate-600 hover:bg-slate-100"
+                          ? "bg-secondary text-primary border-primary/20"
+                          : "text-muted hover:bg-secondary hover:text-text-main"
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
-                      <span className="font-medium">{tab.label}</span>
+                      <Icon className={`w-5 h-5 ${activeTab === tab.id ? 'text-primary' : 'text-muted'}`} />
+                      <span>{tab.label}</span>
                     </button>
                   );
                 })}
@@ -529,39 +529,43 @@ function UserSettings() {
 
           {/* Desktop Sidebar - Navigation tabs */}
           <div className="hidden lg:block lg:col-span-1">
-            <div className="space-y-2 sticky top-24">
+            <div className="space-y-3 sticky top-28">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 text-sm ${
-                      activeTab === tab.id
-                        ? "bg-blue-50 text-blue-700 border border-blue-200"
-                        : "text-slate-600 hover:bg-slate-100"
+                    className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300 text-[15px] font-bold border-2 ${
+                      isActive
+                        ? "bg-secondary text-primary border-primary/20 shadow-sm shadow-primary/5"
+                        : "text-muted border-transparent hover:bg-white hover:border-border hover:shadow-sm"
                     }`}
                   >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{tab.label}</span>
+                    <Icon className={`w-5 h-5 transition-colors ${isActive ? 'text-primary' : 'text-muted'}`} />
+                    <span>{tab.label}</span>
                   </button>
                 );
               })}
 
               {/* Quick Stats */}
-              <div className="mt-8 pt-8 border-t border-slate-200">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-4">Account Info</p>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs text-slate-500">Account Status</p>
-                    <p className="text-sm font-semibold text-slate-900 mt-1">Active</p>
+              <div className="mt-10 pt-10 border-t-2 border-border/50">
+                <p className="text-[10px] font-bold text-muted uppercase tracking-[0.2em] mb-6 px-1">Account Info</p>
+                <div className="space-y-6 px-1">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs font-bold text-muted/60">Account Status</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                      <p className="text-sm font-bold text-text-main">Verified Account</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Member Since</p>
-                    <p className="text-sm font-semibold text-slate-900 mt-1">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs font-bold text-muted/60">Member Since</p>
+                    <p className="text-sm font-bold text-text-main mt-1">
                       {user?.createdAt 
-                        ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-                        : "Jan 2024"}
+                        ? new Date(user.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+                        : "January 2024"}
                     </p>
                   </div>
                 </div>
@@ -570,47 +574,47 @@ function UserSettings() {
           </div>
 
           {/* Main Content - Responsive */}
-          <div className="col-span-1 lg:col-span-3">
+          <div className="col-span-1 lg:col-span-3 min-h-[600px]">
             {/* Profile Tab */}
             {activeTab === "profile" && (
-              <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-6 sm:space-y-8 animate-fadeIn">
                 {/* Error/Success Messages */}
                 {profileError && (
-                  <Alert variant="destructive" withIcon dismissible onDismiss={() => setProfileError("")} className="bg-white shadow-sm">
-                    <AlertDescription>{profileError}</AlertDescription>
+                  <Alert variant="destructive" withIcon dismissible onDismiss={() => setProfileError("")} className="bg-white border-red-100 shadow-sm rounded-2xl">
+                    <AlertDescription className="font-bold">{profileError}</AlertDescription>
                   </Alert>
                 )}
                 {profileSuccess && (
-                  <Alert variant="success" withIcon dismissible onDismiss={() => setProfileSuccess("")} className="bg-white shadow-sm">
-                    <AlertDescription>{profileSuccess}</AlertDescription>
+                  <Alert variant="success" withIcon dismissible onDismiss={() => setProfileSuccess("")} className="bg-white border-green-100 shadow-sm rounded-2xl">
+                    <AlertDescription className="font-bold">{profileSuccess}</AlertDescription>
                   </Alert>
                 )}
 
                 {/* Profile Card - Responsive */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
+                <div className="bg-card rounded-3xl border-2 border-border p-6 sm:p-10 shadow-sm hover:shadow-lg transition-all duration-500 overflow-hidden relative">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -z-0"></div>
+                  <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-12 relative z-10">
                     {/* Avatar Section */}
                     <div className="flex flex-col items-center flex-shrink-0">
-                      <div className="relative group">
-                        <div className="w-20 sm:w-24 h-20 sm:h-24 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white text-2xl sm:text-3xl font-semibold shadow-lg transition-all duration-200 overflow-hidden">
+                      <div className="relative group cursor-pointer" onClick={() => document.getElementById('profileInput').click()}>
+                        <div className="w-24 sm:w-32 h-24 sm:h-32 bg-secondary rounded-3xl flex items-center justify-center text-primary text-3xl sm:text-4xl font-black shadow-inner ring-4 ring-white transition-all duration-500 group-hover:ring-primary/20 group-hover:scale-105 overflow-hidden">
                           {profilePicture ? (
-                            <img src={profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                            <img src={profilePicture} alt="Profile" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                           ) : (
-                            <span>{profileName?.[0]?.toUpperCase() || "U"}</span>
+                            <span className="opacity-40">{profileName?.[0]?.toUpperCase() || "U"}</span>
                           )}
                         </div>
-                        <div className="absolute -bottom-1 -right-1 bg-blue-600 p-2 rounded-full border-2 border-white shadow-sm">
-                          <Camera className="w-3 h-3 text-white" />
+                        <div className="absolute -bottom-1 -right-1 bg-primary p-2.5 rounded-2xl border-4 border-white shadow-lg transition-transform group-hover:scale-110">
+                          <Camera className="w-4 h-4 text-white" />
                         </div>
                       </div>
                       <button 
                         onClick={() => document.getElementById('profileInput').click()}
                         disabled={updatingProfile}
-                        className="mt-3 sm:mt-4 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                        className="mt-6 px-5 py-2.5 text-xs sm:text-sm font-bold text-primary hover:bg-primary hover:text-white rounded-xl transition-all duration-300 flex items-center gap-2 group border border-primary/20 hover:border-primary shadow-sm active:scale-95"
                       >
                         <Upload className="w-4 h-4" />
-                        <span className="hidden sm:inline">Change Photo</span>
-                        <span className="sm:hidden">Change</span>
+                        <span>Update Photo</span>
                       </button>
                       <input 
                         id="profileInput"
@@ -623,60 +627,60 @@ function UserSettings() {
 
                     {/* Name & Info Section */}
                     <div className="flex-1 text-center sm:text-left w-full sm:w-auto">
-                      <div className="mb-4 sm:mb-6">
+                      <div className="mb-6 sm:mb-8">
                         {!isEditingName ? (
-                          <div className="flex items-center justify-center sm:justify-start gap-2 group">
-                            <h2 className="text-xl sm:text-2xl font-semibold text-slate-900">{profileName}</h2>
+                          <div className="flex items-center justify-center sm:justify-start gap-3 group">
+                            <h2 className="text-2xl sm:text-4xl font-black text-text-main tracking-tight">{profileName}</h2>
                             <button
                               onClick={() => setIsEditingName(true)}
-                              className="p-2 opacity-0 group-hover:opacity-100 hover:bg-slate-100 rounded-lg transition-all duration-200"
+                              className="p-2 opacity-0 group-hover:opacity-100 hover:bg-secondary rounded-xl transition-all duration-300 transform hover:scale-110"
                             >
-                              <Edit3 className="w-4 h-4 text-slate-600" />
+                              <Edit3 className="w-5 h-5 text-primary" />
                             </button>
                           </div>
                         ) : (
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-3 animate-fadeIn">
                             <input
                               type="text"
                               value={tempName}
                               onChange={(e) => setTempName(e.target.value)}
-                              className="flex-1 px-3 sm:px-4 py-2 sm:py-3 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-900 text-sm sm:text-base"
+                              className="flex-1 px-4 sm:px-6 py-3 sm:py-4 border-2 border-primary rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 font-bold text-text-main text-lg sm:text-xl bg-white shadow-inner"
                               autoFocus
                               disabled={updatingProfile}
                             />
                             <button
                               onClick={handleSaveName}
                               disabled={updatingProfile}
-                              className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 disabled:opacity-50"
+                              className="p-3 bg-primary text-white rounded-2xl hover:bg-button-hover transition-all duration-300 disabled:opacity-50 shadow-md hover:shadow-primary/20 active:scale-95"
                             >
-                              {updatingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                              {updatingProfile ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                             </button>
                             <button
                               onClick={handleCancelEdit}
                               disabled={updatingProfile}
-                              className="p-2 bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300 transition-colors duration-200 disabled:opacity-50"
+                              className="p-3 bg-background text-muted rounded-2xl hover:bg-secondary hover:text-text-main transition-all duration-300 disabled:opacity-50 border-2 border-border"
                             >
-                              <X className="w-4 h-4" />
+                              <X className="w-5 h-5" />
                             </button>
                           </div>
                         )}
                       </div>
 
-                      <div className="space-y-2 sm:space-y-3">
-                        <div>
-                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Email</p>
-                          <p className="text-sm sm:text-base text-slate-900 mt-1">{user?.email}</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                        <div className="p-4 rounded-2xl bg-white/50 border border-border/50">
+                          <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1 opacity-60">Email Address</p>
+                          <p className="text-sm sm:text-base text-text-main font-bold truncate">{user?.email}</p>
                         </div>
                         {connectedProvider && (
-                          <div>
-                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Connected Account</p>
+                          <div className="p-4 rounded-2xl bg-white/50 border border-border/50">
+                            <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1 opacity-60">Connected Account</p>
                             <div className="flex items-center gap-2 mt-1">
                               {connectedProvider === "google" ? (
-                                <FaGoogle className="w-4 h-4 text-red-500" />
+                                <div className="w-6 h-6 flex items-center justify-center bg-red-50 rounded-lg"><FaGoogle className="w-3.5 h-3.5 text-red-500" /></div>
                               ) : (
-                                <FaGithub className="w-4 h-4 text-gray-900" />
+                                <div className="w-6 h-6 flex items-center justify-center bg-gray-100 rounded-lg"><FaGithub className="w-3.5 h-3.5 text-gray-900" /></div>
                               )}
-                              <span className="text-sm sm:text-base text-slate-900 capitalize">{connectedProvider}</span>
+                              <span className="text-sm sm:text-base text-text-main font-bold capitalize">{connectedProvider}</span>
                             </div>
                           </div>
                         )}
@@ -686,51 +690,63 @@ function UserSettings() {
                 </div>
 
                 {/* Profile Information Form - Responsive */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4 sm:mb-6">
-                    Profile Information
-                  </h3>
+                <div className="bg-card rounded-3xl border-2 border-border p-6 sm:p-10 shadow-sm hover:shadow-lg transition-all duration-500">
+                  <div className="flex items-center gap-4 mb-8 sm:mb-10">
+                    <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center">
+                      <User className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-black text-text-main tracking-tight">
+                      Profile Information
+                    </h3>
+                  </div>
 
-                  <form onSubmit={handleProfileUpdate} className="space-y-4 sm:space-y-6">
-                    <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Full Name</label>
-                      <input
-                        type="text"
-                        value={profileName}
-                        onChange={(e) => setProfileName(e.target.value)}
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-slate-900 text-sm sm:text-base"
-                      />
+                  <form onSubmit={handleProfileUpdate} className="space-y-6 sm:space-y-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10">
+                      <div className="space-y-3">
+                        <label className="block text-xs sm:text-sm font-black text-text-main uppercase tracking-widest ml-1 opacity-70">Full Name</label>
+                        <input
+                          type="text"
+                          value={profileName}
+                          onChange={(e) => setProfileName(e.target.value)}
+                          className="w-full px-5 py-4 bg-background border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 text-text-main font-bold text-sm sm:text-base placeholder:text-muted/40"
+                          placeholder="Your full name"
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        <label className="block text-xs sm:text-sm font-black text-text-main uppercase tracking-widest ml-1 opacity-70">
+                          Email Address
+                        </label>
+                        <div className="relative group">
+                          <input
+                            type="email"
+                            value={user?.email || ""}
+                            disabled
+                            className="w-full px-5 py-4 bg-secondary/50 border-2 border-border rounded-2xl text-muted font-bold cursor-not-allowed text-sm sm:text-base opacity-80"
+                          />
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 px-2 py-1 bg-white border border-border rounded-lg text-[10px] font-black text-muted/60 uppercase tracking-tighter opacity-0 group-hover:opacity-100 transition-opacity">Locked</div>
+                        </div>
+                      </div>
                     </div>
 
-                    <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        value={user?.email || ""}
-                        disabled
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-300 rounded-lg bg-slate-50 text-slate-500 cursor-not-allowed text-sm sm:text-base"
-                      />
-                      <p className="text-xs text-slate-500 mt-2">Email cannot be changed</p>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">Bio</label>
+                    <div className="space-y-3">
+                      <label className="block text-xs sm:text-sm font-black text-text-main uppercase tracking-widest ml-1 opacity-70">Bio</label>
                       <textarea
-                        className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-slate-900 text-sm sm:text-base"
-                        placeholder="Tell us about yourself"
+                        className="w-full px-5 py-4 bg-background border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 text-text-main font-bold text-sm sm:text-base placeholder:text-muted/40 min-h-[120px]"
+                        placeholder="Share a little bit about yourself..."
                         rows={4}
                       />
                     </div>
 
-                    <button 
-                      type="submit"
-                      disabled={updatingProfile}
-                      className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors duration-200 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {updatingProfile ? "Saving..." : "Save Changes"}
-                    </button>
+                    <div className="flex justify-end pt-4">
+                      <button 
+                        type="submit"
+                        disabled={updatingProfile}
+                        className="w-full sm:w-auto px-8 sm:px-12 py-4 bg-primary text-white rounded-2xl hover:bg-button-hover font-black transition-all duration-300 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-primary/20 hover:-translate-y-1 active:translate-y-0"
+                      >
+                        {updatingProfile ? "Updating Account..." : "Save Changes"}
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>
@@ -738,48 +754,51 @@ function UserSettings() {
 
             {/* Security Tab - Responsive */}
             {activeTab === "security" && (
-              <div className="space-y-4 sm:space-y-6">
-                <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <div className="flex flex-col sm:flex-row sm:items-start gap-4 mb-6 sm:mb-8">
-                    <Shield className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0 sm:mt-1" />
+              <div className="space-y-6 sm:space-y-8 animate-fadeIn">
+                <div className="bg-card rounded-3xl border-2 border-border p-6 sm:p-10 shadow-sm hover:shadow-lg transition-all duration-500">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-6 mb-8 sm:mb-12">
+                    <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center shrink-0 shadow-sm border border-primary/10">
+                      <Shield className="w-7 h-7 text-primary" />
+                    </div>
                     <div>
-                      <h3 className="text-base sm:text-lg font-semibold text-slate-900">
-                        {hasPassword ? "Change Password" : "Set Password"}
+                      <h3 className="text-xl sm:text-2xl font-black text-text-main tracking-tight">
+                        {hasPassword ? "Account Password" : "Set Secure Password"}
                       </h3>
-                      <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                      <p className="text-xs sm:text-sm text-muted mt-1 font-bold">
                         {hasPassword 
-                          ? "Change your password regularly to keep your account secure"
-                          : "Set a password to enable login with email and password"}
+                          ? "Update your login credentials regularly to maintain peak account security"
+                          : "Establish a unique password to enable multiple secure login methods"}
                       </p>
                     </div>
                   </div>
 
                   {/* Password-specific error message */}
                   {passwordError && (
-                    <Alert variant="destructive" withIcon className="mb-4 bg-white shadow-sm">
-                      <AlertDescription>{passwordError}</AlertDescription>
+                    <Alert variant="destructive" withIcon className="mb-8 bg-white border-red-100 shadow-sm rounded-2xl">
+                      <AlertDescription className="font-bold">{passwordError}</AlertDescription>
                     </Alert>
                   )}
 
-                  <form onSubmit={handlePasswordSubmit} className="space-y-3 sm:space-y-4">
+                  <form onSubmit={handlePasswordSubmit} className="space-y-6 sm:space-y-8 lg:max-w-2xl">
                     {hasPassword && (
-                      <div>
-                        <label className="block text-xs sm:text-sm font-semibold text-slate-700 mb-2">
+                      <div className="space-y-3">
+                        <label className="block text-xs sm:text-sm font-black text-text-main uppercase tracking-widest ml-1 opacity-70">
                           Current Password
                         </label>
-                        <div className="relative">
+                        <div className="relative group">
                           <input
                             type={showCurrentPassword ? "text" : "password"}
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
-                            className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base pr-10"
+                            className="w-full px-5 py-4 bg-background border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-bold text-text-main text-sm sm:text-base pr-14"
                             required
+                            placeholder="••••••••"
                             disabled={submitting}
                           />
                           <button
                             type="button"
                             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-900"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-muted hover:text-primary hover:bg-secondary rounded-xl transition-all"
                           >
                             {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </button>
@@ -787,12 +806,12 @@ function UserSettings() {
                       </div>
                     )}
 
-                    <div>
+                    <div className="space-y-6">
                       <PasswordStrengthIndicator
                         value={newPassword}
                         onChange={(value) => setNewPassword(value)}
                         label="New Password"
-                        placeholder="Enter new password"
+                        placeholder="Choose a strong password"
                         showScore={true}
                         showScoreNumber={false}
                         showVisibilityToggle={true}
@@ -800,84 +819,89 @@ function UserSettings() {
                           required: true,
                           minLength: 4,
                           disabled: submitting,
+                          className: "w-full px-5 py-4 bg-background border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-bold text-text-main text-sm sm:text-base"
                         }}
                       />
+
+                      <div className="pt-2">
+                        <PasswordStrengthIndicator
+                          value={confirmPassword}
+                          compareValue={newPassword}
+                          onChange={(value) => setConfirmPassword(value)}
+                          label="Confirm New Password"
+                          placeholder="Re-enter your new password"
+                          showScore={true}
+                          showScoreNumber={false}
+                          showVisibilityToggle={true}
+                          inputProps={{
+                            required: true,
+                            minLength: 4,
+                            disabled: submitting,
+                            className: "w-full px-5 py-4 bg-background border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all duration-300 font-bold text-text-main text-sm sm:text-base"
+                          }}
+                        />
+                      </div>
                     </div>
 
-                    <div>
-                      <PasswordStrengthIndicator
-                        value={confirmPassword}
-                        compareValue={newPassword}
-                        onChange={(value) => setConfirmPassword(value)}
-                        label="Confirm New Password"
-                        placeholder="Confirm new password"
-                        showScore={true}
-                        showScoreNumber={false}
-                        showVisibilityToggle={true}
-                        inputProps={{
-                          required: true,
-                          minLength: 4,
-                          disabled: submitting,
-                        }}
-                      />
+                    <div className="pt-6 sm:pt-8 border-t border-border/50">
+                      <button 
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full sm:w-auto px-10 sm:px-14 py-4 bg-primary text-white rounded-2xl hover:bg-button-hover font-black transition-all duration-300 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-primary/20 hover:-translate-y-1 active:translate-y-0"
+                      >
+                        {submitting
+                          ? hasPassword
+                            ? "Updating Security..."
+                            : "Setting Password..."
+                          : hasPassword
+                          ? "Update Password"
+                          : "Save Password"}
+                      </button>
                     </div>
-
-                    <button 
-                      type="submit"
-                      disabled={submitting}
-                      className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors duration-200 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {submitting
-                        ? hasPassword
-                          ? "Changing Password..."
-                          : "Setting Password..."
-                        : hasPassword
-                        ? "Update Password"
-                        : "Set Password"}
-                    </button>
                   </form>
                 </div>
 
 
                 {/* Logout Options */}
-                <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4">Logout Options</h3>
-                  <div className="grid md:grid-cols-2 gap-4">
+                <div className="bg-card rounded-3xl border-2 border-border p-6 sm:p-10 shadow-sm hover:shadow-lg transition-all duration-500 overflow-hidden relative">
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-red-50/30 rounded-bl-full -z-0"></div>
+                  <h3 className="text-xl sm:text-2xl font-black text-text-main tracking-tight mb-8 sm:mb-10 relative z-10">Access & Session Control</h3>
+                  <div className="grid md:grid-cols-2 gap-6 sm:gap-10 relative z-10">
                     {/* Current Device Logout */}
-                    <div className="border border-slate-200 rounded-lg p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                          <LogOut className="w-5 h-5 text-orange-600" />
+                    <div className="border-2 border-border rounded-2xl p-6 bg-white hover:border-orange-200 transition-all group">
+                      <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <LogOut className="w-6 h-6 text-orange-500" />
                         </div>
                         <div>
-                          <h4 className="font-semibold text-slate-900 text-sm">Current Device</h4>
-                          <p className="text-xs text-slate-600">Logout from this device only</p>
+                          <h4 className="font-bold text-text-main text-sm">Current Session</h4>
+                          <p className="text-[10px] font-bold text-muted uppercase tracking-tighter">Exit this device only</p>
                         </div>
                       </div>
                       <button
                         onClick={handleLogout}
-                        className="w-full px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium text-sm"
+                        className="w-full px-6 py-3 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-all font-bold text-sm shadow-sm active:scale-95"
                       >
-                        Logout
+                        Sign Out
                       </button>
                     </div>
 
                     {/* All Devices Logout */}
-                    <div className="border border-slate-200 rounded-lg p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                          <LogOut className="w-5 h-5 text-red-600" />
+                    <div className="border-2 border-border rounded-2xl p-6 bg-white hover:border-red-200 transition-all group">
+                      <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <LogOut className="w-6 h-6 text-red-500" />
                         </div>
                         <div>
-                          <h4 className="font-semibold text-slate-900 text-sm">All Devices</h4>
-                          <p className="text-xs text-slate-600">Logout from all devices</p>
+                          <h4 className="font-bold text-text-main text-sm">Global Logout</h4>
+                          <p className="text-[10px] font-bold text-muted uppercase tracking-tighter">Terminate all sessions</p>
                         </div>
                       </div>
                       <button
                         onClick={handleLogoutAll}
-                        className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium text-sm"
+                        className="w-full px-6 py-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition-all font-bold text-sm shadow-sm active:scale-95"
                       >
-                        Logout All
+                        Sign Out All Devices
                       </button>
                     </div>
                   </div>
@@ -887,106 +911,144 @@ function UserSettings() {
 
             {/* Storage Tab - Responsive */}
             {activeTab === "storage" && (
-              <div className="space-y-4 sm:space-y-6">
-                <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 lg:p-8 shadow-sm hover:shadow-md transition-shadow duration-300">
-                  <h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-4 sm:mb-6">Storage Usage</h3>
+              <div className="space-y-6 sm:space-y-8 animate-fadeIn">
+                <div className="bg-card rounded-3xl border-2 border-border p-6 sm:p-10 shadow-sm hover:shadow-lg transition-all duration-500 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-bl-full -z-0"></div>
+                  
+                  <div className="flex items-center gap-4 mb-10 relative z-10">
+                    <div className="w-12 h-12 rounded-2xl bg-secondary flex items-center justify-center">
+                      <Database className="w-6 h-6 text-primary" />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-black text-text-main tracking-tight">Cloud Storage Plan</h3>
+                  </div>
 
-                  <div className="space-y-4 sm:space-y-6">
+                  <div className="space-y-8 relative z-10">
                     <div>
-                      <div className="flex justify-between items-baseline mb-3">
-                        <span className="text-2xl sm:text-3xl font-semibold text-slate-900">{formatStorage(usedStorageInBytes)}</span>
-                        <span className="text-xs sm:text-sm text-slate-500">of {formatStorage(maxStorageLimit)}</span>
+                      <div className="flex justify-between items-end mb-4">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-black text-muted uppercase tracking-[0.2em] mb-1">Occupied Space</span>
+                          <span className="text-3xl sm:text-5xl font-black text-text-main tracking-tighter">{formatStorage(usedStorageInBytes)}</span>
+                        </div>
+                        <div className="text-right">
+                          <span className="text-xs font-bold text-muted">Total Quota</span>
+                          <p className="text-lg font-bold text-text-main">{formatStorage(maxStorageLimit)}</p>
+                        </div>
                       </div>
-                      <div className="relative w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                      
+                      <div className="relative w-full bg-secondary rounded-full h-4 overflow-hidden shadow-inner ring-1 ring-border/50">
                         <div
-                          className={`h-full rounded-full transition-all duration-1000 ${
+                          className={`h-full rounded-full transition-all duration-1000 ease-out shadow-sm ${
                             usagePercentage > 90 
                               ? "bg-red-500" 
                               : usagePercentage > 75 
                               ? "bg-orange-500" 
-                              : "bg-gradient-to-r from-blue-500 to-blue-600"
+                              : "bg-primary"
                           }`}
                           style={{ 
                             width: usedStorageInBytes === 0 
-                              ? "0%" 
-                              : `${Math.max(usagePercentage, 0.5)}%` 
+                              ? "0.5%" 
+                              : `${Math.max(usagePercentage, 1)}%` 
                           }}
-                        ></div>
+                        >
+                          <div className="w-full h-full bg-white/20 animate-pulse"></div>
+                        </div>
                       </div>
-                      <div className="flex justify-between items-center mt-2">
-                        <span className="text-xs text-slate-500">
-                          Free: {formatStorage(maxStorageLimit - usedStorageInBytes)}
-                        </span>
-                        <span className={`text-xs font-semibold ${
-                          usagePercentage > 90 ? "text-red-600" : usagePercentage > 75 ? "text-orange-600" : "text-blue-600"
+                      
+                      <div className="flex justify-between items-center mt-4">
+                        <div className="flex items-center gap-2">
+                           <div className="w-3 h-3 rounded-full bg-secondary border border-border"></div>
+                           <span className="text-xs font-bold text-muted">
+                            {formatStorage(maxStorageLimit - usedStorageInBytes)} Available
+                          </span>
+                        </div>
+                        <span className={`text-sm font-black px-3 py-1 rounded-lg ${
+                          usagePercentage > 90 
+                            ? "text-red-500 bg-red-50" 
+                            : usagePercentage > 75 
+                            ? "text-orange-500 bg-orange-50" 
+                            : "text-primary bg-secondary"
                         }`}>
                           {usedStorageInBytes > 0 && usagePercentage < 0.1 
                             ? "< 0.1%" 
-                            : `${usagePercentage.toFixed(1)}%`}
+                            : `${usagePercentage.toFixed(1)}% Used`}
                         </span>
                       </div>
                     </div>
 
-                    <div className={`p-3 sm:p-4 rounded-lg border ${
+                    <div className={`p-6 rounded-2xl border-2 transition-all duration-300 ${
                       usagePercentage > 90 
-                        ? "bg-red-50 border-red-200" 
+                        ? "bg-red-50/50 border-red-100" 
                         : usagePercentage > 75 
-                        ? "bg-orange-50 border-orange-200" 
-                        : "bg-blue-50 border-blue-200"
+                        ? "bg-orange-50/50 border-orange-100" 
+                        : "bg-secondary/30 border-primary/10"
                     }`}>
-                      <p className={`text-xs sm:text-sm font-medium ${
-                        usagePercentage > 90 ? "text-red-900" : usagePercentage > 75 ? "text-orange-900" : "text-blue-900"
-                      }`}>
-                        {usagePercentage > 90 
-                          ? "Storage Unhealthy: You are almost out of space! Please upgrade or delete some files." 
-                          : usagePercentage > 75 
-                          ? "Storage Warning: You are using most of your storage." 
-                          : "Storage Healthy: You have plenty of storage available."}
-                      </p>
+                      <div className="flex items-start gap-4">
+                        <div className={`p-2 rounded-xl shrink-0 ${
+                          usagePercentage > 90 ? "bg-red-100 text-red-600" : usagePercentage > 75 ? "bg-orange-100 text-orange-600" : "bg-white text-primary shadow-sm"
+                        }`}>
+                          <Info className="w-5 h-5" />
+                        </div>
+                        <p className={`text-sm font-bold leading-relaxed ${
+                          usagePercentage > 90 ? "text-red-900" : usagePercentage > 75 ? "text-orange-900" : "text-text-main"
+                        }`}>
+                          {usagePercentage > 90 
+                            ? "Storage Critical: You have nearly exhausted your allocated space. Access may become restricted soon unless you upgrade or free up space." 
+                            : usagePercentage > 75 
+                            ? "Storage Warning: You're approaching your limit. Consider reviewing your files or migrating to a larger plan." 
+                            : "Storage Healthy: You have plenty of room for more memories and documents! Your cloud experience is running smoothly."}
+                        </p>
+                      </div>
                     </div>
 
-                    <button className="w-full px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors duration-200 text-sm sm:text-base">
-                      Upgrade Storage
-                    </button>
+                    <div className="pt-4">
+                      <button 
+                        onClick={() => navigate("/plans")}
+                        className="w-full px-8 py-4 bg-primary text-white rounded-2xl hover:bg-button-hover font-black transition-all duration-300 text-base shadow-lg shadow-primary/20 hover:-translate-y-1 active:translate-y-0"
+                      >
+                        Upgrade Storage Plan
+                      </button>
+                    </div>
                   </div>
                 </div>
-
               </div>
             )}
-
           </div>
         </div>
       </div>
 
       {/* Custom Confirmation Modal */}
       {showConfirmModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 animate-slideUp">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <Lock className="w-6 h-6 text-blue-600" />
+        <div className="fixed inset-0 bg-text-main/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fadeIn">
+          <div className="bg-card rounded-[32px] shadow-strong max-w-md w-full p-8 sm:p-10 animate-scaleIn border border-border">
+            <div className="flex flex-col items-center text-center gap-6 mb-8">
+              <div className="w-20 h-20 bg-secondary rounded-[24px] flex items-center justify-center shadow-inner relative">
+                <div className="absolute inset-0 bg-primary/5 animate-ping rounded-[24px]"></div>
+                <ShieldCheck className="w-10 h-10 text-primary relative z-10" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900">
-                {hasPassword ? "Change Password?" : "Set Password?"}
-              </h3>
+              <div>
+                <h3 className="text-2xl font-black text-text-main tracking-tight mb-2">
+                  {hasPassword ? "Update Security Key?" : "Secure Your Account?"}
+                </h3>
+                <p className="text-sm font-bold text-muted leading-relaxed">
+                  {hasPassword 
+                    ? "Updating your password will invalidate your old one. You will need to use your new credentials for all future sign-ins." 
+                    : "Establish a secure password to unlock additional login methods and enhance your workspace's integrity."}
+                </p>
+              </div>
             </div>
-            <p className="text-gray-600 mb-6">
-              {hasPassword 
-                ? "Are you sure you want to change your password? You'll need to use the new password to login." 
-                : "Are you sure you want to set a password for your account? You'll be able to login with email and password."}
-            </p>
-            <div className="flex gap-3">
+            
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setShowConfirmModal(false)}
-                className="flex-1 px-4 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                className="flex-1 px-6 py-4 text-text-main bg-background border-2 border-border rounded-2xl hover:bg-secondary hover:border-primary/20 transition-all font-black text-sm active:scale-95"
               >
-                Cancel
+                No, Go Back
               </button>
               <button
                 onClick={confirmPasswordChange}
-                className="flex-1 px-4 py-2.5 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                className="flex-1 px-6 py-4 text-white bg-primary rounded-2xl hover:bg-button-hover transition-all font-black text-sm shadow-md shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0"
               >
-                Confirm
+                Yes, Secure It
               </button>
             </div>
           </div>
@@ -995,11 +1057,21 @@ function UserSettings() {
 
       {/* Custom Success Notification */}
       {showSuccessNotification && (
-        <div className="fixed top-24 right-6 z-50 max-w-sm w-full md:w-[380px]">
-          <Alert variant="success" withIcon duration={4000} dismissible onDismiss={() => setShowSuccessNotification(false)} className="bg-white/95 backdrop-blur-md shadow-2xl border-green-100">
-            <AlertTitle>Success!</AlertTitle>
-            <AlertDescription>{success}</AlertDescription>
-          </Alert>
+        <div className="fixed top-12 right-6 z-[10000] max-w-sm w-full md:w-[400px] animate-slideIn">
+          <div className="bg-white/95 backdrop-blur-xl shadow-strong border-2 border-green-100 rounded-2xl p-5 flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                <Check className="w-5 h-5 text-white" />
+              </div>
+            </div>
+            <div className="flex-1">
+              <div className="flex justify-between items-start mb-1">
+                <h4 className="text-base font-black text-text-main">Success!</h4>
+                <button onClick={() => setShowSuccessNotification(false)} className="text-muted hover:text-text-main p-1"><X className="w-4 h-4" /></button>
+              </div>
+              <p className="text-sm font-bold text-muted leading-snug">{success}</p>
+            </div>
+          </div>
         </div>
       )}
     </div>

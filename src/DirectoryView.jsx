@@ -997,7 +997,8 @@ function DirectoryView() {
 
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center gap-3 md:gap-4">
             {/* Upload Files Button */}
-            <div className="relative group/btn cursor-not-allowed w-full md:w-auto">
+            {/* Upload Button */}
+            <div className="relative group/btn w-full md:w-auto">
               <button
                 onClick={() => {
                   if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
@@ -1007,19 +1008,17 @@ function DirectoryView() {
                   fileInputRef.current.click();
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
-                className="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-3 text-white rounded-lg transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg hover:transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) ? '#CBD5E0' : '#66B2D6',
-                  cursor: ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) ? 'not-allowed' : 'pointer'
-                }}
-                onMouseEnter={(e) => !["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && (e.target.style.backgroundColor = '#5aa0c0')}
-                onMouseLeave={(e) => !["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && (e.target.style.backgroundColor = '#66B2D6')}
+                className={`w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) 
+                  ? "bg-slate-300 cursor-not-allowed" 
+                  : "bg-button hover:bg-button-hover"
+                }`}
               >
                 <Upload className="w-4 h-4" />
                 Upload Files {["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && "⚠️"}
               </button>
               {["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && (
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none flex items-center gap-1 shadow-lg z-50">
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-lg opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none flex items-center gap-1 shadow-xl z-50">
                   <AlertTriangle className="text-amber-400 w-3 h-3" />
                   Access Restricted ⚠️
                 </div>
@@ -1027,7 +1026,7 @@ function DirectoryView() {
             </div>
 
             {/* Create Directory Button */}
-            <div className="relative group/btn cursor-not-allowed w-full md:w-auto">
+            <div className="relative group/btn w-full md:w-auto">
               <button
                 onClick={() => {
                   if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
@@ -1037,19 +1036,17 @@ function DirectoryView() {
                   setShowCreateDirModal(true);
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
-                className="w-full md:w-auto flex items-center justify-center gap-2 px-5 py-3 text-white rounded-lg transition-all duration-200 font-semibold text-sm shadow-md hover:shadow-lg hover:transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  backgroundColor: ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) ? '#CBD5E0' : '#10B981',
-                  cursor: ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) ? 'not-allowed' : 'pointer'
-                }}
-                onMouseEnter={(e) => !["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && (e.target.style.backgroundColor = '#059669')}
-                onMouseLeave={(e) => !["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && (e.target.style.backgroundColor = '#10B981')}
+                className={`w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) 
+                  ? "bg-slate-300 cursor-not-allowed" 
+                  : "bg-accent hover:bg-accent/90"
+                }`}
               >
                 <FolderPlus className="w-4 h-4" />
                 Create Directory {["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && "⚠️"}
               </button>
               {["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && (
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none flex items-center gap-1 shadow-lg z-50">
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-lg opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none flex items-center gap-1 shadow-xl z-50">
                   <AlertTriangle className="text-amber-400 w-3 h-3" />
                   Access Restricted ⚠️
                 </div>
@@ -1057,7 +1054,7 @@ function DirectoryView() {
             </div>
 
             {/* Import from Drive Button */}
-            <div className="relative group/btn cursor-not-allowed w-full md:w-auto">
+            <div className="relative group/btn w-full md:w-auto">
               <div
                 className="w-full"
                 onClick={() => {
@@ -1069,15 +1066,15 @@ function DirectoryView() {
                 <ImportFromDrive
                   onFilesSelected={handleDriveFileImport}
                   disabled={["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) || isRenaming}
-                  className={`w-full flex items-center justify-center gap-2 px-5 py-3 text-gray-700 border border-gray-300 rounded-lg shadow-sm transition-all duration-200 font-semibold text-sm ${
+                  className={`w-full flex items-center justify-center gap-2 px-6 py-3.5 text-text-main border-2 border-border rounded-xl shadow-sm transition-all duration-300 font-bold text-sm ${
                     user?.subscriptionStatus?.toLowerCase() === "paused" || isRenaming
-                      ? "bg-gray-100 cursor-not-allowed opacity-50 grayscale pointer-events-none"
-                      : "bg-white hover:bg-gray-50 hover:border-gray-400 hover:shadow-lg hover:scale-105"
+                      ? "bg-slate-100 cursor-not-allowed opacity-50 grayscale pointer-events-none"
+                      : "bg-white hover:bg-secondary hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5"
                   }`}
                 />
               </div>
               {user?.subscriptionStatus?.toLowerCase() === "paused" && (
-                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none flex items-center gap-1 shadow-lg z-50">
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded-lg opacity-0 group-hover/btn:opacity-100 transition-opacity whitespace-nowrap pointer-events-none flex items-center gap-1 shadow-xl z-50">
                   <AlertTriangle className="text-amber-400 w-3 h-3" />
                   Paused: Imports Disabled ⚠️
                 </div>
@@ -1091,23 +1088,19 @@ function DirectoryView() {
           {/* Search Bar */}
           <div className="flex-1 relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Search className="w-5 h-5" style={{ color: '#A3C5D9' }} />
+              <Search className="w-5 h-5 text-primary/50" />
             </div>
             <input
               type="text"
               placeholder="Search files and folders..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white border rounded-lg transition-all focus:outline-none"
-              style={{ borderColor: '#D1DCE5', color: '#2C3E50' }}
-              onFocus={(e) => e.target.style.borderColor = '#66B2D6'}
-              onBlur={(e) => e.target.style.borderColor = '#D1DCE5'}
+              className="w-full pl-12 pr-4 py-3.5 bg-card border-2 border-border rounded-xl transition-all duration-300 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 text-text-main placeholder:text-muted"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
-                className="absolute inset-y-0 right-0 pr-4 flex items-center"
-                style={{ color: '#A3C5D9' }}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted hover:text-text-main transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1117,28 +1110,16 @@ function DirectoryView() {
           {/* View Toggle Button */}
           <button
             onClick={() => setViewMode(viewMode === "list" ? "grid" : "list")}
-            className="flex items-center justify-center gap-2 px-5 py-3 bg-white border rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-soft whitespace-nowrap"
-            style={{
-              borderColor: '#D1DCE5',
-              color: '#2C3E50'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.borderColor = '#A7DDE9';
-              e.target.style.backgroundColor = '#fafdff';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.borderColor = '#D1DCE5';
-              e.target.style.backgroundColor = '#FFFFFF';
-            }}
+            className="flex items-center justify-center gap-2 px-5 py-3.5 bg-card border-2 border-border rounded-xl font-bold text-sm transition-all duration-300 hover:border-primary/30 hover:bg-secondary text-text-main shadow-sm hover:shadow-md"
           >
             {viewMode === "list" ? (
               <>
-                <Grid className="w-5 h-5" />
+                <Grid className="w-5 h-5 text-primary" />
                 Grid View
               </>
             ) : (
               <>
-                <List className="w-5 h-5" />
+                <List className="w-5 h-5 text-primary" />
                 List View
               </>
             )}
@@ -1149,20 +1130,14 @@ function DirectoryView() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-5 py-3 bg-white border rounded-lg font-semibold text-sm transition-all duration-200 hover:shadow-soft appearance-none pr-10 cursor-pointer"
-              style={{
-                borderColor: '#D1DCE5',
-                color: '#2C3E50'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#66B2D6'}
-              onBlur={(e) => e.target.style.borderColor = '#D1DCE5'}
+              className="px-5 py-3.5 bg-card border-2 border-border rounded-xl font-bold text-sm transition-all duration-300 hover:border-primary/30 hover:bg-secondary text-text-main appearance-none pr-12 cursor-pointer shadow-sm hover:shadow-md outline-none focus:border-primary"
             >
               <option value="name">Sort by Name</option>
               <option value="date">Sort by Date</option>
               <option value="size">Sort by Size</option>
             </select>
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <ChevronDown className="w-5 h-5" style={{ color: '#2C3E50' }} />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+              <ChevronDown className="w-5 h-5 text-muted" />
             </div>
           </div>
         </div>
@@ -1274,27 +1249,34 @@ function DirectoryView() {
           )
         ) : viewMode === "grid" ? (
           // Grid View
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mt-8">
             {combinedItems.map((item) => (
               <div
                 key={item.id}
-                className="bg-white rounded-xl border-2 hover:shadow-medium transition-all duration-200 cursor-pointer group flex flex-col justify-between overflow-hidden"
-                style={{ borderColor: '#D1DCE5' }}
+                className="glass-card group flex flex-col justify-between overflow-hidden relative"
                 onClick={() =>
                   !(activeContextMenu || isUploading) && handleRowClick(item)
                 }
                 onContextMenu={(e) => handleContextMenu(e, item.id)}
               >
-                <div className="p-4 flex-1 flex flex-col">
-                  {/* Top Row: Icon and 3 Dots */}
-                  <div className="flex justify-between items-center mb-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#fafdff' }}>
+                <div className="p-5 flex-1 flex flex-col">
+                  {/* Top Row: Icon and Actions */}
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-secondary transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/10">
                         {getFileIcon(item)}
                       </div>
-                      <span className="text-xs font-semibold tracking-wider" style={{ color: '#A3C5D9' }}>
-                        {item.isDirectory ? "FOLDER" : (item.name && typeof item.name === 'string' ? item.name.split('.').pop()?.toUpperCase() || 'FILE' : 'FILE')}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-bold tracking-widest text-primary uppercase">
+                          {item.isDirectory ? "Folder" : (item.name && typeof item.name === 'string' ? item.name.split('.').pop()?.toUpperCase() || 'FILE' : 'FILE')}
+                        </span>
+                        <h3 
+                          className="text-sm font-bold text-text-main truncate max-w-[140px]" 
+                          title={item.name}
+                        >
+                          {item.name}
+                        </h3>
+                      </div>
                     </div>
                     
                     <button
@@ -1303,58 +1285,48 @@ function DirectoryView() {
                         if (!isRenaming) handleContextMenu(e, item.id);
                       }}
                       disabled={isRenaming}
-                      className={`p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors ${isRenaming ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className="p-2 rounded-xl hover:bg-secondary text-muted hover:text-primary transition-all active:scale-95"
                     >
                       <MoreVertical className="w-5 h-5" />
                     </button>
                   </div>
 
-                  {/* Body: Name, Size, Date */}
-                  <div className="space-y-1">
-                    <h3 
-                      className="text-sm font-semibold truncate mb-1" 
-                      style={{ color: '#2C3E50' }}
-                      title={item.name}
-                    >
-                      {item.name}
-                    </h3>
-                    <div className="flex flex-col gap-1 mt-2">
-                       <div className="flex justify-between items-center text-xs">
-                         <span style={{ color: '#000000' }}>Size</span>
-                         <span className="font-medium" style={{ color: '#2C3E50' }}>
-                           {item.isDirectory ? `${item.fileCount || 0} items` : formatSize(item.size)}
-                         </span>
-                       </div>
-                       <div className="flex justify-between items-center text-xs">
-                         <span style={{ color: '#000000' }}>Modified</span>
-                         <span className="font-medium" style={{ color: '#2C3E50' }}>
-                           {new Date(item.updatedAt || item.createdAt).toLocaleDateString('en-US', {
-                             year: 'numeric',
-                             month: 'short',
-                             day: 'numeric'
-                           })}
-                         </span>
-                       </div>
+                  {/* Body: Stats */}
+                  <div className="space-y-3 mt-auto">
+                    <div className="flex justify-between items-center bg-background/50 p-2 rounded-lg">
+                      <span className="text-[11px] font-semibold text-muted uppercase tracking-tighter">Size</span>
+                      <span className="text-xs font-bold text-text-main">
+                        {item.isDirectory ? `${item.fileCount || 0} items` : formatSize(item.size)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center bg-background/50 p-2 rounded-lg">
+                      <span className="text-[11px] font-semibold text-muted uppercase tracking-tighter">Modified</span>
+                      <span className="text-xs font-bold text-text-main">
+                        {new Date(item.updatedAt || item.createdAt).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Footer: Info | Download */}
-                <div className="flex border-t" style={{ borderColor: '#D1DCE5' }}>
-                   <button
+                {/* Quick Actions Footer */}
+                <div className="flex border-t border-border/50 bg-secondary/30">
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       openDetailsPopup(item);
                     }}
-                    className="flex-1 py-3 text-xs font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors border-r"
-                    style={{ borderColor: '#D1DCE5', color: '#2C3E50' }}
+                    className="flex-1 py-3.5 text-xs font-bold flex items-center justify-center gap-2 hover:bg-white hover:text-primary transition-all text-text-main border-r border-border/50"
                   >
-                    <Info className="w-3.5 h-3.5" />
-                    Info
+                    <Info className="w-4 h-4" />
+                    Details
                   </button>
                   
                   {!item.isDirectory ? (
-                     <button
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         const statusStr = String(user?.subscriptionStatus || "").toLowerCase().trim();
@@ -1364,14 +1336,13 @@ function DirectoryView() {
                         }
                         window.location.href = `${BASE_URL}/file/${item.id}?action=download`;
                       }}
-                      className="flex-1 py-3 text-xs font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
-                      style={{ color: '#2C3E50' }}
+                      className="flex-1 py-3.5 text-xs font-bold flex items-center justify-center gap-2 hover:bg-white hover:text-button transition-all text-text-main"
                     >
-                      <Download className="w-3.5 h-3.5" />
-                      Download
+                      <Download className="w-4 h-4" />
+                      Get File
                     </button>
                   ) : (
-                    <div className="flex-1 bg-gray-50/50"></div>
+                    <div className="flex-1 bg-secondary/10"></div>
                   )}
                 </div>
 
