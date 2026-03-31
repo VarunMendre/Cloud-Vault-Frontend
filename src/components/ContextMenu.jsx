@@ -35,10 +35,12 @@ function ContextMenu({
 
   // Determine position style
   const MENU_HEIGHT_ESTIMATE = 280; 
+  const MENU_WIDTH_ESTIMATE = 220;
   const isNearBottom = typeof window !== 'undefined' && (contextMenuPos.y + MENU_HEIGHT_ESTIMATE > window.innerHeight);
+  const isNearRight = typeof window !== 'undefined' && (contextMenuPos.x + MENU_WIDTH_ESTIMATE > window.innerWidth);
 
   const menuStyle = {
-    left: contextMenuPos.x,
+    left: isNearRight ? contextMenuPos.x - MENU_WIDTH_ESTIMATE : contextMenuPos.x,
     top: isNearBottom ? "auto" : contextMenuPos.y,
     bottom: isNearBottom ? (window.innerHeight - contextMenuPos.y) : "auto",
   };
@@ -63,7 +65,7 @@ function ContextMenu({
       )}>
         {icon}
       </div>
-      <span className="flex-1">{label}</span>
+      <span className="flex-1 capitalize">{label}</span>
     </div>
   );
 
@@ -85,14 +87,14 @@ function ContextMenu({
       <MenuContainer>
         {renderItem(
           <Pencil className="w-4 h-4 transition-colors group-hover:text-primary" />, 
-          "Rename Folder", 
+          "rename", 
           () => openRenameModal("directory", item.id, item.name, item.__v),
           "default",
           isPaused
         )}
         {renderItem(
           <Trash2 className="w-4 h-4 transition-colors group-hover:text-red-600" />, 
-          "Delete Archive", 
+          "delete", 
           () => handleDeleteDirectory(item.id),
           "danger",
           isPaused
@@ -100,7 +102,7 @@ function ContextMenu({
         <div className="h-px bg-border/50 mx-4 my-1"></div>
         {renderItem(
           <Info className="w-4 h-4 transition-colors group-hover:text-primary" />, 
-          "Node Details", 
+          "details", 
           () => openDetailsPopup(item)
         )}
       </MenuContainer>
@@ -112,7 +114,7 @@ function ContextMenu({
         <MenuContainer>
           {renderItem(
             <X className="w-4 h-4 transition-colors group-hover:text-red-600" />, 
-            "Cancel Transmission", 
+            "cancel upload", 
             () => handleCancelUpload(item.id),
             "danger"
           )}
@@ -124,14 +126,14 @@ function ContextMenu({
         <MenuContainer>
           {renderItem(
             <Share2 className="w-4 h-4 transition-colors group-hover:text-primary" />, 
-            "Share Access", 
+            "Share file", 
             () => handleShare("file", item.id, item.name),
             "default",
             isPaused
           )}
           {renderItem(
             <Download className="w-4 h-4 transition-colors group-hover:text-primary" />, 
-            "Synchronize Local", 
+            "download", 
             () => {
               if (isPaused) {
                 showToast("Grid Access Paused: Upgrade required.", "warning");
@@ -144,14 +146,14 @@ function ContextMenu({
           )}
           {renderItem(
             <Pencil className="w-4 h-4 transition-colors group-hover:text-primary" />, 
-            "Modify Label", 
+            "rename", 
             () => openRenameModal("file", item.id, item.name, item.__v),
             "default",
             isPaused
           )}
           {renderItem(
             <Trash2 className="w-4 h-4 transition-colors group-hover:text-red-600" />, 
-            "Purge Instance", 
+            "delete", 
             () => handleDeleteFile(item.id),
             "danger",
             isPaused
@@ -159,7 +161,7 @@ function ContextMenu({
           <div className="h-px bg-border/50 mx-4 my-1"></div>
           {renderItem(
             <Info className="w-4 h-4 transition-colors group-hover:text-primary" />, 
-            "Metadata", 
+            "metaData", 
             () => openDetailsPopup(item)
           )}
         </MenuContainer>

@@ -1,5 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { 
+  Check, 
+  ShieldCheck, 
+  Zap, 
+  Clock, 
+  CreditCard, 
+  ChevronRight, 
+  Loader2, 
+  ArrowRight, 
+  Star, 
+  Database, 
+  User, 
+  X 
+} from "lucide-react";
 import { createSubscription, getSubscriptionDetails } from "./apis/subscriptionApi";
 import SubscriptionAlert from "./components/SubscriptionAlert";
 import DirectoryHeader from "./components/DirectoryHeader";

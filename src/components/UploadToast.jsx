@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, ChevronDown, ChevronUp, CheckCircle2, Loader2, File, CloudUpload, Activity } from "lucide-react";
+import { X, ChevronDown, ChevronUp, CheckCircle2, Loader2, File, Activity } from "lucide-react";
 
 // Helper function to format file sizes
 const formatSize = (bytes) => {

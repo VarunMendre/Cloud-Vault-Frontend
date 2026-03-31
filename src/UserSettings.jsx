@@ -17,11 +17,15 @@ import {
   Lock,
   HardDrive,
   ChevronDown,
+  Database,
+  ShieldCheck,
+  Check,
+  Info,
+  Loader2
 } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { Alert, AlertDescription, AlertTitle } from "./components/lightswind/alert";
 import { PasswordStrengthIndicator } from "./components/lightswind/password-strength-indicator";
-import { Loader2 } from "lucide-react";
 
 function UserSettings() {
   const { user, refreshUser } = useAuth();

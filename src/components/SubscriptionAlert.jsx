@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { 
   ShieldAlert, 
-  HelpCircle, 
   Mail, 
   ChevronDown, 
   ChevronUp, 
