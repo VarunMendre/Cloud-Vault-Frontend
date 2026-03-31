@@ -831,7 +831,7 @@ function DirectoryView() {
       setActiveContextMenu(null);
     } else {
       setActiveContextMenu(id);
-      setContextMenuPos({ x: clickX - 110, y: clickY });
+      setContextMenuPos({ x: clickX, y: clickY });
     }
   }
 
