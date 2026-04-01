@@ -94,7 +94,7 @@ function DirectoryItem({
 
   return (
     <div
-      className="flex flex-col relative gap-1 border-2 border-border rounded-xl bg-card cursor-pointer group transition-all duration-300 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+      className="flex flex-col relative border-2 border-border rounded-xl bg-card cursor-pointer group transition-all duration-300 hover:border-primary/30 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
       onClick={() =>
         !(activeContextMenu || isUploading)
           ? handleRowClick(item.isDirectory ? "directory" : "file", item.id)
@@ -104,46 +104,47 @@ function DirectoryItem({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex items-center gap-4 p-4">
+      <div className="flex items-center gap-2.5 sm:gap-4 p-3 sm:p-4">
         {/* Icon */}
         <div className="flex-shrink-0">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-secondary transition-all group-hover:bg-primary/10">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center bg-secondary transition-all group-hover:bg-primary/10">
             {renderIcon()}
           </div>
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 overflow-hidden">
           {/* Name and Type Badge */}
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-bold text-text-main truncate text-sm sm:text-base group-hover:text-primary transition-colors">{item.name}</span>
+          <div className="flex items-center gap-1.5 sm:gap-2 mb-0.5 sm:mb-1">
+            <span className="font-bold text-text-main truncate text-[13px] sm:text-base group-hover:text-primary transition-colors">{item.name}</span>
             {item.isDirectory ? (
-              <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-lg bg-secondary text-primary border border-primary/10">
+              <span className="flex-shrink-0 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase rounded-md sm:rounded-lg bg-secondary text-primary border border-primary/10">
                 Folder
               </span>
             ) : fileExtension ? (
-              <span className="px-2 py-0.5 text-[10px] font-bold uppercase rounded-lg bg-background text-muted border border-border">
+              <span className="flex-shrink-0 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase rounded-md sm:rounded-lg bg-background text-muted border border-border">
                 {fileExtension}
               </span>
             ) : null}
           </div>
 
           {/* Size and Modified Date */}
-          <div className="flex items-center gap-4 text-xs font-medium text-muted">
+          <div className="flex items-center gap-2 sm:gap-4 text-[11px] sm:text-xs font-medium text-muted">
             <div className="flex items-center gap-1">
-              <span className="opacity-60 uppercase tracking-tighter">Size:</span>
+              <span className="opacity-60 uppercase tracking-tighter hidden sm:inline">Size:</span>
               <span className="text-text-main">{formatSize(item.size || 0)}</span>
             </div>
             <div className="flex items-center gap-1">
-              <span className="opacity-60 uppercase tracking-tighter">Modified:</span>
-              <span className="text-text-main">{formatDate(item.updatedAt || item.createdAt)}</span>
+              <span className="opacity-60 uppercase tracking-tighter hidden sm:inline">Modified:</span>
+              <span className="text-text-main whitespace-nowrap">{formatDate(item.updatedAt || item.createdAt)}</span>
             </div>
           </div>
         </div>
 
         {/* Quick Actions & Menu */}
-        <div className="flex items-center gap-1">
-          <div className={`flex items-center gap-1 transition-all duration-300 ${isHovered && !isUploadingItem ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+          {/* Hover actions - hidden on mobile (no hover), visible on desktop hover */}
+          <div className={`hidden sm:flex items-center gap-1 transition-all duration-300 ${isHovered && !isUploadingItem ? 'opacity-100' : 'opacity-0'}`}>
             {!item.isDirectory && (
               <button
                 onClick={handleDownload}
@@ -163,9 +164,9 @@ function DirectoryItem({
             </button>
           </div>
 
-          {/* Context Menu Trigger */}
+          {/* Context Menu Trigger — always visible */}
           <button
-            className="p-2.5 rounded-xl text-muted hover:bg-secondary hover:text-text-main transition-all active:scale-95 ml-1"
+            className="p-2 sm:p-2.5 rounded-xl text-muted hover:bg-secondary hover:text-text-main transition-all active:scale-95 ml-0.5 sm:ml-1"
             onClick={(e) => {
               e.stopPropagation();
               handleContextMenu(e, item.id);

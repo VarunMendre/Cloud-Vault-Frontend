@@ -164,13 +164,13 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-secondary/30">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-white shadow-sm ring-1 ring-border">
-              <Info className="w-6 h-6 text-primary" />
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border flex items-center justify-between bg-secondary/30">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center bg-white shadow-sm ring-1 ring-border">
+              <Info className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
             </div>
             <div>
-              <h3 className="text-xl font-bold text-text-main">Details</h3>
+              <h3 className="text-lg sm:text-xl font-bold text-text-main">Details</h3>
               <p className="text-xs font-medium text-muted mt-0.5 uppercase tracking-wider">
                 {isDirectory ? "Folder" : "File"} information
               </p>
@@ -185,13 +185,13 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
         </div>
 
         {/* Content */}
-        <div className="px-6 py-8 overflow-y-auto custom-scrollbar">
+        <div className="px-4 sm:px-6 py-5 sm:py-8 overflow-y-auto custom-scrollbar">
           {/* Item Preview */}
-          <div className="flex items-center gap-5 mb-8 p-5 bg-background border-2 border-border border-dashed rounded-2xl">
+          <div className="flex items-center gap-3 sm:gap-5 mb-5 sm:mb-8 p-3 sm:p-5 bg-background border-2 border-border border-dashed rounded-xl sm:rounded-2xl">
             <div className="flex-shrink-0 scale-110">{getIcon(itemType)}</div>
             <div className="flex-1 min-w-0">
               <div
-                className="font-bold truncate text-xl text-text-main"
+                className="font-bold truncate text-base sm:text-xl text-text-main"
                 title={name}
               >
                 {name}
@@ -217,9 +217,9 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               {/* Size */}
-              <div className="flex items-start gap-4 p-4 rounded-xl border border-border bg-white hover:border-primary/30 transition-colors">
+              <div className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border border-border bg-white hover:border-primary/30 transition-colors">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary/50">
                   <Database className="w-5 h-5 text-purple-600" />
                 </div>
@@ -232,7 +232,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
               </div>
 
               {/* Created At */}
-              <div className="flex items-start gap-4 p-4 rounded-xl border border-border bg-white hover:border-primary/30 transition-colors">
+              <div className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl border border-border bg-white hover:border-primary/30 transition-colors">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-secondary/50">
                   <Calendar className="w-5 h-5 text-emerald-600" />
                 </div>
@@ -285,10 +285,10 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-5 border-t border-border bg-secondary/10 flex justify-end gap-3">
+        <div className="px-4 sm:px-6 py-4 sm:py-5 border-t border-border bg-secondary/10 flex justify-end gap-2 sm:gap-3">
           {!isDirectory && (
              <button
-              className="flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded-xl transition-all duration-300 bg-white border-2 border-border text-text-main hover:bg-secondary hover:border-primary/30 shadow-sm active:scale-95"
+              className="flex items-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 bg-white border-2 border-border text-text-main hover:bg-secondary hover:border-primary/30 shadow-sm active:scale-95"
               onClick={handleDownload}
             >
               <Download className="w-4 h-4 text-primary" />
@@ -296,7 +296,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
             </button>
           )}
           <button
-            className="px-6 py-3.5 text-sm font-bold text-white bg-primary rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 shadow-md"
+            className="px-4 sm:px-6 py-3 sm:py-3.5 text-xs sm:text-sm font-bold text-white bg-primary rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 active:translate-y-0 shadow-md"
             onClick={onClose}
           >
             Close

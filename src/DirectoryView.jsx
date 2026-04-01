@@ -981,24 +981,24 @@ function DirectoryView() {
       />
 
       {/* Upload Section with 3 Buttons */}
-      <div className="max-w-7xl mx-auto px-6 pt-8 pb-8">
-        <div className="bg-white rounded-2xl border-2 border-dashed p-8 text-center shadow-soft transition-all duration-300 hover:shadow-medium" style={{ borderColor: '#A7DDE9' }}>
-          <div className="mb-6">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#E6FAF5' }}>
-              <Upload className="w-8 h-8" style={{ color: '#66B2D6' }} />
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 pt-5 sm:pt-8 pb-5 sm:pb-8">
+        <div className="bg-white rounded-2xl border-2 border-dashed p-4 sm:p-8 text-center shadow-soft transition-all duration-300 hover:shadow-medium" style={{ borderColor: '#A7DDE9' }}>
+          <div className="mb-4 sm:mb-6">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#E6FAF5' }}>
+              <Upload className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: '#66B2D6' }} />
             </div>
-            <h2 className="text-xl font-bold mb-1" style={{ color: '#2C3E50' }}>
+            <h2 className="text-base sm:text-xl font-bold mb-1" style={{ color: '#2C3E50' }}>
               Upload Files or Create Directory
             </h2>
-            <p className="text-sm" style={{ color: '#000000' }}>
+            <p className="text-xs sm:text-sm" style={{ color: '#000000' }}>
               Drag and drop files here, or click to select files
             </p>
           </div>
 
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-center gap-3 md:gap-4">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 sm:gap-3 md:gap-4">
             {/* Upload Files Button */}
             {/* Upload Button */}
-            <div className="relative group/btn w-full md:w-auto">
+            <div className="relative group/btn w-full sm:w-auto">
               <button
                 onClick={() => {
                   if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
@@ -1008,7 +1008,7 @@ function DirectoryView() {
                   fileInputRef.current.click();
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
-                className={`w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
                   ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) 
                   ? "bg-slate-300 cursor-not-allowed" 
                   : "bg-button hover:bg-button-hover"
@@ -1026,7 +1026,7 @@ function DirectoryView() {
             </div>
 
             {/* Create Directory Button */}
-            <div className="relative group/btn w-full md:w-auto">
+            <div className="relative group/btn w-full sm:w-auto">
               <button
                 onClick={() => {
                   if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
@@ -1036,7 +1036,7 @@ function DirectoryView() {
                   setShowCreateDirModal(true);
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
-                className={`w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
                   ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) 
                   ? "bg-slate-300 cursor-not-allowed" 
                   : "bg-accent hover:bg-accent/90"
@@ -1054,7 +1054,7 @@ function DirectoryView() {
             </div>
 
             {/* Import from Drive Button */}
-            <div className="relative group/btn w-full md:w-auto">
+            <div className="relative group/btn w-full sm:w-auto">
               <div
                 className="w-full"
                 onClick={() => {
@@ -1066,7 +1066,7 @@ function DirectoryView() {
                 <ImportFromDrive
                   onFilesSelected={handleDriveFileImport}
                   disabled={["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) || isRenaming}
-                  className={`w-full flex items-center justify-center gap-2 px-6 py-3.5 text-text-main border-2 border-border rounded-xl shadow-sm transition-all duration-300 font-bold text-sm ${
+                  className={`w-full flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-text-main border-2 border-border rounded-xl shadow-sm transition-all duration-300 font-bold text-xs sm:text-sm ${
                     user?.subscriptionStatus?.toLowerCase() === "paused" || isRenaming
                       ? "bg-slate-100 cursor-not-allowed opacity-50 grayscale pointer-events-none"
                       : "bg-white hover:bg-secondary hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5"
@@ -1084,7 +1084,7 @@ function DirectoryView() {
         </div>
 
         {/* Search, View Toggle, and Filter Controls */}
-        <div className="mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
           {/* Search Bar */}
           <div className="flex-1 relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -1234,7 +1234,7 @@ function DirectoryView() {
         />
       )}
 
-      <div className="max-w-7xl mx-auto px-6 pb-8">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 pb-5 sm:pb-8">
         {combinedItems.length === 0 ? (
           errorMessage ===
           "Directory not found or you do not have access to it!" ? (
@@ -1249,7 +1249,7 @@ function DirectoryView() {
           )
         ) : viewMode === "grid" ? (
           // Grid View
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 mt-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6 mt-5 sm:mt-8">
             {combinedItems.map((item) => (
               <div
                 key={item.id}
@@ -1259,11 +1259,11 @@ function DirectoryView() {
                 }
                 onContextMenu={(e) => handleContextMenu(e, item.id)}
               >
-                <div className="p-5 flex-1 flex flex-col">
+                <div className="p-3 sm:p-5 flex-1 flex flex-col">
                   {/* Top Row: Icon and Actions */}
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-secondary transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/10">
+                  <div className="flex justify-between items-start mb-3 sm:mb-4">
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                      <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex-shrink-0 flex items-center justify-center bg-secondary transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/10">
                         {getFileIcon(item)}
                       </div>
                       <div className="flex flex-col">
@@ -1271,7 +1271,7 @@ function DirectoryView() {
                           {item.isDirectory ? "Folder" : (item.name && typeof item.name === 'string' ? item.name.split('.').pop()?.toUpperCase() || 'FILE' : 'FILE')}
                         </span>
                         <h3 
-                          className="text-sm font-bold text-text-main truncate max-w-[140px]" 
+                          className="text-[13px] sm:text-sm font-bold text-text-main truncate max-w-[100px] sm:max-w-[140px]" 
                           title={item.name}
                         >
                           {item.name}

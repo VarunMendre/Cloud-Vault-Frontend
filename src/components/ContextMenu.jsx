@@ -33,14 +33,24 @@ function ContextMenu({
   const itemDisabled = "text-muted hover:bg-secondary/50 cursor-not-allowed opacity-50";
   const itemDanger = "text-red-500 hover:bg-red-50";
 
-  // Determine position style
+  // Determine position style — mobile-safe
   const MENU_HEIGHT_ESTIMATE = 280; 
   const MENU_WIDTH_ESTIMATE = 220;
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 480;
   const isNearBottom = typeof window !== 'undefined' && (contextMenuPos.y + MENU_HEIGHT_ESTIMATE > window.innerHeight);
   const isNearRight = typeof window !== 'undefined' && (contextMenuPos.x + MENU_WIDTH_ESTIMATE > window.innerWidth);
 
-  const menuStyle = {
-    left: isNearRight ? contextMenuPos.x - MENU_WIDTH_ESTIMATE : contextMenuPos.x,
+  // On mobile: center horizontally, anchor near bottom for thumb reach
+  // On desktop: position at cursor with overflow protection
+  const menuStyle = isMobile ? {
+    left: '50%',
+    transform: 'translateX(-50%)',
+    bottom: 16,
+    top: 'auto',
+    width: 'calc(100vw - 32px)',
+    maxWidth: 320,
+  } : {
+    left: isNearRight ? Math.max(8, contextMenuPos.x - MENU_WIDTH_ESTIMATE) : contextMenuPos.x,
     top: isNearBottom ? "auto" : contextMenuPos.y,
     bottom: isNearBottom ? (window.innerHeight - contextMenuPos.y) : "auto",
   };

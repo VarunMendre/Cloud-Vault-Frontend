@@ -36,7 +36,7 @@ const UploadToast = ({ uploadQueue, progressMap, isUploading, onCancel }) => {
   if (activeUploads.length === 0 && !showFinished) return null;
 
   return (
-    <div className="fixed bottom-8 right-8 z-[1000] w-[340px] bg-card rounded-[32px] shadow-strong border border-border overflow-hidden transition-all duration-500 transform translate-y-0 animate-slideIn">
+    <div className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 z-[1000] w-[calc(100vw-32px)] sm:w-[340px] bg-card rounded-[32px] shadow-strong border border-border overflow-hidden transition-all duration-500 transform translate-y-0 animate-slideIn">
       {/* Header */}
       <div className="bg-text-main px-6 py-4 flex flex-col relative overflow-hidden group">
         <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
