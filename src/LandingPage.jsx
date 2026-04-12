@@ -31,7 +31,15 @@ const LandingPage = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/login');
+    const isLandingDomain = 
+      window.location.hostname === "cloudvault.cloud" || 
+      window.location.hostname === "www.cloudvault.cloud";
+
+    if (isLandingDomain) {
+      window.location.href = "https://app.cloudvault.cloud/login";
+    } else {
+      navigate("/login");
+    }
   };
 
   // Double the images array for seamless infinite loop

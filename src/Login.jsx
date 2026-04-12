@@ -52,7 +52,7 @@ const Login = () => {
 
   const loginWithGitHubHandler = () => {
     setIsGithubLoading(true);
-    const CLIENT_ID = "Ov23lifBnGMie0EjK9Zz";
+    const CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
     window.location.assign(
       `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${window.location.origin}/github-callback&scope=read:user user:email`
     );
