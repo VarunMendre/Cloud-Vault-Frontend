@@ -60,6 +60,9 @@ function DirectoryView() {
   const [directoriesList, setDirectoriesList] = useState([]);
   const [filesList, setFilesList] = useState([]);
 
+  // Loading state
+  const [isLoading, setIsLoading] = useState(true);
+
   // Error state
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -145,6 +148,7 @@ function DirectoryView() {
    */
   async function getDirectoryItems() {
     setErrorMessage("");
+    setIsLoading(true);
     try {
       const response = await fetch(`${BASE_URL}/directory/${dirId || ""}`, {
         credentials: "include",
@@ -165,6 +169,8 @@ function DirectoryView() {
     } catch (error) {
       setErrorMessage(error.message);
       showToast(error.message, "error");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -1245,7 +1251,50 @@ function DirectoryView() {
       )}
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 pb-5 sm:pb-8">
-        {combinedItems.length === 0 ? (
+        {isLoading ? (
+          // ── Skeleton Loader ──────────────────────────────────────────
+          viewMode === "grid" ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 mt-5 sm:mt-8">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl border border-gray-200 overflow-hidden animate-pulse">
+                  <div className="p-4">
+                    <div className="w-12 h-12 rounded-xl bg-gray-100 mb-3" />
+                    <div className="h-3.5 bg-gray-100 rounded-full mb-2 w-3/4" />
+                    <div className="h-2.5 bg-gray-100 rounded-full mb-4 w-1/3" />
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <div className="h-2 bg-gray-100 rounded-full w-1/4" />
+                        <div className="h-2 bg-gray-100 rounded-full w-1/3" />
+                      </div>
+                      <div className="flex justify-between">
+                        <div className="h-2 bg-gray-100 rounded-full w-1/4" />
+                        <div className="h-2 bg-gray-100 rounded-full w-2/5" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex border-t border-gray-100">
+                    <div className="flex-1 py-3 bg-gray-50" />
+                    <div className="w-px bg-gray-100" />
+                    <div className="flex-1 py-3 bg-gray-50" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-1.5 mt-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-200 rounded-xl animate-pulse">
+                  <div className="w-9 h-9 rounded-lg bg-gray-100 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="h-3 bg-gray-100 rounded-full mb-1.5 w-2/5" />
+                    <div className="h-2 bg-gray-100 rounded-full w-3/5" />
+                  </div>
+                  <div className="w-5 h-5 rounded bg-gray-100 flex-shrink-0" />
+                </div>
+              ))}
+            </div>
+          )
+        ) : combinedItems.length === 0 ? (
           errorMessage ===
           "Directory not found or you do not have access to it!" ? (
             <p className="text-center text-gray-500 py-12">
@@ -1267,7 +1316,7 @@ function DirectoryView() {
               return (
                 <div
                   key={item.id}
-                  className="relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group flex flex-col"
+                  className="relative bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group flex flex-col"
                   onClick={() =>
                     !(activeContextMenu || isUploading) && handleRowClick(item)
                   }

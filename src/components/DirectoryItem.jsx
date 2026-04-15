@@ -51,7 +51,7 @@ function DirectoryItem({
 
   return (
     <div
-      className="relative flex items-center gap-3 px-4 py-3 bg-white border border-gray-100 rounded-xl cursor-pointer group transition-all duration-150 hover:bg-gray-50 hover:border-gray-200"
+      className="relative flex items-center gap-3 px-4 py-3 bg-white border border-gray-200 rounded-xl cursor-pointer group transition-all duration-150 hover:bg-gray-50 hover:border-gray-300"
       onClick={() =>
         !(activeContextMenu || isUploading)
           ? handleRowClick(item.isDirectory ? "directory" : "file", item.id)
