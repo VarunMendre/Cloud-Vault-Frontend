@@ -1009,10 +1009,15 @@ function DirectoryView() {
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
                 className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) 
-                  ? "bg-slate-300 cursor-not-allowed" 
-                  : "bg-button hover:bg-button-hover"
+                  ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())
+                  ? "bg-slate-300 cursor-not-allowed"
+                  : ""
                 }`}
+                style={
+                  !["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())
+                    ? { background: "linear-gradient(to right, #4F9FBC, #4593AD, #3A85A0)" }
+                    : undefined
+                }
               >
                 <Upload className="w-4 h-4" />
                 Upload Files {["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && "⚠️"}
@@ -1037,10 +1042,15 @@ function DirectoryView() {
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
                 className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) 
-                  ? "bg-slate-300 cursor-not-allowed" 
-                  : "bg-accent hover:bg-accent/90"
+                  ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())
+                  ? "bg-slate-300 cursor-not-allowed"
+                  : ""
                 }`}
+                style={
+                  !["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())
+                    ? { background: "linear-gradient(to right, #22C55E, #1DB854, #18A84A)" }
+                    : undefined
+                }
               >
                 <FolderPlus className="w-4 h-4" />
                 Create Directory {["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && "⚠️"}
@@ -1248,123 +1258,132 @@ function DirectoryView() {
             </p>
           )
         ) : viewMode === "grid" ? (
-          // Grid View
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-6 mt-5 sm:mt-8">
-            {combinedItems.map((item) => (
-              <div
-                key={item.id}
-                className="glass-card group flex flex-col justify-between overflow-hidden relative"
-                onClick={() =>
-                  !(activeContextMenu || isUploading) && handleRowClick(item)
-                }
-                onContextMenu={(e) => handleContextMenu(e, item.id)}
-              >
-                <div className="p-3 sm:p-5 flex-1 flex flex-col">
-                  {/* Top Row: Icon and Actions */}
-                  <div className="flex justify-between items-start mb-3 sm:mb-4">
-                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-                      <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex-shrink-0 flex items-center justify-center bg-secondary transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary/10">
-                        {getFileIcon(item)}
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold tracking-widest text-primary uppercase">
-                          {item.isDirectory ? "Folder" : (item.name && typeof item.name === 'string' ? item.name.split('.').pop()?.toUpperCase() || 'FILE' : 'FILE')}
+          // Grid View — clean card matching reference design
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 mt-5 sm:mt-8">
+            {combinedItems.map((item) => {
+              const gridExt = !item.isDirectory && item.name?.includes('.')
+                ? item.name.split('.').pop().toUpperCase()
+                : null;
+              return (
+                <div
+                  key={item.id}
+                  className="relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group flex flex-col"
+                  onClick={() =>
+                    !(activeContextMenu || isUploading) && handleRowClick(item)
+                  }
+                  onContextMenu={(e) => handleContextMenu(e, item.id)}
+                >
+                  <div className="p-4 flex-1">
+                    {/* File icon */}
+                    <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-3">
+                      {getFileIcon(item)}
+                    </div>
+
+                    {/* Filename */}
+                    <h3
+                      className="font-bold text-gray-900 text-sm leading-snug mb-2 line-clamp-2"
+                      title={item.name}
+                    >
+                      {item.name}
+                    </h3>
+
+                    {/* Extension / Folder badge */}
+                    {gridExt ? (
+                      <span className="inline-block px-2 py-0.5 text-[10px] font-semibold uppercase rounded-md bg-gray-100 text-gray-500 mb-3 tracking-wide">
+                        {gridExt}
+                      </span>
+                    ) : item.isDirectory ? (
+                      <span className="inline-block px-2 py-0.5 text-[10px] font-semibold uppercase rounded-md bg-blue-50 text-blue-500 mb-3 tracking-wide">
+                        Folder
+                      </span>
+                    ) : null}
+
+                    {/* Size & Modified rows */}
+                    <div className="space-y-1.5 mt-1">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-gray-400">Size</span>
+                        <span className="text-gray-600 font-medium">
+                          {item.isDirectory ? `${item.fileCount || 0} items` : formatSize(item.size)}
                         </span>
-                        <h3 
-                          className="text-[13px] sm:text-sm font-bold text-text-main truncate max-w-[100px] sm:max-w-[140px]" 
-                          title={item.name}
-                        >
-                          {item.name}
-                        </h3>
+                      </div>
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-gray-400">Modified</span>
+                        <span className="text-gray-600 font-medium">
+                          {new Date(item.updatedAt || item.createdAt).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                          })}
+                        </span>
                       </div>
                     </div>
-                    
+                  </div>
+
+                  {/* Footer action buttons */}
+                  <div className="flex border-t border-gray-100">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (!isRenaming) handleContextMenu(e, item.id);
+                        openDetailsPopup(item);
                       }}
-                      disabled={isRenaming}
-                      className="p-2 rounded-xl hover:bg-secondary text-muted hover:text-primary transition-all active:scale-95"
+                      className="flex-1 py-2.5 text-xs font-medium flex items-center justify-center gap-1.5 text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-all border-r border-gray-100"
                     >
-                      <MoreVertical className="w-5 h-5" />
+                      <Info className="w-3.5 h-3.5" />
+                      Details
                     </button>
+                    {!item.isDirectory ? (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const statusStr = String(user?.subscriptionStatus || '').toLowerCase().trim();
+                          if (['halted', 'expired', 'paused'].includes(statusStr)) {
+                            showToast('Access Restricted: Your subscription is currently paused.', 'warning');
+                            return;
+                          }
+                          window.location.href = `${BASE_URL}/file/${item.id}?action=download`;
+                        }}
+                        className="flex-1 py-2.5 text-xs font-medium flex items-center justify-center gap-1.5 text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-all"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        Download
+                      </button>
+                    ) : (
+                      <div className="flex-1" />
+                    )}
                   </div>
 
-                  {/* Body: Stats */}
-                  <div className="space-y-3 mt-auto">
-                    <div className="flex justify-between items-center bg-background/50 p-2 rounded-lg">
-                      <span className="text-[11px] font-semibold text-muted uppercase tracking-tighter">Size</span>
-                      <span className="text-xs font-bold text-text-main">
-                        {item.isDirectory ? `${item.fileCount || 0} items` : formatSize(item.size)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center bg-background/50 p-2 rounded-lg">
-                      <span className="text-[11px] font-semibold text-muted uppercase tracking-tighter">Modified</span>
-                      <span className="text-xs font-bold text-text-main">
-                        {new Date(item.updatedAt || item.createdAt).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Actions Footer */}
-                <div className="flex border-t border-border/50 bg-secondary/30">
+                  {/* 3-dot menu button (top-right) */}
                   <button
+                    className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-300 hover:text-gray-600 hover:bg-gray-100 transition-all active:scale-95 opacity-0 group-hover:opacity-100"
                     onClick={(e) => {
                       e.stopPropagation();
-                      openDetailsPopup(item);
+                      if (!isRenaming) handleContextMenu(e, item.id);
                     }}
-                    className="flex-1 py-3.5 text-xs font-bold flex items-center justify-center gap-2 hover:bg-white hover:text-primary transition-all text-text-main border-r border-border/50"
+                    disabled={isRenaming}
                   >
-                    <Info className="w-4 h-4" />
-                    Details
+                    <MoreVertical className="w-4 h-4" />
                   </button>
-                  
-                  {!item.isDirectory ? (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const statusStr = String(user?.subscriptionStatus || "").toLowerCase().trim();
-                        if (["halted", "expired", "paused"].includes(statusStr)) {
-                          showToast("Access Restricted: Your subscription is currently paused.", "warning");
-                          return;
-                        }
-                        window.location.href = `${BASE_URL}/file/${item.id}?action=download`;
-                      }}
-                      className="flex-1 py-3.5 text-xs font-bold flex items-center justify-center gap-2 hover:bg-white hover:text-button transition-all text-text-main"
-                    >
-                      <Download className="w-4 h-4" />
-                      Get File
-                    </button>
-                  ) : (
-                    <div className="flex-1 bg-secondary/10"></div>
+
+                  {/* Context menu (rendered via portal) */}
+                  {activeContextMenu === item.id && (
+                    <ContextMenu
+                      item={item}
+                      contextMenuPos={contextMenuPos}
+                      isUploadingItem={item.id.toString().startsWith('temp-')}
+                      handleCancelUpload={handleCancelUpload}
+                      handleDeleteFile={handleDeleteFile}
+                      handleDeleteDirectory={handleDeleteDirectory}
+                      openRenameModal={openRenameModal}
+                      handleShare={handleShare}
+                      openDetailsPopup={openDetailsPopup}
+                      BASE_URL={BASE_URL}
+                      subscriptionStatus={user?.subscriptionStatus}
+                      showToast={showToast}
+                    />
                   )}
                 </div>
-
-                {/* Context menu for grid view */}
-                {activeContextMenu === item.id && (
-                  <ContextMenu
-                    item={item}
-                    contextMenuPos={contextMenuPos}
-                    isUploadingItem={item.id.toString().startsWith("temp-")}
-                    handleCancelUpload={handleCancelUpload}
-                    handleDeleteFile={handleDeleteFile}
-                    handleDeleteDirectory={handleDeleteDirectory}
-                    openRenameModal={openRenameModal}
-                    handleShare={handleShare}
-                    openDetailsPopup={openDetailsPopup}
-                    BASE_URL={BASE_URL}
-                    subscriptionStatus={user?.subscriptionStatus}
-                    showToast={showToast}
-                  />
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           // List View

@@ -127,8 +127,8 @@ function App() {
   const { isAuthenticating } = useAuth();
 
   // Define public routes that shouldn't show the "Authenticating" overlay
-  const publicRoutes = ["/landing", "/privacy-policy", "/terms-of-service", "/refund-policy", "/contact-us"];
-  const isPublicPage = publicRoutes.includes(window.location.pathname);
+  const publicRoutes = ["/landing", "/login", "/register", "/privacy-policy", "/terms-of-service", "/refund-policy", "/contact-us", "/"];
+  const isPublicPage = publicRoutes.includes(window.location.pathname) || isLandingDomain;
 
   return (
     <>

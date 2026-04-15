@@ -159,138 +159,149 @@ function Price({ value }) {
 
 function PlanCard({ plan, onSelect, isLoading, isDisabled }) {
   const isFree = plan.price === 0;
+  const yearlyMonthly = plan.period === "/year" && plan.price !== 0 ? Math.floor(plan.price / 12) : plan.price;
 
   return (
     <div
       className={classNames(
-        "relative flex flex-col rounded-[32px] border-2 bg-card p-8 shadow-sm transition-all duration-500 overflow-hidden group",
-        "hover:shadow-2xl hover:-translate-y-2 hover:border-primary/20",
+        "relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md",
         plan.popular
-          ? "border-primary/30 ring-4 ring-primary/5"
-          : isFree 
-            ? "border-accent/30 ring-4 ring-accent/5"
-            : "border-border"
+          ? "ring-1"
+          : isFree
+          ? "border-green-500 ring-1 ring-green-500/20"
+          : "ring-1"
       )}
+      style={
+        plan.popular
+          ? { borderColor: "#66B2D6" }
+          : isFree
+          ? undefined
+          : { borderColor: "#D4AF37", "--tw-ring-color": "rgba(212,175,55,0.25)" }
+      }
     >
-        {plan.popular && (
-          <div className="absolute top-0 right-0">
-            <div className="bg-primary px-6 py-2 rounded-bl-3xl text-[10px] font-black text-white tracking-[0.2em] shadow-lg animate-pulse">
-              MOST POPULAR
-            </div>
-          </div>
-        )}
-      
+      {/* Popular badge */}
+      {plan.popular && (
+        <div
+          className="absolute -top-2 right-4 select-none rounded-full px-2 py-0.5 text-xs font-medium text-white shadow"
+          style={{ backgroundColor: "#66B2D6" }}
+        >
+          MOST POPULAR
+        </div>
+      )}
+      {/* Free / current plan badge */}
       {isFree && (
-        <div className="absolute top-0 right-0">
-          <div className="bg-accent px-6 py-2 rounded-bl-3xl text-[10px] font-black text-white tracking-[0.2em] shadow-lg">
-            CURRENT PLAN
-          </div>
+        <div className="absolute -top-2 right-4 select-none rounded-sm bg-green-600 px-2 py-0.5 text-[10px] font-bold text-white shadow">
+          CURRENT PLAN
         </div>
       )}
 
-      <div className="mb-8 mt-2">
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-4">
-             <div className={classNames(
-               "w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 shadow-inner",
-               isFree ? "bg-accent/10 text-accent" : plan.popular ? "bg-primary/10 text-primary" : "bg-secondary text-muted"
-             )}>
-                {isFree ? (
-                   <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 3l1.912 5.886h6.188l-5.007 3.638 1.913 5.887-5.006-3.639-5.006 3.639 1.913-5.887-5.007-3.638h6.188L12 3z" /></svg>
-                ) : plan.popular ? (
-                   <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
-                ) : (
-                   <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
-                )}
-             </div>
-             <div>
-               <h3 className="text-2xl font-black text-text-main tracking-tight leading-none mb-1">{plan.name}</h3>
-               <p className="text-xs font-black text-primary uppercase tracking-widest opacity-80">{plan.tagline}</p>
-             </div>
+      {/* Header */}
+      <div className="mb-3 flex items-center justify-between">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <div
+              className={classNames(
+                "p-1.5 rounded-lg",
+                isFree
+                  ? "bg-green-50 text-green-600"
+                  : plan.popular
+                  ? "bg-blue-50 text-blue-600"
+                  : "bg-slate-50 text-slate-600"
+              )}
+            >
+              {isFree ? (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3l1.912 5.886h6.188l-5.007 3.638 1.913 5.887-5.006-3.639-5.006 3.639 1.913-5.887-5.007-3.638h6.188L12 3z" /></svg>
+              ) : plan.popular ? (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" /></svg>
+              ) : (
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+              )}
+            </div>
+            <h3 className="text-lg font-bold text-slate-900">{plan.name}</h3>
           </div>
-          <p className="text-sm font-bold text-muted leading-relaxed min-h-[48px]">{plan.description}</p>
+          <p className="text-xs font-semibold" style={{ color: "#66B2D6" }}>
+            {plan.tagline}
+          </p>
+          <p className="text-[11px] text-slate-500 leading-tight">{plan.description}</p>
         </div>
       </div>
 
-      <div className="mb-10 flex flex-col gap-2">
-        <div className="flex items-end gap-2">
-          <Price value={plan.period === "/year" ? Math.floor(plan.price / 12) : plan.price} />
-          {plan.price !== 0 && (
-            <span className="mb-2 text-sm font-black text-muted uppercase tracking-tighter">/month</span>
+      {/* Price */}
+      <div className="mb-6 mt-2 flex flex-col gap-0.5">
+        <div className="flex items-end gap-1">
+          {yearlyMonthly === 0 ? (
+            <span className="text-4xl font-bold tracking-tight text-slate-900">Free</span>
+          ) : (
+            <>
+              <span className="text-lg font-semibold text-slate-700">₹</span>
+              <span className="text-4xl font-bold tracking-tight text-slate-900">{yearlyMonthly}</span>
+              <span className="mb-[6px] text-sm text-slate-500">/month</span>
+            </>
           )}
         </div>
         {plan.period === "/year" && plan.price !== 0 && (
-          <div className="flex flex-col gap-1 p-3 rounded-xl bg-accent/5 border border-accent/10 border-dashed">
-            <span className="text-[11px] text-muted font-bold">
-              Annual billing total: ₹{plan.price}
+          <div className="flex flex-col">
+            <span className="text-[11px] text-slate-500 font-medium">
+              Billed annually at ₹{plan.price}
             </span>
-            <span className="text-[11px] text-accent font-black tracking-tight">
-              PROMO: Save ₹{Math.floor(((PLAN_CATALOG.monthly.find(p => p.name === plan.name).price * 12) - plan.price))} yearly
+            <span className="text-[11px] text-green-600 font-bold mt-0.5">
+              Save ₹{(PLAN_CATALOG.monthly.find((p) => p.name === plan.name)?.price * 12) - plan.price} per year
             </span>
           </div>
         )}
       </div>
 
-      <div className="h-px bg-border/50 mb-10 w-full" />
+      <div className="h-px bg-slate-100 mb-6" />
 
+      {/* CTA Button */}
       <button
         onClick={() => !isFree && !isDisabled && onSelect?.(plan)}
         disabled={isDisabled || isFree}
-            className={classNames(
-              "mb-10 cursor-pointer inline-flex w-full items-center justify-center rounded-[20px] px-6 py-4.5 text-base font-black transition-all duration-300 shadow-lg active:scale-[0.98]",
-              isFree 
-                ? "bg-accent/10 border-2 border-accent/20 text-accent cursor-default shadow-none" 
-                : plan.popular
-                  ? "bg-primary text-white hover:bg-button-hover shadow-primary/20 hover:shadow-primary/30"
-                  : "bg-text-main text-white hover:bg-slate-800 shadow-slate-900/10 hover:shadow-slate-900/20"
-            )}
+        className={classNames(
+          "mb-6 cursor-pointer inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-bold transition focus:outline-none",
+          isFree
+            ? "bg-green-600 text-white hover:bg-green-700"
+            : plan.popular
+            ? "text-white hover:opacity-90"
+            : "bg-slate-900 text-white hover:bg-slate-800"
+        )}
+        style={plan.popular && !isFree ? { backgroundColor: "#66B2D6" } : undefined}
       >
         {isFree ? (
           <span className="flex items-center gap-2">
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4"><path d="M5 13l4 4L19 7" /></svg>
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"><path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" /></svg>
             Active Now
           </span>
         ) : isLoading ? (
-          <span className="flex items-center gap-3">
-            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <span className="flex items-center gap-2">
+            <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             Redirecting...
           </span>
         ) : (
-          <span className="flex items-center gap-2 uppercase tracking-widest">
-            {plan.cta}
-          </span>
+          plan.cta
         )}
       </button>
 
-      <div className="text-[10px] font-black text-muted/60 uppercase tracking-[0.2em] mb-6 px-1 flex items-center gap-2">
-        <span className="w-8 h-[2px] bg-border transition-all duration-500 group-hover:w-12 group-hover:bg-primary/30"></span>
-        Features
+      {/* Features list */}
+      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">
+        What's Included
       </div>
-      <ul className="space-y-4 text-sm font-bold text-text-main/80 px-1">
+      <ul className="space-y-3 text-[13px] text-slate-600">
         {plan.features.map((f, i) => (
-          <li key={i} className="flex items-center gap-3 group/item">
-            <div className={classNames(
-              "w-5 h-5 rounded-full flex items-center justify-center shrink-0 transition-all duration-300 group-hover/item:scale-110",
-              isFree ? "bg-accent/10 text-accent" : plan.popular ? "bg-primary/10 text-primary" : "bg-secondary text-muted"
-            )}>
-              <svg
-                className="h-3 w-3"
-                viewBox="0 0 24 24"
-                fill="none"
-                strokeWidth="4"
-                stroke="currentColor"
-              >
-                <path
-                  d="M5 13l4 4L19 7"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <span className="transition-colors group-hover/item:text-text-main">{f}</span>
+          <li key={i} className="flex items-start gap-2.5">
+            <svg
+              className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500"
+              viewBox="0 0 24 24"
+              fill="none"
+              strokeWidth="3.5"
+              stroke="currentColor"
+            >
+              <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span>{f}</span>
           </li>
         ))}
       </ul>
