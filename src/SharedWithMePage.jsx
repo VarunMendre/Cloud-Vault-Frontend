@@ -1,19 +1,23 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import DirectoryHeader from "./components/DirectoryHeader";
-import { 
-  ArrowLeft, 
-  FileText, 
-  Search, 
-  UserCircle, 
-  Download, 
-  Eye, 
-  AlertTriangle, 
-  X, 
-  Info 
+import {
+  FileText,
+  Search,
+  ArrowLeft,
+  ChevronRight,
+  Eye,
+  Download,
+  AlertTriangle,
+  Info,
+  X,
+  UserCircle,
+  ShieldCheck,
+  Globe,
+  Database,
+  Lock
 } from "lucide-react";
-import { Alert, AlertDescription } from "./components/lightswind/alert";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -30,7 +34,7 @@ function SharedWithMePage() {
 
   const showToast = (message, type = "info") => {
     setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "info" }), 3000);
+    setTimeout(() => setToast({ show: false, message: "", type: "info" }), 4000);
   };
 
   useEffect(() => {
@@ -48,6 +52,7 @@ function SharedWithMePage() {
       }
     } catch (err) {
       console.error("Error fetching shared files:", err);
+      showToast("Access Relay Interrupted", "warning");
     } finally {
       setLoading(false);
     }
@@ -55,7 +60,7 @@ function SharedWithMePage() {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString();
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   const formatFileSize = (bytes) => {
@@ -73,209 +78,185 @@ function SharedWithMePage() {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       <DirectoryHeader
-        directoryName="Shared With Me"
-        path={[]}
         userName={user?.name || "Guest User"}
-        userEmail={user?.email || "guest@example.com"}
-        userPicture={user?.picture}
+        userEmail={user?.email || ""}
+        userPicture={user?.picture || ""}
         userRole={user?.role || "User"}
+        subscriptionId={user?.subscriptionId}
+        subscriptionStatus={user?.subscriptionStatus || "active"}
       />
 
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-8">
-        {/* Header */}
-        <div className="mb-6">
-          <button
-            onClick={() => navigate("/share")}
-            className="flex items-center gap-2 mb-4 text-sm font-medium transition-colors"
-            style={{ color: '#66B2D6' }}
-            onMouseEnter={(e) => e.target.style.color = '#5aa0c0'}
-            onMouseLeave={(e) => e.target.style.color = '#66B2D6'}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </button>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <FileText className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold" style={{ color: '#2C3E50' }}>Files Shared with Me</h1>
-              <p className="text-sm" style={{ color: '#A3C5D9' }}>Access files others have shared with you</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 text-sm mt-2" style={{ color: '#A3C5D9' }}>
-            <span className="font-medium" style={{ color: '#66B2D6' }}>{filteredFiles.length} files</span>
-            <span>•</span>
-            <span>Last updated: {new Date().toLocaleDateString()}</span>
-          </div>
-        </div>
-
-        {/* Search and Filter */}
-        <div className="bg-white rounded-xl p-4 shadow-sm border mb-6" style={{ borderColor: '#D1DCE5' }}>
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: '#A3C5D9' }} />
-              <input
-                type="text"
-                placeholder="Search files or people..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 rounded-lg transition-all text-sm focus:outline-none"
-                style={{ 
-                  backgroundColor: '#fafdff', 
-                  borderColor: '#D1DCE5',
-                  color: '#2C3E50'
-                }}
-                onFocus={(e) => e.target.style.borderColor = '#66B2D6'}
-                onBlur={(e) => e.target.style.borderColor = '#D1DCE5'}
-              />
-            </div>
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 rounded-lg transition-all text-sm focus:outline-none"
-              style={{
-                backgroundColor: '#fafdff',
-                borderColor: '#D1DCE5',
-                color: '#2C3E50'
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#66B2D6'}
-              onBlur={(e) => e.target.style.borderColor = '#D1DCE5'}
+      <div className="max-w-7xl mx-auto px-4 pt-32 pb-16">
+        
+        {/* Header Section */}
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12">
+          <div>
+            <button
+              onClick={() => navigate("/")}
+              className="group flex items-center gap-2 mb-6 text-[10px] font-black text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-widest"
+              id="back-to-dashboard-btn"
             >
-              <option value="all">All Files (0)</option>
-              <option value="document">Documents</option>
-              <option value="image">Images</option>
-              <option value="video">Videos</option>
-            </select>
+              <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+              Primary Node
+            </button>
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-white rounded-[1.25rem] border border-gray-200 shadow-sm flex items-center justify-center rotate-3 group-hover:rotate-0 transition-transform">
+                <Globe className="w-7 h-7 text-[#66B2D6]" />
+              </div>
+              <div>
+                <h2 className="text-[10px] font-black text-[#66B2D6] uppercase tracking-[0.3em] mb-1">External Ingress</h2>
+                <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Shared Artifacts</h1>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-6">
+             <div className="text-right hidden sm:block">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Permissions</p>
+                <p className="text-sm font-bold text-gray-900">{filteredFiles.length} SHARED NODES</p>
+             </div>
+             <div className="h-10 w-px bg-gray-200 hidden sm:block" />
+             <div className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.1em]">SECURE ACCESS ACTIVE</span>
+             </div>
           </div>
         </div>
 
-        {/* Files List */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        {/* Console Controls */}
+        <div className="bg-white rounded-[2rem] p-6 border border-gray-200 shadow-sm mb-8 flex flex-col md:flex-row gap-6 items-center">
+          <div className="flex-1 w-full relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-[#66B2D6] transition-colors" />
+            <input
+              type="text"
+              id="artifact-search-input"
+              placeholder="Query registry metadata..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-2xl text-sm font-bold focus:outline-none focus:border-[#66B2D6]/30 focus:bg-white transition-all outline-none"
+            />
+          </div>
+          <div className="flex gap-4 w-full md:w-auto">
+            <div className="relative w-full md:w-56">
+                <select
+                  id="artifact-filter-select"
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="w-full pl-6 pr-10 py-4 bg-gray-50 border border-transparent rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-500 focus:outline-none focus:border-[#66B2D6]/30 transition-all outline-none cursor-pointer appearance-none"
+                >
+                  <option value="all">Global Shards</option>
+                  <option value="document">Text Assets</option>
+                  <option value="image">Visual Buffers</option>
+                  <option value="video">Motion Vectors</option>
+                </select>
+                <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 pointer-events-none rotate-90" />
+            </div>
+          </div>
+        </div>
+
+        {/* Shard Registry */}
+        <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-200 overflow-hidden">
           {loading ? (
-            <div className="flex items-center justify-center py-16">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="ml-3 text-gray-700">Loading...</span>
+            <div className="flex flex-col items-center justify-center py-32 gap-6">
+              <div className="w-12 h-12 border-4 border-gray-100 border-t-[#66B2D6] rounded-full animate-spin"></div>
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] animate-pulse">Syncing Permissions...</p>
             </div>
           ) : filteredFiles.length === 0 ? (
-            <div className="text-center py-16 px-6">
-              <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <UserCircle className="w-10 h-10 text-blue-300" />
+            <div className="text-center py-32 px-6">
+              <div className="w-24 h-24 bg-gray-50 border border-gray-100 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-inner">
+                <Lock className="w-10 h-10 text-gray-200" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No files shared with you</h3>
-              <p className="text-sm text-gray-500 max-w-md mx-auto">
-                When someone shares a file with you, it will appear here.
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Isolated Registry</h3>
+              <p className="text-sm font-medium text-gray-400 max-w-sm mx-auto leading-relaxed">
+                No external shards have been indexed. Artifacts shared by collaborators will materialize here.
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      File Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Shared By
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Shared Date
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Size
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Permission
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      Actions
-                    </th>
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="bg-gray-50/50 border-b border-gray-100">
+                    <th className="px-8 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Resource Shard</th>
+                    <th className="px-8 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Source Hub</th>
+                    <th className="px-8 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Indexing Date</th>
+                    <th className="px-8 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Payload</th>
+                    <th className="px-8 py-6 text-left text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Logic Access</th>
+                    <th className="px-8 py-6 text-right text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Operations</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {filteredFiles.map((file) => (
-                    <tr key={file.fileId} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <FileText className="w-4 h-4 text-blue-600" />
+                    <tr key={file.fileId} className="group hover:bg-gray-50/30 transition-colors">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-4">
+                          <div className="w-11 h-11 bg-white border border-gray-100 rounded-[1rem] flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                            <FileText className="w-5 h-5 text-[#66B2D6]" />
                           </div>
-                          <span className="text-sm font-medium text-gray-900 truncate">
+                          <span className="text-sm font-bold text-gray-900 truncate max-w-[200px]" title={file.fileName} id={`file-name-${file.fileId}`}>
                             {file.fileName}
                           </span>
                         </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-gray-700">{file.sharedBy}</span>
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-7 h-7 rounded-lg bg-gray-900 flex items-center justify-center text-[10px] font-black text-[#66B2D6]">
+                            {file.sharedBy.charAt(0).toUpperCase()}
+                          </div>
+                          <span className="text-xs font-bold text-gray-600">{file.sharedBy}</span>
+                        </div>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-gray-500">{formatDate(file.sharedAt)}</span>
+                      <td className="px-8 py-6">
+                        <span className="text-xs font-medium text-gray-400 tracking-wide">{formatDate(file.sharedAt)}</span>
                       </td>
-                      <td className="px-6 py-4">
-                        <span className="text-sm text-gray-500">{formatFileSize(file.size)}</span>
+                      <td className="px-8 py-6">
+                        <span className="text-xs font-black text-gray-900">{formatFileSize(file.size)}</span>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-8 py-6">
                         <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          className={`inline-flex items-center px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${
                             file.permission === "editor"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-blue-100 text-blue-800"
+                              ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
+                              : "bg-[#66B2D6]/10 text-[#66B2D6] border border-[#66B2D6]/20"
                           }`}
                         >
-                          {file.permission === "editor" ? "Editor" : "Viewer"}
+                          {file.permission}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-right">
+                      <td className="px-8 py-6 text-right">
                         <div className="flex justify-end gap-2">
                           <button 
+                            id={`preview-artifact-${file.fileId}`}
                             onClick={(e) => {
                               e.preventDefault();
-                              e.stopPropagation();
-                              
                               const statusStr = String(user?.subscriptionStatus || "").toLowerCase().trim();
-                              const isPaused = statusStr === "paused";
-                              console.log("SharedWithMe View - statusStr:", statusStr, "isPaused:", isPaused);
-                              
-                              if (isPaused) {
-                                showToast("Your subscription has been paused so you can't download or upload a file.", "warning");
-                                return false;
+                               if (statusStr === "halted" || statusStr === "expired") {
+                                showToast("Encryption Lockdown: Access Restored upon sync", "warning");
+                                return;
                               }
                               window.open(`${BASE_URL}/file/${file.fileId}`, '_blank');
                             }}
-                            className={`p-2 rounded-full transition-colors ${
-                              user?.subscriptionStatus?.toLowerCase() === "paused"
-                                ? "text-gray-400 cursor-not-allowed bg-gray-50"
-                                : "text-gray-500 hover:text-blue-600 hover:bg-blue-50"
-                            }`}
-                            title={user?.subscriptionStatus?.toLowerCase() === "paused" ? "Paused" : "View File"}
+                            className="p-3 text-gray-300 hover:text-gray-900 hover:bg-white rounded-xl transition-all border border-transparent hover:border-gray-100 hover:shadow-sm active:scale-95"
+                            title="Metadata Scan"
                           >
-                            <Eye className="w-5 h-5" />
+                            <Eye className="w-4.5 h-4.5" />
                           </button>
                           <button 
+                            id={`download-artifact-${file.fileId}`}
                             onClick={(e) => {
                               e.preventDefault();
-                              e.stopPropagation();
-                              
                               const statusStr = String(user?.subscriptionStatus || "").toLowerCase().trim();
-                              const isPaused = statusStr === "paused";
-                              console.log("SharedWithMe Download - statusStr:", statusStr, "isPaused:", isPaused);
-                              
-                              if (isPaused) {
-                                showToast("Your subscription has been paused so you can't download or upload a file.", "warning");
-                                return false;
+                              if (statusStr === "halted" || statusStr === "expired") {
+                                showToast("Egress Restricted: Node Synchronization Required", "warning");
+                                return;
                               }
                               window.location.href = `${BASE_URL}/file/${file.fileId}?action=download`;
                             }}
-                            className={`p-2 rounded-full transition-colors ${
-                              user?.subscriptionStatus?.toLowerCase() === "paused"
-                                ? "text-gray-400 cursor-not-allowed bg-gray-50"
-                                : "text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                            }`}
-                            title={user?.subscriptionStatus?.toLowerCase() === "paused" ? "Paused" : "Download File"}
+                            className="p-3 text-gray-300 hover:text-gray-900 hover:bg-white rounded-xl transition-all border border-transparent hover:border-gray-100 hover:shadow-sm active:scale-95"
+                            title="Secure Egress"
                           >
-                            <Download className="w-5 h-5" />
+                            <Download className="w-4.5 h-4.5" />
                           </button>
                         </div>
                       </td>
@@ -288,21 +269,23 @@ function SharedWithMePage() {
         </div>
       </div>
 
-      {/* Toast Notification */}
+      {/* Modern Notification Module */}
       {toast.show && (
-        <div className="fixed top-24 right-6 z-[100] max-w-sm w-full md:w-[380px]">
-          <Alert 
-            variant={toast.type === "error" ? "destructive" : toast.type === "warning" ? "warning" : "info"}
-            withIcon
-            duration={3000}
-            dismissible
-            onDismiss={() => setToast({ ...toast, show: false })}
-            className="bg-white/95 backdrop-blur-md shadow-2xl border-gray-100"
-          >
-            <AlertDescription className="font-semibold">
-              {toast.message}
-            </AlertDescription>
-          </Alert>
+        <div className="fixed bottom-10 right-10 z-[110] max-w-sm w-full animate-slideUp">
+          <div className="bg-white border border-gray-100 rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.2)] p-6 flex items-start gap-5 backdrop-blur-md">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${
+              toast.type === 'warning' ? 'bg-amber-50 text-amber-500 border-amber-100' : 'bg-[#66B2D6]/10 text-[#66B2D6] border-[#66B2D6]/20'
+            }`}>
+              {toast.type === 'warning' ? <AlertTriangle className="w-6 h-6" /> : <Info className="w-6 h-6" />}
+            </div>
+            <div className="flex-1 pt-1">
+              <p className="text-sm font-black text-gray-900 uppercase tracking-widest leading-tight">Protocol Alert</p>
+              <p className="text-xs font-bold text-gray-400 mt-1 uppercase tracking-wider">{toast.message}</p>
+            </div>
+            <button onClick={() => setToast({ ...toast, show: false })} className="text-gray-300 hover:text-gray-900 transition-colors p-1">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       )}
     </div>

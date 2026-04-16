@@ -15,6 +15,9 @@ import {
   Database,
   Calendar,
   Clock,
+  Shield,
+  ChevronRight,
+  Info
 } from "lucide-react";
 
 export const formatSize = (bytes) => {
@@ -76,7 +79,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
         }
       } catch (err) {
         console.error("Failed to fetch details", err);
-        setDetails((prev) => ({ ...prev, path: "Error fetching path" }));
+        setDetails((prev) => ({ ...prev, path: "Error fetching registry path" }));
       }
     }
     fetchDetails();
@@ -95,7 +98,7 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
   };
 
   const getIcon = (type) => {
-    const cls = "w-7 h-7";
+    const cls = "w-6 h-6";
     switch (type) {
       case "folder":  return <Folder    className={cls} style={{ color: "#66B2D6" }} />;
       case "image":   return <ImageIcon  className={cls} style={{ color: "#9333EA" }} />;
@@ -120,100 +123,107 @@ function DetailsPopup({ item, onClose, BASE_URL, subscriptionStatus, showToast }
     window.location.href = `${BASE_URL}/file/${item.id}?action=download`;
   };
 
-  const Row = ({ label, value }) => (
-    <div className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
-      <span className="text-xs text-gray-400 font-medium w-24 flex-shrink-0">{label}</span>
-      <span className="text-xs text-gray-800 font-semibold text-right break-all leading-relaxed ml-2">{value}</span>
+  const DetailRow = ({ label, value, icon: Icon }) => (
+    <div className="flex items-start justify-between py-4 border-b border-gray-100 last:border-0 group/row">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0 group-hover/row:border-[#66B2D6]/30 transition-colors">
+           <Icon className="w-3.5 h-3.5 text-gray-400 group-hover/row:text-[#66B2D6] transition-colors" />
+        </div>
+        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{label}</span>
+      </div>
+      <span className="text-xs font-bold text-gray-900 text-right break-all max-w-[180px] leading-relaxed ml-4">{value}</span>
     </div>
   );
 
   const modal = (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,0.35)", backdropFilter: "blur(4px)" }}
+      className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-md animate-fadeIn"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm flex flex-col overflow-hidden animate-scaleIn"
-        style={{ border: "1px solid #e5e7eb" }}
+        className="bg-white rounded-[2.5rem] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.3)] w-full max-w-sm flex flex-col overflow-hidden animate-scaleIn border border-gray-100"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            {/* File icon */}
-            <div className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0">
-              {getIcon(itemType)}
+        {/* Header Section */}
+        <div className="bg-gray-50/50 p-8 border-b border-gray-100 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#66B2D6]/5 rounded-bl-[4rem] -z-10" />
+            
+            <div className="flex items-start justify-between gap-4 mb-6">
+                 <div className="w-16 h-16 rounded-[1.5rem] bg-white border border-gray-100 shadow-sm flex items-center justify-center shrink-0 transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+                    {getIcon(itemType)}
+                 </div>
+                 <button
+                    onClick={onClose}
+                    className="p-2 rounded-xl text-gray-300 hover:text-gray-900 hover:bg-white border border-transparent hover:border-gray-100 transition-all active:scale-95"
+                 >
+                    <X className="w-5 h-5" />
+                 </button>
             </div>
-            <div className="min-w-0">
-              <p className="font-bold text-gray-900 text-sm truncate max-w-[180px]" title={name}>
-                {name}
-              </p>
-              {ext ? (
-                <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-gray-100 text-gray-500 tracking-wide">
-                  {ext}
-                </span>
-              ) : (
-                <span className="inline-block mt-0.5 px-1.5 py-0.5 text-[9px] font-bold uppercase rounded bg-blue-50 text-blue-500 tracking-wide">
-                  Folder
-                </span>
-              )}
+
+            <div className="space-y-1">
+                <p className="text-[10px] font-black text-[#66B2D6] uppercase tracking-[0.3em]">Metadata Registry</p>
+                <h3 className="text-xl font-black text-gray-900 tracking-tight break-all line-clamp-2 leading-tight" title={name}>
+                    {name}
+                </h3>
             </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all flex-shrink-0"
-          >
-            <X className="w-4 h-4" />
-          </button>
         </div>
 
-        {/* Details rows */}
-        <div className="px-5 py-2 overflow-y-auto" style={{ maxHeight: "60vh" }}>
-          {!isDirectory && (
-            <Row label="Size" value={formatSize(size || 0)} />
-          )}
-          {isDirectory && (
-            <>
-              <Row label="Files" value={String(numberOfFiles)} />
-              <Row label="Folders" value={String(numberOfFolders)} />
-            </>
-          )}
-          <Row
-            label="Created"
-            value={new Date(createdAt).toLocaleString("en-US", {
-              month: "short", day: "numeric", year: "numeric",
-              hour: "2-digit", minute: "2-digit", hour12: true,
-            })}
-          />
-          <Row
-            label="Modified"
-            value={new Date(updatedAt).toLocaleString("en-US", {
-              month: "short", day: "numeric", year: "numeric",
-              hour: "2-digit", minute: "2-digit", hour12: true,
-            })}
-          />
-          <Row label="Location" value={path} />
+        {/* Content Section */}
+        <div className="p-8 overflow-y-auto" style={{ maxHeight: "40vh" }}>
+           {!isDirectory && (
+             <DetailRow label="Payload Size" value={formatSize(size || 0)} icon={Database} />
+           )}
+           {isDirectory && (
+             <>
+               <DetailRow label="Asset Cluster" value={`${numberOfFiles} Files`} icon={File} />
+               <DetailRow label="Resource Nodes" value={`${numberOfFolders} Folders`} icon={Folder} />
+             </>
+           )}
+           <DetailRow
+             label="Deployment"
+             icon={Calendar}
+             value={new Date(createdAt).toLocaleString("en-US", {
+               month: "short", day: "numeric", year: "numeric",
+               hour: "2-digit", minute: "2-digit",
+             })}
+           />
+           <DetailRow
+             label="Sync Cycle"
+             icon={Clock}
+             value={new Date(updatedAt).toLocaleString("en-US", {
+               month: "short", day: "numeric", year: "numeric",
+               hour: "2-digit", minute: "2-digit",
+             })}
+           />
+           <DetailRow label="Grid Location" icon={MapPin} value={path} />
         </div>
 
-        {/* Footer */}
-        <div className="flex gap-2 px-5 py-4 border-t border-gray-100 bg-gray-50/60">
-          {!isDirectory && (
-            <button
-              onClick={handleDownload}
-              className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold text-gray-700 bg-white border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all"
-            >
-              <Download className="w-3.5 h-3.5" />
-              Download
-            </button>
-          )}
-          <button
-            onClick={onClose}
-            className="flex-1 py-2 rounded-lg text-xs font-semibold text-white transition-all"
-            style={{ backgroundColor: "#66B2D6" }}
-          >
-            Close
-          </button>
+        {/* Footer Section */}
+        <div className="p-8 pt-0">
+            <div className="flex flex-col gap-3">
+                {!isDirectory && (
+                    <button
+                        onClick={handleDownload}
+                        className="w-full flex items-center justify-center gap-3 py-4 bg-gray-900 border border-transparent rounded-[1.25rem] text-xs font-black text-white uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-gray-200 group/btn"
+                    >
+                        <Download className="w-4 h-4 text-[#66B2D6] group-hover/btn:translate-y-0.5 transition-transform" />
+                        Secure Egress Extract
+                    </button>
+                )}
+                <button
+                    onClick={onClose}
+                    className="w-full py-4 bg-white border border-gray-200 rounded-[1.25rem] text-xs font-black text-gray-400 uppercase tracking-widest hover:text-gray-900 hover:border-gray-900 transition-all font-bold"
+                >
+                    Inactivate Focus
+                </button>
+            </div>
+            
+            <div className="mt-8 flex items-center justify-center gap-2">
+                 <Shield className="w-3 h-3 text-emerald-500" />
+                 <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest whitespace-nowrap">
+                   Secure Infrastructure Node
+                 </span>
+            </div>
         </div>
       </div>
     </div>
