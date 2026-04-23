@@ -1,70 +1,55 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import DirectoryHeader, { BASE_URL } from "./components/DirectoryHeader";
 import {
   ArrowLeft,
-  Upload,
-  Eye,
-  EyeOff,
-  LogOut,
   Camera,
-  Edit3,
-  Save,
+  Edit2,
+  Check,
   X,
   Shield,
   User,
-  Lock,
   HardDrive,
-  ChevronDown,
+  LogOut,
+  CheckCircle2,
+  Key,
   Database,
-  ShieldCheck,
-  Check,
-  Info,
-  Loader2,
-  ExternalLink,
+  Eye,
+  EyeOff,
   ChevronRight,
   ShieldAlert,
-  Zap,
-  ArrowRight,
-  Activity,
-  UserCheck,
-  Globe,
-  RefreshCw,
-  Clock,
-  Key
+  Loader2,
+  AlertTriangle
 } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
-import { Alert, AlertDescription, AlertTitle } from "./components/lightswind/alert";
 import { PasswordStrengthIndicator } from "./components/lightswind/password-strength-indicator";
 
-/* ─── Shared UI Components ─────────────────────────────────────────── */
-
 const Card = ({ children, className = "" }) => (
-    <div className={`bg-white rounded-[2rem] border border-gray-200 shadow-sm overflow-hidden ${className}`}>
-        {children}
-    </div>
+  <div className={`bg-white rounded-[16px] border border-[#E2E8F0] shadow-sm p-6 ${className}`}>
+    {children}
+  </div>
 );
 
-const SectionHeader = ({ icon: Icon, title, subtitle }) => (
-    <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/30 flex items-center gap-4">
-        <div className="w-10 h-10 rounded-xl bg-white border border-gray-100 flex items-center justify-center text-[#66B2D6] shadow-sm">
-            <Icon className="w-5 h-5" />
-        </div>
-        <div>
-            <h3 className="text-[10px] font-black text-[#66B2D6] uppercase tracking-[0.2em] mb-0.5">{title}</h3>
-            <p className="text-xs font-bold text-gray-900 tracking-tight">{subtitle}</p>
-        </div>
-    </div>
+const SectionHeader = ({ title, description }) => (
+  <div className="mb-6">
+    <h3 className="text-[18px] font-bold text-[#1A202C]">{title}</h3>
+    {description && <p className="text-[14px] text-[#718096] mt-1">{description}</p>}
+  </div>
 );
 
 const Label = ({ children }) => (
-    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">
-        {children}
-    </label>
+  <label className="block text-[14px] font-semibold text-[#1A202C] mb-2">
+    {children}
+  </label>
 );
 
-function UserSettings() {
+const inputCls = "w-full px-4 py-2.5 bg-[#F0F2F5] border border-transparent rounded-[10px] text-[15px] text-[#1A202C] focus:outline-none focus:border-[#2D8B8B] focus:bg-white transition-all placeholder:text-[#718096]";
+const btnPrimaryCls = "px-5 py-2.5 bg-[#2D8B8B] text-white rounded-[10px] text-[14px] font-semibold hover:bg-[#1A7A7A] transition-colors flex items-center justify-center gap-2 disabled:opacity-50";
+const btnSecondaryCls = "px-5 py-2.5 bg-white border border-[#E2E8F0] text-[#1A202C] rounded-[10px] text-[14px] font-semibold hover:bg-[#F0F2F5] transition-colors flex items-center justify-center gap-2 disabled:opacity-50";
+const btnDangerCls = "px-5 py-2.5 bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] rounded-[10px] text-[14px] font-semibold hover:bg-[#FEE2E2] transition-colors flex items-center justify-center gap-2";
+
+export default function UserSettings() {
   const { user, refreshUser } = useAuth();
   const navigate = useNavigate();
 
@@ -72,8 +57,6 @@ function UserSettings() {
   const [profileName, setProfileName] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
   const [updatingProfile, setUpdatingProfile] = useState(false);
-  const [profileSuccess, setProfileSuccess] = useState("");
-  const [profileError, setProfileError] = useState("");
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState("");
 
@@ -94,7 +77,6 @@ function UserSettings() {
   // UI states
   const [loading, setLoading] = useState(true);
   const [passwordError, setPasswordError] = useState("");
-  const [success, setSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
   
   // Custom modal states
@@ -104,6 +86,7 @@ function UserSettings() {
 
   // Tab navigation
   const [activeTab, setActiveTab] = useState("profile");
+  const fileInputRef = useRef(null);
 
   const showNotify = (message, type = "success") => {
     setShowNotification({ show: true, message, type });
@@ -112,11 +95,9 @@ function UserSettings() {
 
   // Format storage size helper
   const formatStorage = (bytes) => {
-    const MB = 1024 * 1024;
-    const GB = 1024 * 1024 * 1024;
-    if (bytes >= GB) return `${(bytes / GB).toFixed(2)} GB`;
-    if (bytes >= MB) return `${(bytes / MB).toFixed(2)} MB`;
-    return `${(bytes / 1024).toFixed(2)} KB`;
+    if (bytes === 0) return "0 Bytes";
+    const k = 1024, dm = 2, sizes = ["Bytes", "KB", "MB", "GB", "TB"], i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   };
 
   const usagePercentage = Math.min((usedStorageInBytes / maxStorageLimit) * 100, 100);
@@ -164,7 +145,7 @@ function UserSettings() {
     const file = e.target.files[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      showNotify("Invalid asset type. Image required.", "error");
+      showNotify("Please upload a valid image file.", "error");
       return;
     }
     setUpdatingProfile(true);
@@ -179,17 +160,21 @@ function UserSettings() {
         body: JSON.stringify({ picture: key }),
       });
       if (updateRes.ok) {
-        showNotify("Biometric asset updated");
+        showNotify("Profile picture updated successfully");
         refreshUser();
       }
     } catch (err) {
-      showNotify("Asset deployment failed", "error");
+      showNotify("Failed to upload profile picture", "error");
     } finally {
       setUpdatingProfile(false);
     }
   };
 
   const handleSaveName = async () => {
+    if (!tempName.trim()) {
+       showNotify("Name cannot be empty", "error");
+       return;
+    }
     setUpdatingProfile(true);
     try {
       const response = await fetch(`${BASE_URL}/user/profile`, {
@@ -201,11 +186,11 @@ function UserSettings() {
       if (response.ok) {
         setProfileName(tempName);
         setIsEditingName(false);
-        showNotify("Identity re-indexed");
+        showNotify("Profile name updated successfully");
         refreshUser();
       }
     } catch (err) {
-      showNotify("Naming protocol failure", "error");
+      showNotify("Failed to update profile name", "error");
     } finally {
       setUpdatingProfile(false);
     }
@@ -214,11 +199,11 @@ function UserSettings() {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (newPassword.length < 4) {
-      setPasswordError("Complexity insufficient (min 4 chars)");
+      setPasswordError("Password must be at least 4 characters long");
       return;
     }
     if (newPassword !== confirmPassword) {
-      setPasswordError("Verification mismatch");
+      setPasswordError("New passwords do not match");
       return;
     }
     setPendingPasswordData({ currentPassword, newPassword });
@@ -241,13 +226,13 @@ function UserSettings() {
       if (response.ok) {
         setHasPassword(true);
         setCurrentPassword(""); setNewPassword(""); setConfirmPassword("");
-        showNotify("Security protocols synchronized");
+        showNotify("Password updated successfully");
       } else {
         const data = await response.json();
-        setPasswordError(data.message || "Protocol reject: Invalid credentials");
+        setPasswordError(data.message || "Failed to update password");
       }
     } catch (err) {
-      setPasswordError("Security relay interrupted");
+      setPasswordError("An error occurred while updating the password");
     } finally {
       setSubmitting(false);
     }
@@ -259,31 +244,30 @@ function UserSettings() {
   };
 
   const handleLogoutAll = async () => {
-    await fetch(`${BASE_URL}/user/logout-all`, { method: "POST", credentials: "include" });
-    navigate("/login");
+    if (window.confirm("Are you sure you want to log out of all devices?")) {
+      await fetch(`${BASE_URL}/user/logout-all`, { method: "POST", credentials: "include" });
+      navigate("/login");
+    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-4 border-gray-100 border-t-[#66B2D6] rounded-full animate-spin"></div>
-        <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] animate-pulse">Syncing Core Assets...</p>
+      <div className="min-h-screen bg-[#F0F2F5] flex flex-col items-center justify-center gap-4">
+        <Loader2 className="w-8 h-8 text-[#2D8B8B] animate-spin" />
       </div>
     );
   }
 
   const tabs = [
-    { id: "profile", label: "Identity Hub", icon: User },
-    { id: "security", label: "Security Protocol", icon: ShieldCheck },
-    { id: "storage", label: "Infrastructure", icon: HardDrive },
+    { id: "profile", label: "Profile", icon: User },
+    { id: "security", label: "Security", icon: Shield },
+    { id: "storage", label: "Storage", icon: HardDrive },
   ];
 
-  const inputCls = "w-full pl-6 pr-4 py-4 bg-gray-50 border border-transparent rounded-2xl text-[11px] font-black uppercase tracking-widest focus:outline-none focus:border-[#66B2D6]/30 focus:bg-white transition-all outline-none placeholder:text-gray-300";
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F0F2F5] font-sans text-[#1A202C]">
       <DirectoryHeader
-        userName={user?.name || "Guest User"}
+        userName={user?.name || "User"}
         userEmail={user?.email || ""}
         userPicture={user?.picture || ""}
         userRole={user?.role || "User"}
@@ -291,213 +275,184 @@ function UserSettings() {
         subscriptionStatus={user?.subscriptionStatus || "active"}
       />
 
-      <div className="max-w-7xl mx-auto px-4 pt-32 pb-16">
+      <div className="max-w-[1000px] mx-auto px-6 py-8 mt-16">
         
-        {/* Dynamic Header Section */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
-            <div>
-                <button 
-                  onClick={() => navigate("/")}
-                  className="flex items-center gap-2 mb-8 text-[10px] font-black text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-widest group"
-                >
-                  <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
-                  Primary Node
-                </button>
-                <div className="flex items-center gap-5">
-                    <div className="w-16 h-16 bg-white rounded-[1.5rem] border border-gray-200 shadow-sm flex items-center justify-center rotate-3 hover:rotate-0 transition-transform duration-500">
-                         <Zap className="w-8 h-8 text-[#66B2D6]" />
-                    </div>
-                    <div>
-                        <h2 className="text-[10px] font-black text-[#66B2D6] uppercase tracking-[0.4em] mb-1">Vault Console</h2>
-                        <h1 className="text-4xl font-black text-gray-900 tracking-tight">System Registry</h1>
-                    </div>
-                </div>
-            </div>
-            
-            <div className="inline-flex p-1.5 bg-white border border-gray-200 rounded-[1.5rem] shadow-sm">
-                {tabs.map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
-                        className={`px-8 py-3 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all flex items-center gap-3 ${
-                            activeTab === tab.id 
-                            ? "bg-gray-900 text-white shadow-xl scale-105" 
-                            : "text-gray-400 hover:text-gray-900 hover:bg-gray-50"
-                        }`}
-                        id={`tab-nav-${tab.id}`}
-                    >
-                        <tab.icon className={`w-3.5 h-3.5 ${activeTab === tab.id ? 'text-[#66B2D6]' : ''}`} />
-                        <span className="hidden sm:inline">{tab.label}</span>
-                    </button>
-                ))}
-            </div>
+        {/* Breadcrumb & Title */}
+        <div className="mb-8">
+            <button 
+                onClick={() => navigate("/")}
+                className="flex items-center text-[13px] text-[#4A5568] hover:text-[#1A202C] transition-colors mb-4 gap-1 w-fit"
+            >
+                <ArrowLeft className="w-3.5 h-3.5" /> Back to Drive
+            </button>
+            <h1 className="text-[28px] font-bold text-[#1A202C]">User Settings</h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+        <div className="flex flex-col md:flex-row gap-8 items-start">
             
-            {/* Left Column: Biometric Snapshot */}
-            <div className="lg:col-span-1 space-y-6 lg:sticky lg:top-32">
-                <Card className="p-8">
-                    <div className="relative mb-10 flex justify-center group">
-                        <div className="w-32 h-32 rounded-[2.5rem] bg-gray-50 border-2 border-dashed border-gray-200 overflow-hidden shadow-inner flex items-center justify-center relative transform rotate-1 group-hover:rotate-0 transition-all duration-500">
-                            {profilePicture ? (
-                                <img src={profilePicture} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-110" />
-                            ) : (
-                                <User className="w-12 h-12 text-gray-200" />
-                            )}
-                            <button 
-                                onClick={() => document.getElementById('biometric-uploader').click()}
-                                className="absolute inset-0 bg-gray-900/60 opacity-0 group-hover:opacity-100 transition-all flex flex-col items-center justify-center gap-2 backdrop-blur-sm"
-                            >
-                                <Camera className="w-6 h-6 text-[#66B2D6]" />
-                                <span className="text-[8px] font-black text-white uppercase tracking-widest">Update Binary</span>
-                            </button>
-                        </div>
-                        <input id="biometric-uploader" type="file" className="hidden" onChange={handleFileChange} />
-                        
-                        <div className="absolute -bottom-2 -right-2 bg-white p-2 rounded-xl shadow-lg border border-gray-100">
-                             <ShieldCheck className="w-5 h-5 text-emerald-500" />
-                        </div>
-                    </div>
-
-                    <div className="text-center mb-10">
-                        <h2 className="text-2xl font-black text-gray-900 tracking-tight leading-tight mb-2 truncate">{profileName}</h2>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-50 border border-gray-100 rounded-full">
-                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">Operational Phase</p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4 pt-8 border-t border-gray-100">
-                        <div className="flex items-center justify-between">
-                            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Registry ID</span>
-                            <span className="text-[10px] font-bold text-gray-900 font-mono">#{user?._id?.slice(-8).toUpperCase() || "GRID-NODE"}</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Uptime</span>
-                            <span className="text-[10px] font-bold text-gray-900">99.9%</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Protocol</span>
-                            <span className="text-[10px] font-black text-[#66B2D6] uppercase tracking-widest">{user?.role || "User"} Unit</span>
-                        </div>
-                    </div>
+            {/* Sidebar Navigation */}
+            <div className="w-full md:w-[260px] shrink-0 space-y-6">
+                <Card className="p-4 flex flex-col gap-2">
+                   {tabs.map((tab) => {
+                       const isActive = activeTab === tab.id;
+                       return (
+                           <button
+                               key={tab.id}
+                               onClick={() => setActiveTab(tab.id)}
+                               className={`w-full flex items-center gap-3 px-4 py-3 rounded-[10px] text-[14px] font-semibold transition-all ${
+                                   isActive ? 'bg-[#F7FFFE] text-[#2D8B8B] border border-[#A8D8D8]' : 'text-[#718096] hover:bg-[#F0F2F5] border border-transparent'
+                               }`}
+                           >
+                               <tab.icon className={`w-4 h-4 ${isActive ? 'text-[#2D8B8B]' : 'text-[#718096]'}`} />
+                               {tab.label}
+                           </button>
+                       );
+                   })}
                 </Card>
-                
-                <Card className="p-8 bg-gray-900 border-none relative overflow-hidden group">
-                     <div className="absolute top-0 right-0 w-24 h-24 bg-[#66B2D6]/10 rounded-bl-[4rem] group-hover:scale-150 transition-transform duration-700" />
-                     <h3 className="text-[10px] font-black text-[#66B2D6] uppercase tracking-[0.3em] mb-4">Infrastructure Status</h3>
-                     <div className="space-y-4">
-                         <div className="flex justify-between items-end mb-2">
-                             <p className="text-2xl font-black text-white leading-none">{formatStorage(usedStorageInBytes)}</p>
-                             <p className="text-[9px] font-black text-gray-500 uppercase">Used dividend</p>
-                         </div>
-                         <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                             <div className="h-full bg-[#66B2D6] rounded-full shadow-[0_0_12px_rgba(102,178,214,0.3)] transition-all duration-1000" style={{ width: `${usagePercentage}%` }} />
-                         </div>
-                         <p className="text-[9px] font-black text-gray-500 uppercase tracking-widest text-center mt-3">Capactity: {formatStorage(maxStorageLimit)}</p>
-                     </div>
+
+                {/* Storage Mini Widget */}
+                <Card className="p-5">
+                    <h4 className="text-[14px] font-semibold mb-3">Storage Link</h4>
+                    <div className="h-2 w-full bg-[#E2E8F0] rounded-full overflow-hidden mb-2">
+                        <div 
+                           className="h-full bg-[#2D8B8B] rounded-full transition-all duration-500" 
+                           style={{ width: `${usagePercentage}%` }} 
+                        />
+                    </div>
+                    <div className="flex justify-between text-[12px] text-[#718096]">
+                        <span>{formatStorage(usedStorageInBytes)}</span>
+                        <span>{formatStorage(maxStorageLimit)}</span>
+                    </div>
                 </Card>
             </div>
 
-            {/* Right Column: Dynamic Content Panels */}
-            <div className="lg:col-span-3 space-y-8">
+            {/* Main Content Area */}
+            <div className="flex-1 w-full space-y-6">
                 
-                {/* ── PROFILE HUB ────────────────────────────────────────── */}
+                {/* ── PROFILE TAB ────────────────────────────────────────── */}
                 {activeTab === "profile" && (
-                    <div className="space-y-8 animate-fadeIn">
+                    <div className="animate-fadeIn space-y-6">
                         <Card>
-                            <SectionHeader icon={Info} title="Identity Meta" subtitle="Synchronize your personal identification assets" />
-                            <div className="p-10 space-y-10">
+                            <SectionHeader title="Profile Picture" description="Update your personal photo identifying your account." />
+                            <div className="flex items-center gap-6">
+                                <div className="relative group">
+                                    <div className="w-20 h-20 rounded-full bg-[#F0F2F5] border border-[#E2E8F0] overflow-hidden flex items-center justify-center">
+                                        {profilePicture ? (
+                                            <img src={profilePicture} alt="Avatar" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <User className="w-8 h-8 text-[#A0AEC0]" />
+                                        )}
+                                    </div>
+                                    <button 
+                                        onClick={() => fileInputRef.current?.click()}
+                                        disabled={updatingProfile}
+                                        className="absolute bottom-0 right-0 p-1.5 bg-[#2D8B8B] text-white rounded-full shadow-sm hover:scale-110 transition-transform disabled:opacity-50"
+                                    >
+                                        <Camera className="w-3.5 h-3.5" />
+                                    </button>
+                                </div>
+                                <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                                 <div>
-                                    <Label>Registry Identifier</Label>
-                                    <div className="relative group">
+                                    <p className="text-[14px] text-[#1A202C] font-semibold mb-1">Upload a new picture</p>
+                                    <p className="text-[12px] text-[#718096]">JPEG or PNG, less than 5MB.</p>
+                                </div>
+                            </div>
+                        </Card>
+
+                        <Card>
+                            <SectionHeader title="User Information" description="Manage your basic account details." />
+                            <div className="space-y-6 max-w-lg">
+                                <div>
+                                    <Label>Username</Label>
+                                    <div className="flex gap-3">
                                         <input 
                                             type="text" 
                                             value={tempName} 
                                             onChange={(e) => setTempName(e.target.value)}
                                             disabled={!isEditingName || updatingProfile}
-                                            className={`${inputCls} group-hover:border-[#66B2D6]/20 ${isEditingName ? 'border-[#66B2D6]' : ''}`}
-                                            id="identity-identifier-input"
+                                            className={`${inputCls} flex-1 ${!isEditingName && 'bg-white border-[#E2E8F0]'}`}
                                         />
-                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                                            {!isEditingName ? (
-                                                <button onClick={() => setIsEditingName(true)} className="p-2.5 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-gray-900 transition-all shadow-sm">
-                                                    <Edit3 className="w-4 h-4" />
+                                        {!isEditingName ? (
+                                            <button onClick={() => setIsEditingName(true)} className={btnSecondaryCls}>
+                                                <Edit2 className="w-4 h-4" /> Edit
+                                            </button>
+                                        ) : (
+                                            <div className="flex gap-2">
+                                                <button onClick={handleSaveName} disabled={updatingProfile} className={btnPrimaryCls}>
+                                                    {updatingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
                                                 </button>
-                                            ) : (
-                                                <div className="flex items-center gap-2">
-                                                    <button onClick={handleSaveName} disabled={updatingProfile} className="p-2.5 bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-500/20 hover:bg-emerald-600 transition-all flex items-center gap-2">
-                                                        {updatingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                                                    </button>
-                                                    <button onClick={() => { setIsEditingName(false); setTempName(profileName); }} className="p-2.5 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-gray-900 transition-all">
-                                                        <X className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
+                                                <button onClick={() => { setIsEditingName(false); setTempName(profileName); }} className={btnSecondaryCls}>
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                                 
                                 <div>
-                                    <Label>Node Address (Read Only)</Label>
-                                    <div className="px-6 py-5 bg-gray-50 border border-gray-100 rounded-2xl flex items-center justify-between">
-                                         <span className="text-sm font-bold text-gray-400">{user?.email}</span>
-                                         <ShieldAlert className="w-4 h-4 text-amber-500/50" />
-                                    </div>
-                                    <p className="text-[9px] font-black text-gray-300 uppercase tracking-widest mt-3 px-1 italic">Verified logic branch locked</p>
+                                    <Label>User Address (Email)</Label>
+                                    <input 
+                                        type="email" 
+                                        value={user?.email || ""} 
+                                        disabled
+                                        className={`${inputCls} bg-[#F0F2F5] opacity-70 cursor-not-allowed`}
+                                    />
+                                    <p className="text-[12px] text-[#718096] mt-1 flex items-center gap-1">
+                                        <Shield className="w-3 h-3" /> Email cannot be changed.
+                                    </p>
                                 </div>
+                            </div>
+                        </Card>
 
-                                <div>
-                                    <Label>External Authentication Anchors</Label>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${connectedProvider === 'google' ? 'bg-[#66B2D6]/5 border-[#66B2D6]/30' : 'bg-gray-50 border-gray-100 grayscale opacity-60'}`}>
-                                            <div className="flex items-center gap-4">
-                                                <FaGoogle className={connectedProvider === 'google' ? 'text-[#DB4437]' : 'text-gray-400'} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">Google Gateway</span>
-                                            </div>
-                                            {connectedProvider === 'google' && <div className="w-5 h-5 bg-emerald-500 rounded-lg flex items-center justify-center shadow-lg"><Check className="w-3 h-3 text-white" /></div>}
+                        <Card>
+                            <SectionHeader title="Connected Accounts" description="Manage your linked login providers." />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className={`flex items-center justify-between p-4 rounded-[12px] border ${connectedProvider === 'google' ? 'bg-[#F7FFFE] border-[#A8D8D8]' : 'bg-white border-[#E2E8F0]'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center">
+                                            <FaGoogle className="text-[#DB4437]" />
                                         </div>
-                                        <div className={`flex items-center justify-between p-5 rounded-2xl border transition-all ${connectedProvider === 'github' ? 'bg-[#66B2D6]/5 border-[#66B2D6]/30' : 'bg-gray-50 border-gray-100 grayscale opacity-60'}`}>
-                                            <div className="flex items-center gap-4">
-                                                <FaGithub className={connectedProvider === 'github' ? 'text-black' : 'text-gray-400'} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">GitHub Relay</span>
-                                            </div>
-                                            {connectedProvider === 'github' && <div className="w-5 h-5 bg-emerald-500 rounded-lg flex items-center justify-center shadow-lg"><Check className="w-3 h-3 text-white" /></div>}
-                                        </div>
+                                        <span className="text-[14px] font-semibold">Google</span>
                                     </div>
+                                    {connectedProvider === 'google' && <CheckCircle2 className="w-5 h-5 text-[#2D8B8B]" />}
+                                </div>
+                                <div className={`flex items-center justify-between p-4 rounded-[12px] border ${connectedProvider === 'github' ? 'bg-[#F7FFFE] border-[#A8D8D8]' : 'bg-white border-[#E2E8F0]'}`}>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center">
+                                            <FaGithub className="text-[#1A202C]" />
+                                        </div>
+                                        <span className="text-[14px] font-semibold">GitHub</span>
+                                    </div>
+                                    {connectedProvider === 'github' && <CheckCircle2 className="w-5 h-5 text-[#2D8B8B]" />}
                                 </div>
                             </div>
                         </Card>
                     </div>
                 )}
 
-                {/* ── SECURITY HUB ───────────────────────────────────────── */}
+                {/* ── SECURITY TAB ───────────────────────────────────────── */}
                 {activeTab === "security" && (
-                    <div className="space-y-8 animate-fadeIn">
+                    <div className="animate-fadeIn space-y-6">
                         <Card>
-                            <SectionHeader icon={Shield} title="Encryption Management" subtitle="Manage account access keys and protocols" />
-                            <form onSubmit={handlePasswordSubmit} className="p-10 space-y-10">
+                            <SectionHeader title="Security" description="Set and reset password." />
+                            <form onSubmit={handlePasswordSubmit} className="space-y-5 max-w-lg">
                                 
                                 {passwordError && (
-                                    <div className="p-5 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-4 animate-shake">
-                                         <ShieldAlert className="w-5 h-5 text-rose-500 shrink-0" />
-                                         <div className="space-y-1">
-                                             <p className="text-[10px] font-black text-rose-600 uppercase tracking-widest leading-none">Protocol Violation</p>
-                                             <p className="text-xs font-bold text-rose-500 leading-tight">{passwordError}</p>
-                                         </div>
+                                    <div className="p-3 bg-[#FEF2F2] border border-[#FECACA] rounded-[10px] flex items-center gap-2 text-[13px] text-[#DC2626]">
+                                         <AlertTriangle className="w-4 h-4 shrink-0" />
+                                         {passwordError}
                                     </div>
                                 )}
 
                                 {hasPassword && (
                                     <div>
-                                        <Label>Current Cipher Key</Label>
+                                        <Label>Current Password</Label>
                                         <div className="relative">
                                             <input 
                                                 type={showCurrentPassword ? "text" : "password"} 
                                                 value={currentPassword}
                                                 onChange={(e) => setCurrentPassword(e.target.value)}
-                                                placeholder="Enter legacy index"
+                                                placeholder="Enter current password"
                                                 className={inputCls}
                                                 required
                                                 disabled={submitting}
@@ -505,155 +460,117 @@ function UserSettings() {
                                             <button 
                                                 type="button" 
                                                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                                className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-900 transition-colors"
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#718096] hover:text-[#1A202C]"
                                             >
-                                                {showCurrentPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                                {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                             </button>
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                                     <div className="space-y-4">
-                                        <Label>New Encryption Node</Label>
-                                        <PasswordStrengthIndicator
-                                            value={newPassword}
-                                            onChange={(val) => setNewPassword(val)}
-                                            showScore={true}
-                                            showVisibilityToggle={true}
-                                            placeholder="Min. 4 characters"
-                                            inputProps={{ className: inputCls, disabled: submitting }}
-                                        />
-                                     </div>
-                                     <div className="space-y-4">
-                                        <Label>Redundancy Check</Label>
-                                        <PasswordStrengthIndicator
-                                            value={confirmPassword}
-                                            compareValue={newPassword}
-                                            onChange={(val) => setConfirmPassword(val)}
-                                            showVisibilityToggle={true}
-                                            placeholder="Verify index integrity"
-                                            inputProps={{ className: inputCls, disabled: submitting }}
-                                        />
-                                     </div>
+                                <div>
+                                    <Label>Password</Label>
+                                    <PasswordStrengthIndicator
+                                        value={newPassword}
+                                        onChange={(val) => setNewPassword(val)}
+                                        showScore={true}
+                                        showVisibilityToggle={true}
+                                        placeholder="Min. 4 characters"
+                                        inputProps={{ className: inputCls, disabled: submitting }}
+                                    />
+                                </div>
+                                <div>
+                                    <Label>Retype Password</Label>
+                                    <PasswordStrengthIndicator
+                                        value={confirmPassword}
+                                        compareValue={newPassword}
+                                        onChange={(val) => setConfirmPassword(val)}
+                                        showVisibilityToggle={true}
+                                        placeholder="Retype password"
+                                        inputProps={{ className: inputCls, disabled: submitting }}
+                                    />
                                 </div>
 
-                                <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-gray-100 pt-10">
-                                     <div className="flex items-center gap-4">
-                                         <ShieldCheck className="w-6 h-6 text-[#66B2D6]" />
-                                         <div className="max-w-[18rem]">
-                                             <p className="text-[10px] font-black text-gray-900 uppercase tracking-widest mb-1">Update Protocol</p>
-                                             <p className="text-[9px] font-medium text-gray-400 uppercase tracking-wider leading-relaxed">Updating ciphers will invalidate all active biometric sessions.</p>
-                                         </div>
-                                     </div>
+                                <div className="pt-2">
                                      <button 
                                         type="submit" 
                                         disabled={submitting || !newPassword} 
-                                        className="w-full sm:w-auto px-10 py-5 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-gray-200 hover:bg-black transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
+                                        className={btnPrimaryCls}
                                      >
                                         {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Key className="w-4 h-4" />}
-                                        Synchronize Keys
+                                        {hasPassword ? "Change Password" : "Set Password"}
                                      </button>
                                 </div>
                             </form>
                         </Card>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                             <Card className="group">
-                                <div className="p-8 space-y-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-500 border border-amber-100 group-hover:bg-amber-100 transition-colors">
-                                            <LogOut className="w-6 h-6" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-sm font-black text-gray-900 uppercase tracking-tight">Active Node Session</h4>
-                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Local Authorization Only</p>
-                                        </div>
+                        <Card>
+                            <SectionHeader title="Session Management" description="Manage your active sessions and devices." />
+                            <div className="space-y-4 max-w-lg">
+                                <div className="flex items-center justify-between p-4 bg-[#F0F2F5] rounded-[10px]">
+                                    <div>
+                                        <p className="text-[14px] font-semibold text-[#1A202C]">Log out of current device</p>
+                                        <p className="text-[12px] text-[#718096]">End your session on this browser.</p>
                                     </div>
-                                    <button 
-                                        onClick={handleLogout}
-                                        className="w-full py-4 border border-amber-100 bg-white text-amber-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-600 hover:text-white transition-all shadow-sm"
-                                    >
-                                        Inactivate Current Session
+                                    <button onClick={handleLogout} className={btnSecondaryCls}>
+                                        <LogOut className="w-4 h-4" /> Log out
                                     </button>
                                 </div>
-                             </Card>
-                             <Card className="group">
-                                <div className="p-8 space-y-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center text-rose-500 border border-rose-100 group-hover:bg-rose-100 transition-colors">
-                                            <ShieldAlert className="w-6 h-6" />
-                                        </div>
-                                        <div>
-                                            <h4 className="text-sm font-black text-gray-900 uppercase tracking-tight">Global Invalidation</h4>
-                                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Emergency Killswitch</p>
-                                        </div>
+                                <div className="flex items-center justify-between p-4 bg-[#FEF2F2] rounded-[10px]">
+                                    <div>
+                                        <p className="text-[14px] font-semibold text-[#DC2626]">Log out everywhere</p>
+                                        <p className="text-[12px] text-[#DC2626]/80">If you noticed suspicious activity.</p>
                                     </div>
-                                    <button 
-                                        onClick={handleLogoutAll}
-                                        className="w-full py-4 border border-rose-100 bg-white text-rose-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-rose-600 hover:text-white transition-all shadow-sm"
-                                    >
-                                        Purge Global Auth Registry
+                                    <button onClick={handleLogoutAll} className={btnDangerCls}>
+                                        <ShieldAlert className="w-4 h-4" /> Secure Account
                                     </button>
                                 </div>
-                             </Card>
-                        </div>
+                            </div>
+                        </Card>
                     </div>
                 )}
 
-                {/* ── INFRASTRUCTURE HUB ─────────────────────────────────── */}
+                {/* ── STORAGE TAB ────────────────────────────────────────── */}
                 {activeTab === "storage" && (
-                    <div className="space-y-8 animate-fadeIn">
+                    <div className="animate-fadeIn space-y-6">
                         <Card>
-                            <SectionHeader icon={Database} title="Asset Cluster" subtitle="Manage node storage dividends and tiers" />
-                            <div className="p-10 space-y-12">
+                            <SectionHeader title="Storage Overview" description="View and manage your account storage limits." />
+                            <div className="py-2">
+                                <div className="flex items-end gap-3 mb-6">
+                                     <h3 className="text-[40px] font-bold text-[#1A202C] leading-none">{formatStorage(usedStorageInBytes)}</h3>
+                                     <span className="text-[14px] text-[#718096] pb-1">used of {formatStorage(maxStorageLimit)}</span>
+                                </div>
+                                
+                                <div className="w-full bg-[#F0F2F5] rounded-full h-3 mb-3 shrink-0 overflow-hidden">
+                                     <div 
+                                         className={`h-full rounded-full transition-all duration-500`}
+                                         style={{ 
+                                             width: `${Math.max(usagePercentage, 1)}%`,
+                                             backgroundColor: usagePercentage > 90 ? '#DC2626' : '#2D8B8B'
+                                         }} 
+                                     />
+                                </div>
+                                
+                                <p className="text-[13px] text-[#718096]">
+                                    You have used {usagePercentage.toFixed(1)}% of your available storage.
+                                </p>
+                            </div>
+                        </Card>
+
+                        <Card>
+                            <SectionHeader title="Upgrade Your Plan" description="Need more space? Upgrade to a higher tier plan." />
+                            <div className="flex flex-col sm:flex-row items-center justify-between p-5 bg-[#F7FFFE] border border-[#A8D8D8] rounded-[12px] gap-4">
                                 <div>
-                                    <div className="flex justify-between items-end mb-6">
-                                         <div>
-                                             <h3 className="text-4xl font-black text-gray-900 tracking-tight leading-none mb-2">{formatStorage(usedStorageInBytes)}</h3>
-                                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Allocated Dividend Index</p>
-                                         </div>
-                                         <div className="text-right">
-                                             <p className="text-xs font-black text-gray-900">{usagePercentage.toFixed(2)}%</p>
-                                             <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Sync Ratio</p>
-                                         </div>
-                                    </div>
-                                    
-                                    <div className="h-4 bg-gray-50 border border-gray-100 rounded-full overflow-hidden shadow-inner p-1">
-                                        <div 
-                                            className={`h-full rounded-full transition-all duration-1000 ease-out shadow-sm ${usagePercentage > 90 ? 'bg-rose-500' : 'bg-[#66B2D6]'}`}
-                                            style={{ width: `${Math.max(usagePercentage, 1)}%` }} 
-                                        />
-                                    </div>
-                                    
-                                    <div className="mt-8 grid grid-cols-2 gap-10">
-                                         <div className="space-y-1">
-                                             <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Primary Capacity</p>
-                                             <p className="text-sm font-black text-gray-900">{formatStorage(maxStorageLimit)}</p>
-                                         </div>
-                                         <div className="space-y-1 text-right">
-                                             <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Available Flux</p>
-                                             <p className="text-sm font-black text-[#66B2D6]">{formatStorage(maxStorageLimit - usedStorageInBytes)}</p>
-                                         </div>
-                                    </div>
+                                    <h4 className="text-[15px] font-bold text-[#1A202C]">Current Plan: {user?.role || "Basic"}</h4>
+                                    <p className="text-[13px] text-[#718096] mt-1">
+                                        Unlock advanced features and more storage space.
+                                    </p>
                                 </div>
-
-                                <div className="p-8 bg-gray-50 border border-gray-100 rounded-3xl flex items-center gap-6">
-                                     <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-emerald-500 shadow-sm border border-gray-100">
-                                         <ShieldCheck className="w-7 h-7" />
-                                     </div>
-                                     <div className="flex-1">
-                                          <p className="text-xs font-black text-gray-900 uppercase tracking-widest mb-1">Resource Health</p>
-                                          <p className="text-xs font-medium text-gray-400 leading-relaxed uppercase tracking-tight">Your infrastructure node is performing optimally within its designated tier parameters.</p>
-                                     </div>
-                                </div>
-
                                 <button 
                                     onClick={() => navigate("/plans")}
-                                    className="w-full py-6 bg-gray-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-[0.3em] shadow-xl hover:bg-black transition-all active:scale-[0.98] flex items-center justify-center gap-3"
+                                    className={btnPrimaryCls}
                                 >
-                                    Initiate Migration to Higher Tier
-                                    <ChevronRight className="w-4 h-4 text-[#66B2D6]" />
+                                    View Plans <ChevronRight className="w-4 h-4" />
                                 </button>
                             </div>
                         </Card>
@@ -663,43 +580,32 @@ function UserSettings() {
         </div>
       </div>
 
-      {/* ── Security Confirm Modal ─────────────────── */}
+      {/* ── Modals & Notifications ─────────────────── */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-md animate-fadeIn">
-          <div className="bg-white rounded-[2.5rem] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.3)] w-full max-w-sm overflow-hidden animate-scaleIn border border-gray-100">
-            <div className="p-10">
-                <div className="w-16 h-16 bg-[#66B2D6]/10 rounded-2xl flex items-center justify-center text-[#66B2D6] border border-[#66B2D6]/20 mb-8 mx-auto">
-                   <ShieldAlert className="w-8 h-8" />
-                </div>
-                <div className="text-center mb-10">
-                    <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-tight mb-3">Protocol Update?</h3>
-                    <p className="text-xs font-medium text-gray-400 uppercase tracking-widest leading-relaxed">
-                        Modifying security indices will trigger a global session invalidation across all nodes.
-                    </p>
-                </div>
-                <div className="flex flex-col gap-3">
-                    <button onClick={confirmPasswordChange} className="w-full py-5 bg-gray-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95">Commit Encryption Sync</button>
-                    <button onClick={() => setShowConfirmModal(false)} className="w-full py-5 bg-white text-gray-400 hover:text-gray-900 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">Abort Update</button>
-                </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
+          <div className="bg-white rounded-[16px] shadow-xl w-full max-w-sm p-6 animate-scaleIn">
+            <h3 className="text-[18px] font-bold text-[#1A202C] mb-2">Change Password?</h3>
+            <p className="text-[14px] text-[#718096] mb-6">
+                Are you sure you want to update your password? You might need to sign in again on other devices.
+            </p>
+            <div className="flex gap-3">
+                <button onClick={() => setShowConfirmModal(false)} className={`${btnSecondaryCls} flex-1`}>Cancel</button>
+                <button onClick={confirmPasswordChange} className={`${btnPrimaryCls} flex-1`}>Confirm</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ── Toast Notification ─────────────────────── */}
       {showNotification.show && (
-        <div className="fixed bottom-10 right-10 z-[10001] max-w-sm w-full animate-slideUp">
-           <div className={`bg-white border rounded-[2rem] shadow-2xl p-6 flex items-start gap-5 backdrop-blur-md ${showNotification.type === 'error' ? 'border-rose-100' : 'border-gray-100'}`}>
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${
-                  showNotification.type === 'error' ? 'bg-rose-50 text-rose-500 border-rose-100' : 'bg-emerald-50 text-emerald-500 border-emerald-100'
-                }`}>
-                  {showNotification.type === 'error' ? <ShieldAlert className="w-6 h-6" /> : <ShieldCheck className="w-6 h-6" />}
-                </div>
-                <div className="flex-1 pt-1">
-                  <p className="text-[10px] font-black text-gray-900 uppercase tracking-widest leading-tight">Registry Event</p>
-                  <p className="text-xs font-bold text-gray-400 mt-1 uppercase tracking-wider leading-relaxed">{showNotification.message}</p>
-                </div>
-                <button onClick={() => setShowNotification({ ...showNotification, show: false })} className="text-gray-300 hover:text-gray-900 transition-colors p-1">
+        <div className="fixed bottom-6 right-6 z-50 animate-slideUp">
+           <div className={`bg-white rounded-[12px] shadow-lg p-4 flex items-center gap-3 border ${showNotification.type === 'error' ? 'border-[#FECACA]' : 'border-[#A8D8D8]'}`}>
+                {showNotification.type === 'error' ? (
+                     <AlertTriangle className="w-5 h-5 text-[#DC2626]" />
+                ) : (
+                     <CheckCircle2 className="w-5 h-5 text-[#2D8B8B]" />
+                )}
+                <p className="text-[14px] font-medium text-[#1A202C]">{showNotification.message}</p>
+                <button onClick={() => setShowNotification({ ...showNotification, show: false })} className="ml-2 text-[#718096] hover:text-[#1A202C]">
                   <X className="w-4 h-4" />
                 </button>
            </div>
@@ -708,5 +614,3 @@ function UserSettings() {
     </div>
   );
 }
-
-export default UserSettings;
