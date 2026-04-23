@@ -561,7 +561,7 @@ export default function UserSettings() {
                             <SectionHeader title="Upgrade Your Plan" description="Need more space? Upgrade to a higher tier plan." />
                             <div className="flex flex-col sm:flex-row items-center justify-between p-5 bg-[#F7FFFE] border border-[#A8D8D8] rounded-[12px] gap-4">
                                 <div>
-                                    <h4 className="text-[15px] font-bold text-[#1A202C]">Current Plan: {user?.role || "Basic"}</h4>
+                                    <h4 className="text-[15px] font-bold text-[#1A202C]">Current Plan: {user?.subscriptionPlan || "Basic"}</h4>
                                     <p className="text-[13px] text-[#718096] mt-1">
                                         Unlock advanced features and more storage space.
                                     </p>
