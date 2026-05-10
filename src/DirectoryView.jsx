@@ -97,6 +97,7 @@ function DirectoryView() {
   const [progressMap, setProgressMap] = useState({});
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [draggedType, setDraggedType] = useState("file"); // "file" or "image"
   const [abortControllers, setAbortControllers] = useState({});
 
   // Storage refresh ref
@@ -546,11 +547,20 @@ function DirectoryView() {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
+
+    // Detect if an image is being dragged
+    if (e.dataTransfer.items) {
+      const items = Array.from(e.dataTransfer.items);
+      const isImage = items.some(item => item.type.startsWith("image/"));
+      setDraggedType(isImage ? "image" : "file");
+    }
   };
 
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    // Only set to false if we are actually leaving the container, not entering a child
+    if (e.currentTarget.contains(e.relatedTarget)) return;
     setIsDragging(false);
   };
 
@@ -1033,18 +1043,37 @@ function DirectoryView() {
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`bg-white rounded-2xl border-2 border-dashed p-4 sm:p-8 text-center shadow-soft transition-all duration-500 relative overflow-hidden ${
-            isDragging ? "border-primary bg-primary/5 scale-[1.01] shadow-xl" : "border-[#A7DDE9] hover:shadow-medium"
+          className={`bg-white rounded-2xl p-4 sm:p-8 text-center shadow-soft transition-all duration-500 relative overflow-hidden min-h-[220px] flex flex-col items-center justify-center ${
+            isDragging 
+              ? "marching-ants-border shadow-glow scale-[1.01]" 
+              : "border-2 border-dashed border-[#A7DDE9] hover:shadow-medium"
           }`}
         >
-          {/* Subtle overlay for dragging */}
+          {/* Holographic Portal Overlay */}
           {isDragging && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-primary/10 backdrop-blur-[2px] pointer-events-none animate-fadeIn">
-              <div className="bg-white p-4 rounded-2xl shadow-2xl scale-110 border-2 border-primary animate-bounce">
-                <Upload className="w-8 h-8 text-primary" />
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-primary/5 backdrop-blur-[4px] pointer-events-none animate-fadeIn">
+              <div className="flex flex-col items-center gap-4 animate-scaleIn">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse" />
+                  <div className="relative bg-white p-6 rounded-3xl shadow-2xl border-2 border-primary flex items-center justify-center group-dragging">
+                    {draggedType === "image" ? (
+                      <ImageIcon className="w-12 h-12 text-primary animate-pulse" />
+                    ) : (
+                      <FileText className="w-12 h-12 text-primary animate-pulse" />
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <h3 className="text-xl font-bold text-primary">Release to Upload</h3>
+                  <p className="text-sm font-medium text-primary/70">
+                    {draggedType === "image" ? "Dropping your images..." : "Dropping your files..."}
+                  </p>
+                </div>
               </div>
             </div>
           )}
+          
+          <div className={`transition-all duration-300 ${isDragging ? "opacity-0 scale-95 blur-sm" : "opacity-100 scale-100"}`}>
           <div className="mb-4 sm:mb-6">
             <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#E6FAF5' }}>
               <Upload className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: '#66B2D6' }} />
@@ -1154,6 +1183,7 @@ function DirectoryView() {
             </div>
           </div>
         </div>
+      </div>
 
         {/* Search, View Toggle, and Filter Controls */}
         <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
