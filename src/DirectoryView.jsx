@@ -96,6 +96,7 @@ function DirectoryView() {
   const [uploadXhrMap, setUploadXhrMap] = useState({});
   const [progressMap, setProgressMap] = useState({});
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [abortControllers, setAbortControllers] = useState({});
 
   // Storage refresh ref
@@ -483,16 +484,19 @@ function DirectoryView() {
   /**
    * Select multiple files
    */
-  function handleFileSelect(e) {
+  /**
+   * Core function to process files (from select or drop)
+   */
+  const handleFiles = (files) => {
     if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
       showToast("Restricted access: Cannot upload files.", "warning");
-      e.target.value = "";
       return;
     }
-    const selectedFiles = Array.from(e.target.files);
+    
+    const selectedFiles = Array.from(files);
     if (selectedFiles.length === 0) return;
 
-    console.log("Selected files:", selectedFiles);
+    console.log("Processing files:", selectedFiles);
 
     const newItems = selectedFiles.map((file) => {
       const tempId = `temp-${Date.now()}-${Math.random()}`;
@@ -516,13 +520,49 @@ function DirectoryView() {
     setUploadQueue((prev) => [...prev, ...newItems]);
     uploadQueueRef.current = [...uploadQueueRef.current, ...newItems];
 
-    e.target.value = "";
-
     if (!isUploading) {
       setIsUploading(true);
       processUploadQueue();
     }
+  };
+
+  /**
+   * Select multiple files via button
+   */
+  function handleFileSelect(e) {
+    handleFiles(e.target.files);
+    e.target.value = "";
   }
+
+  /**
+   * Drag and Drop handlers
+   */
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDragEnter = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFiles(e.dataTransfer.files);
+    }
+  };
 
   /**
    * Process upload queue with S3 direct upload
@@ -988,7 +1028,23 @@ function DirectoryView() {
 
       {/* Upload Section with 3 Buttons */}
       <div className="max-w-7xl mx-auto px-3 sm:px-6 pt-5 sm:pt-8 pb-5 sm:pb-8">
-        <div className="bg-white rounded-2xl border-2 border-dashed p-4 sm:p-8 text-center shadow-soft transition-all duration-300 hover:shadow-medium" style={{ borderColor: '#A7DDE9' }}>
+        <div 
+          onDragOver={handleDragOver}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`bg-white rounded-2xl border-2 border-dashed p-4 sm:p-8 text-center shadow-soft transition-all duration-500 relative overflow-hidden ${
+            isDragging ? "border-primary bg-primary/5 scale-[1.01] shadow-xl" : "border-[#A7DDE9] hover:shadow-medium"
+          }`}
+        >
+          {/* Subtle overlay for dragging */}
+          {isDragging && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-primary/10 backdrop-blur-[2px] pointer-events-none animate-fadeIn">
+              <div className="bg-white p-4 rounded-2xl shadow-2xl scale-110 border-2 border-primary animate-bounce">
+                <Upload className="w-8 h-8 text-primary" />
+              </div>
+            </div>
+          )}
           <div className="mb-4 sm:mb-6">
             <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#E6FAF5' }}>
               <Upload className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: '#66B2D6' }} />
