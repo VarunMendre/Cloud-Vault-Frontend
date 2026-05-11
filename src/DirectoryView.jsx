@@ -99,6 +99,7 @@ function DirectoryView() {
   const [isDragging, setIsDragging] = useState(false);
   const [draggedType, setDraggedType] = useState("file"); // "file" or "image"
   const [abortControllers, setAbortControllers] = useState({});
+  const activeUploadsCount = useRef(0);
 
   // Storage refresh ref
   const refreshStorageRef = useRef(null);
@@ -577,8 +578,14 @@ function DirectoryView() {
   /**
    * Process upload queue with S3 direct upload
    */
+  /**
+   * Process upload queue with S3 direct upload (Asynchronous/Parallel)
+   */
   async function processUploadQueue() {
-    if (uploadQueueRef.current.length === 0) {
+    const MAX_CONCURRENT = 5;
+
+    // Check if we're done
+    if (uploadQueueRef.current.length === 0 && activeUploadsCount.current === 0) {
       setIsUploading(false);
       setUploadQueue([]);
       // Reset allUploads after a delay to allow success state to be visible
@@ -593,52 +600,47 @@ function DirectoryView() {
       return;
     }
 
-    const currentItem = uploadQueueRef.current[0];
-    uploadQueueRef.current = uploadQueueRef.current.slice(1);
-    setUploadQueue((prev) => prev.slice(1));
-    // Don't remove from allUploads yet; toast uses it for full context
+    // Start more uploads if we have space and items
+    while (uploadQueueRef.current.length > 0 && activeUploadsCount.current < MAX_CONCURRENT) {
+      const currentItem = uploadQueueRef.current[0];
+      uploadQueueRef.current = uploadQueueRef.current.slice(1);
+      setUploadQueue((prev) => prev.slice(1));
+      
+      const tempId = currentItem.id;
+      activeUploadsCount.current++;
 
-    const tempId = currentItem.id;
+      // Use an IIFE or separate async call to handle each upload independently
+      (async (item, id) => {
+        try {
+          console.log(`Initiating upload for: ${item.name}`);
+          const { fileId, uploadUrl } = await initiateUpload(item.file, dirId);
 
-    try {
-      console.log(`Initiating upload for: ${currentItem.name}`);
-      const { fileId, uploadUrl } = await initiateUpload(
-        currentItem.file,
-        dirId
-      );
+          setFilesList((prev) =>
+            prev.map((f) => (f.id === id ? { ...f, realFileId: fileId } : f))
+          );
 
-      setFilesList((prev) =>
-        prev.map((f) => (f.id === tempId ? { ...f, realFileId: fileId } : f))
-      );
+          console.log(`Uploading to S3: ${item.name}`);
+          await uploadToS3(uploadUrl, item.file, fileId, (progress) => {
+            setProgressMap((prev) => ({ ...prev, [id]: progress }));
+          });
 
-      console.log(`Uploading to S3: ${currentItem.name}`);
-      await uploadToS3(uploadUrl, currentItem.file, fileId, (progress) => {
-        setProgressMap((prev) => ({ ...prev, [tempId]: progress }));
-      });
-
-      console.log(`Completing upload: ${currentItem.name}`);
-      await completeUpload(fileId);
-
-      console.log(`Successfully uploaded: ${currentItem.name}`);
-
-      processUploadQueue();
-    } catch (error) {
-      console.error(`Upload failed for ${currentItem.name}:`, error);
-
-      setFilesList((prev) =>
-        prev.filter(
-          (f) => f.id !== tempId && f.realFileId !== currentItem.realFileId
-        )
-      );
-
-      setProgressMap((prev) => ({ ...prev, [tempId]: 0 }));
-
-      setErrorMessage(
-        `Upload failed for ${currentItem.name}: ${error.message}`
-      );
-      showToast(`Upload failed: ${error.message}`, "error");
-
-      processUploadQueue();
+          console.log(`Completing upload: ${item.name}`);
+          await completeUpload(fileId);
+          console.log(`Successfully uploaded: ${item.name}`);
+        } catch (error) {
+          console.error(`Upload failed for ${item.name}:`, error);
+          setFilesList((prev) =>
+            prev.filter((f) => f.id !== id && f.realFileId !== item.realFileId)
+          );
+          setProgressMap((prev) => ({ ...prev, [id]: 0 }));
+          setErrorMessage(`Upload failed for ${item.name}: ${error.message}`);
+          showToast(`Upload failed: ${error.message}`, "error");
+        } finally {
+          activeUploadsCount.current--;
+          // After one completes, trigger the queue process again to fill the slot
+          processUploadQueue();
+        }
+      })(currentItem, tempId);
     }
   }
 
