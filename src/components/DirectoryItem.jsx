@@ -51,7 +51,7 @@ function DirectoryItem({
 
   return (
     <div
-      className="relative flex items-center gap-3 px-4 py-3 bg-white border border-gray-200 rounded-xl cursor-pointer group transition-all duration-150 hover:bg-gray-50 hover:border-gray-300"
+      className="relative flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-xl cursor-pointer group transition-all duration-150 hover:bg-gray-50 hover:border-gray-400"
       onClick={() =>
         !(activeContextMenu || isUploading)
           ? handleRowClick(item.isDirectory ? "directory" : "file", item.id)
@@ -112,7 +112,7 @@ function DirectoryItem({
 
       {/* 3-dot menu – always visible */}
       <button
-        className="flex-shrink-0 p-1.5 rounded-lg text-gray-300 hover:text-gray-600 hover:bg-gray-100 transition-all active:scale-95"
+        className="flex-shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all active:scale-95"
         onClick={(e) => {
           e.stopPropagation();
           handleContextMenu(e, item.id);

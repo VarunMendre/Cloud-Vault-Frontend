@@ -715,6 +715,7 @@ function DirectoryView() {
    * Delete a file/directory
    */
   async function handleDeleteFile(id) {
+    setActiveContextMenu(null);
     if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
         showToast("Restricted access: Cannot delete files.", "warning");
         return;
@@ -744,6 +745,7 @@ function DirectoryView() {
   }
 
   async function handleDeleteDirectory(id) {
+    setActiveContextMenu(null);
     if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
         showToast("Restricted access: Cannot delete folders.", "warning");
         return;
@@ -803,6 +805,7 @@ function DirectoryView() {
    * Rename
    */
   function openRenameModal(type, id, currentName, version) {
+    setActiveContextMenu(null);
     setRenameType(type);
     setRenameId(id);
     setRenameValue(currentName);
@@ -1404,7 +1407,7 @@ function DirectoryView() {
               return (
                 <div
                   key={item.id}
-                  className="relative bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group flex flex-col"
+                  className="relative bg-white rounded-2xl border border-gray-300 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group flex flex-col"
                   onClick={() =>
                     !(activeContextMenu || isUploading) && handleRowClick(item)
                   }
@@ -1457,13 +1460,13 @@ function DirectoryView() {
                   </div>
 
                   {/* Footer action buttons */}
-                  <div className="flex border-t border-gray-100">
+                  <div className="flex border-t border-gray-200">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         openDetailsPopup(item);
                       }}
-                      className="flex-1 py-2.5 text-xs font-medium flex items-center justify-center gap-1.5 text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-all border-r border-gray-100"
+                      className="flex-1 py-2.5 text-xs font-medium flex items-center justify-center gap-1.5 text-gray-500 hover:text-gray-800 hover:bg-gray-50 transition-all border-r border-gray-200"
                     >
                       <Info className="w-3.5 h-3.5" />
                       Details
@@ -1491,7 +1494,7 @@ function DirectoryView() {
 
                   {/* 3-dot menu button (top-right) */}
                   <button
-                    className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-300 hover:text-gray-600 hover:bg-gray-100 transition-all active:scale-95 opacity-0 group-hover:opacity-100"
+                    className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all active:scale-95 opacity-0 group-hover:opacity-100"
                     onClick={(e) => {
                       e.stopPropagation();
                       if (!isRenaming) handleContextMenu(e, item.id);
