@@ -229,7 +229,11 @@ export default function UserSettings() {
         showNotify("Password updated successfully");
       } else {
         const data = await response.json();
-        setPasswordError(data.message || "Failed to update password");
+        const errorMessage = data.error || data.message || "Failed to update password";
+        setPasswordError(errorMessage);
+        if (errorMessage.toLowerCase().includes("already set")) {
+          setHasPassword(true);
+        }
       }
     } catch (err) {
       setPasswordError("An error occurred while updating the password");
