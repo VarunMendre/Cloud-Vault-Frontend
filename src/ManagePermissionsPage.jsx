@@ -243,14 +243,14 @@ function ManagePermissionsPage() {
                 <ShieldCheck className="w-6 h-6 text-[#66B2D6]" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Permissions Strategy</h1>
-                <p className="text-sm font-medium text-gray-400">Control governance and access nodes for this resource</p>
+                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Manage Permissions</h1>
+                <p className="text-sm font-medium text-gray-400">Control who can access this resource</p>
               </div>
             </div>
           </div>
           <div className="hidden md:flex items-center gap-2 text-[10px] font-black text-gray-400 bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-sm uppercase tracking-widest">
             <Info className="w-3.5 h-3.5 text-[#66B2D6]" />
-            Encrypted Channel
+            Secure Access
           </div>
         </div>
 
@@ -268,7 +268,7 @@ function ManagePermissionsPage() {
                 )}
               >
                 <Link className="w-4 h-4" />
-                Public Ingress
+                Share Link
               </button>
               <button
                 onClick={() => setActiveTab("sharedWith")}
@@ -280,7 +280,7 @@ function ManagePermissionsPage() {
                 )}
               >
                 <Users className="w-4 h-4" />
-                Entity Access
+                Shared Users
               </button>
             </div>
           </div>
@@ -298,8 +298,8 @@ function ManagePermissionsPage() {
                   {activeTab === "shareLink" && (
                     <div className="space-y-8 animate-fadeIn">
                       <div>
-                        <h2 className="text-xl font-bold text-gray-900 tracking-tight mb-1">Link Synthesis</h2>
-                        <p className="text-sm font-medium text-gray-400">Generate a secure public gateway for this asset.</p>
+                        <h2 className="text-xl font-bold text-gray-900 tracking-tight mb-1">Link Access</h2>
+                        <p className="text-sm font-medium text-gray-400">Generate a public link to share this resource.</p>
                       </div>
 
                       <div className="flex items-center justify-between p-5 bg-gray-50/50 rounded-2xl border border-gray-100 group">
@@ -311,8 +311,8 @@ function ManagePermissionsPage() {
                             <Globe className="w-6 h-6" />
                           </div>
                           <div>
-                            <h4 className="text-sm font-bold text-gray-900">Distribution Channel</h4>
-                            <p className="text-xs font-medium text-gray-400">{linkEnabled ? "Public access is live" : "Access currently disabled"}</p>
+                            <h4 className="text-sm font-bold text-gray-900">Share Link</h4>
+                            <p className="text-xs font-medium text-gray-400">{linkEnabled ? "Anyone with the link can access" : "Link sharing disabled"}</p>
                           </div>
                         </div>
                         <button
@@ -332,7 +332,7 @@ function ManagePermissionsPage() {
                       {linkEnabled && shareLink && (
                         <div className="space-y-8 pt-4 border-t border-gray-100 animate-slideDown">
                           <div className="space-y-4">
-                            <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Logic & Permissions</label>
+                            <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Role</label>
                             <div className="grid grid-cols-2 gap-3">
                               <button
                                 onClick={() => handleUpdateLinkRole("viewer")}
@@ -389,8 +389,8 @@ function ManagePermissionsPage() {
                   {activeTab === "sharedWith" && (
                     <div className="space-y-8 animate-fadeIn">
                       <div>
-                        <h2 className="text-xl font-bold text-gray-900 tracking-tight mb-1">Entity Privileges</h2>
-                        <p className="text-sm font-medium text-gray-400">Audit and modify granular access for verified users.</p>
+                        <h2 className="text-xl font-bold text-gray-900 tracking-tight mb-1">Shared Users</h2>
+                        <p className="text-sm font-medium text-gray-400">Manage who has access to this resource.</p>
                       </div>
 
                       {sharedUsers.length === 0 ? (
@@ -398,21 +398,21 @@ function ManagePermissionsPage() {
                           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-100">
                             <Users className="w-10 h-10 text-gray-200" />
                           </div>
-                          <h3 className="text-lg font-bold text-gray-900 mb-2">Standalone Node</h3>
+                          <h3 className="text-lg font-bold text-gray-900 mb-2">No Shared Users</h3>
                           <p className="text-sm font-medium text-gray-400 max-w-xs mx-auto mb-8 leading-relaxed">
-                            No external entities currently have access privileges for this resource.
+                            No one currently has access to this resource.
                           </p>
                           <button
                             onClick={() => navigate(-1)}
                             className="inline-flex items-center gap-2 px-6 py-3 bg-[#66B2D6] text-white rounded-xl text-sm font-bold hover:shadow-lg transition-all active:scale-[0.98]"
                           >
-                            Return to Drive
+                            Return
                             <ChevronRight className="w-4 h-4" />
                           </button>
                         </div>
                       ) : (
                         <div className="space-y-3">
-                          <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest pl-1">Authorized Entities</label>
+                          <label className="text-[11px] font-black text-gray-400 uppercase tracking-widest pl-1">Authorized Users</label>
                           <div className="grid grid-cols-1 gap-3">
                             {sharedUsers.map((u) => (
                               <div key={u.userId} className="group flex items-center gap-4 p-4 bg-gray-50/50 rounded-2xl border border-gray-100 hover:bg-white hover:border-[#66B2D6]/30 hover:shadow-lg hover:shadow-[#66B2D6]/5 transition-all">

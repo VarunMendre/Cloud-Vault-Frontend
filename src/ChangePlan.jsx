@@ -184,7 +184,7 @@ export default function ChangePlan() {
               <div className="w-10 h-10 bg-white rounded-xl border border-gray-200 shadow-sm flex items-center justify-center">
                 <Star className="w-6 h-6 text-[#66B2D6]" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Modify Infrastructure</h1>
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Change Plan</h1>
             </div>
             <p className="text-sm font-medium text-gray-400 max-w-xl leading-relaxed">Adjust your plan nodes. We'll automatically prorate any remaining credit from your current billing cycle.</p>
           </header>
@@ -197,7 +197,7 @@ export default function ChangePlan() {
                         <div className="flex items-center gap-2">
                            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black bg-[#66B2D6]/10 text-[#66B2D6] uppercase tracking-[0.2em] border border-[#66B2D6]/20">
                               <div className="w-1.5 h-1.5 rounded-full bg-[#66B2D6] animate-pulse"></div>
-                              Active Base
+                              Current Plan
                            </span>
                            <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">ID: {currentPlan.activePlan.planId.slice(-6).toUpperCase()}</span>
                         </div>
@@ -269,8 +269,8 @@ export default function ChangePlan() {
           <div className="mb-24">
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
                   <div>
-                      <h3 className="text-2xl font-bold text-gray-900 tracking-tight">Scaling Targets</h3>
-                      <p className="text-sm font-medium text-gray-400">{eligiblePlans.length} plans available for immediate transition</p>
+                      <h3 className="text-2xl font-bold text-gray-900 tracking-tight">Available Plans</h3>
+                      <p className="text-sm font-medium text-gray-400">{eligiblePlans.length} plans available for transition</p>
                   </div>
               </div>
 
@@ -410,7 +410,7 @@ function UpgradePlanCard({ plan, onUpgrade, isProcessing, disabled }) {
               <Clock className="w-5 h-5 animate-spin" />
             ) : (
                 <>
-                    Initiate Migration
+                    Change to this plan
                     <ChevronRight className="w-4 h-4" />
                 </>
             )}
@@ -442,26 +442,41 @@ function SuccessModal({ subscriptionId, onClose }) {
   }, [subscriptionId, onClose]);
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md">
-      <div className="w-full max-w-sm bg-white rounded-[2rem] shadow-2xl p-8 text-center animate-scaleIn border border-gray-200">
-        <div className={classNames(
-            "w-20 h-20 mx-auto mb-6 rounded-3xl flex items-center justify-center border shadow-inner transition-colors duration-500",
-            activating ? "bg-gray-50 border-gray-100 text-[#66B2D6]" : "bg-green-50 border-green-100 text-green-500"
-        )}>
-           {activating ? <Clock className="w-10 h-10 animate-spin" /> : <CheckCircle2 className="w-10 h-10" />}
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 animate-fadeIn">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+      
+      {/* Modal Content */}
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 text-center animate-scaleIn border border-slate-200 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-100 overflow-hidden">
+           {activating && <div className="h-full bg-[#66B2D6] animate-progress-indeterminate opacity-80"></div>}
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">
-          {activating ? "Processing Nodes" : "Sync Complete"}
+
+        <div className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl transition-all duration-500 ${activating ? 'bg-slate-50 border border-slate-100' : 'bg-green-50 border border-green-100'}`}>
+          <div className={`flex h-12 w-12 items-center justify-center rounded-xl text-white shadow-sm transition-colors duration-500`}
+            style={{ backgroundColor: activating ? '#66B2D6' : '#10B981' }}>
+            {activating ? (
+               <Loader2 className="w-6 h-6 animate-spin" />
+            ) : (
+              <CheckCircle2 className="w-6 h-6 animate-in zoom-in duration-500" />
+            )}
+          </div>
+        </div>
+        
+        <h2 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">
+          {activating ? "Activating your plan..." : "You're All Set!"}
         </h2>
-        <p className="text-sm font-medium text-gray-400 mb-8 leading-relaxed">
+        <p className="text-sm font-medium text-slate-500 mb-8 max-w-[280px] mx-auto leading-relaxed">
           {activating 
-            ? "Verifying payment confirmation and updating account attributes..." 
-            : "Your infrastructure has been upgraded. Returning to dashboard..."}
+            ? "Please wait while we set up your new workspace and apply your plan limits." 
+            : "Your premium access is now live. Enjoy your new features."}
         </p>
-        {activating && (
-           <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-             <div className="h-full bg-[#66B2D6] animate-progress-indeterminate"></div>
-           </div>
+
+        {!activating && (
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center gap-2">
+             <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+             <span className="text-xs font-semibold text-slate-600">Redirecting to Dashboard</span>
+          </div>
         )}
       </div>
     </div>
@@ -470,27 +485,52 @@ function SuccessModal({ subscriptionId, onClose }) {
 
 function CountdownModal({ countdown, onCancel }) {
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/20 backdrop-blur-md">
-      <div className="w-full max-w-sm bg-white rounded-[2rem] shadow-2xl overflow-hidden animate-scaleIn border border-gray-200 relative">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+      
+      {/* Modal Content */}
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden animate-scaleIn border border-slate-200">
         <div className="p-8 text-center">
-          <button onClick={onCancel} className="absolute top-6 right-6 text-gray-300 hover:text-gray-900 transition-colors">
-            <X className="w-5 h-5" />
+          {/* Close button */}
+          <button
+            onClick={onCancel}
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all"
+          >
+            <X className="w-4 h-4" />
           </button>
-          <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-[#66B2D6]/10 flex items-center justify-center text-[#66B2D6] border border-[#66B2D6]/20 shadow-inner">
-             <Zap className="w-10 h-10" />
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">Preparing Bridge</h2>
-          <p className="text-sm font-medium text-gray-400 mb-10 leading-relaxed">Redirecting to secure payment gateway in</p>
-          
-          <div className="mb-10">
-            <div className="text-6xl font-bold text-gray-900 tracking-tighter animate-pulse">{countdown}</div>
+
+          {/* Icon */}
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 border border-blue-100">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl text-white bg-[#66B2D6] shadow-sm">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
           </div>
           
-          <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-center gap-2 text-[10px] font-black text-gray-300 uppercase tracking-widest">
-                <ShieldCheck className="w-4 h-4 text-[#66B2D6]" /> Standard Security Protocol
-              </div>
-              <button onClick={onCancel} className="text-xs font-bold text-gray-400 hover:text-gray-900 transition-colors uppercase tracking-widest">Stop Migration</button>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2 tracking-tight">Secure Checkout</h2>
+          <p className="text-sm font-medium text-slate-500 mb-8 leading-relaxed">
+            Connecting to our secure payment gateway...
+          </p>
+          
+          {/* Countdown Container */}
+          <div className="mb-8 relative flex justify-center items-center">
+            <div className="text-6xl font-bold text-slate-900 relative z-10 animate-pulse">
+              {countdown}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-4 text-center">
+            <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-slate-50 text-slate-600 rounded-lg w-fit mx-auto border border-slate-200">
+               <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+               <span className="text-[11px] font-semibold">Secure connection established</span>
+            </div>
+            
+            <button
+              onClick={onCancel}
+              className="mt-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+            >
+              Cancel Checkout
+            </button>
           </div>
         </div>
       </div>

@@ -95,9 +95,9 @@ function FileSharingDashboard() {
               <span className="text-[32px] font-bold text-[#1A202C] leading-none">{stats.sharedByMeCount}</span>
             </div>
             <h3 className="text-[16px] font-bold text-[#1A202C] mb-1">Shared by Me</h3>
-            <p className="text-[14px] text-[#718096] mb-5">Files you have distributed to others</p>
+            <p className="text-[14px] text-[#718096] mb-5">Files you have shared</p>
             <div className="flex items-center gap-1 text-[13px] font-bold text-[#22C55E] group-hover:gap-2 transition-all">
-              Manage Access <ChevronRight className="w-4 h-4" />
+              Manage Files <ChevronRight className="w-4 h-4" />
             </div>
           </div>
 
@@ -120,7 +120,7 @@ function FileSharingDashboard() {
         {/* Quick Actions */}
         <div className="bg-white rounded-[16px] border border-[#E2E8F0] shadow-sm p-8">
            <h2 className="text-[20px] font-bold text-[#1A202C] mb-2">Quick Actions</h2>
-           <p className="text-[14px] text-[#718096] mb-6">Streamlined controls for rapid asset sharing and permission auditing.</p>
+           <p className="text-[14px] text-[#718096] mb-6">Quickly share files and manage access.</p>
            
            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
@@ -131,8 +131,8 @@ function FileSharingDashboard() {
                   <PlusCircle className="w-6 h-6 text-[#2D8B8B]" />
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-bold text-[#1A202C] mb-0.5">Share New Asset</h3>
-                  <p className="text-[13px] text-[#718096]">Upload and distribute from your drive</p>
+                  <h3 className="text-[15px] font-bold text-[#1A202C] mb-0.5">Share a File</h3>
+                  <p className="text-[13px] text-[#718096]">Share files from your dashboard</p>
                 </div>
               </button>
 
@@ -144,8 +144,8 @@ function FileSharingDashboard() {
                   <ShieldCheck className="w-6 h-6 text-[#22C55E]" />
                 </div>
                 <div>
-                  <h3 className="text-[15px] font-bold text-[#1A202C] mb-0.5">Audit Permissions</h3>
-                  <p className="text-[13px] text-[#718096]">Review or revoke active access</p>
+                  <h3 className="text-[15px] font-bold text-[#1A202C] mb-0.5">Review Permissions</h3>
+                  <p className="text-[13px] text-[#718096]">Review and manage shared files</p>
                 </div>
               </button>
            </div>

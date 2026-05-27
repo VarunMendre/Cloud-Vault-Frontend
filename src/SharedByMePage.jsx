@@ -81,7 +81,7 @@ function SharedByMePage() {
               </div>
               <div>
                 <h1 className="text-[28px] font-bold text-[#1A202C] leading-tight">Shared by Me</h1>
-                <p className="text-[14px] text-[#718096]">Manage and monitor assets you have shared</p>
+                <p className="text-[14px] text-[#718096]">Manage files you have shared</p>
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@ function SharedByMePage() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <div className="w-8 h-8 border-4 border-[#F0F2F5] border-t-[#22C55E] rounded-full animate-spin"></div>
-              <p className="text-[14px] font-semibold text-[#718096]">Fetching shared records...</p>
+              <p className="text-[14px] font-semibold text-[#718096]">Loading shared files...</p>
             </div>
           ) : filteredFiles.length === 0 ? (
             <div className="text-center py-24 px-6">
@@ -206,7 +206,7 @@ function SharedByMePage() {
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[13px] font-bold text-[#718096] hover:text-[#22C55E] hover:bg-white bg-[#F0F2F5] rounded-[8px] shadow-sm transition-all border border-[#E2E8F0]"
                         >
                           <Settings2 className="w-4 h-4" />
-                          Update
+                          Manage
                         </button>
                       </td>
                     </tr>

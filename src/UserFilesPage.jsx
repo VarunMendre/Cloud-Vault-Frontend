@@ -271,8 +271,8 @@ export default function UserFilesPage() {
         <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
             <div className="px-8 py-6 border-b border-gray-100 flex flex-col md:flex-row items-center justify-between gap-6 bg-white">
                 <div>
-                   <h2 className="text-lg font-bold text-gray-900 tracking-tight">User Infrastructure</h2>
-                   <p className="text-xs font-medium text-gray-400 mt-1 uppercase tracking-wider">Verifying shared nodes and egress logs</p>
+                   <h2 className="text-lg font-bold text-gray-900 tracking-tight">User Files</h2>
+                   <p className="text-xs font-medium text-gray-400 mt-1 uppercase tracking-wider">View and manage files</p>
                 </div>
 
                 <div className="flex items-center gap-4 w-full md:w-auto">
@@ -280,7 +280,7 @@ export default function UserFilesPage() {
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-[#66B2D6] transition-colors" />
                         <input
                             type="text"
-                            placeholder="Find file nodes..."
+                            placeholder="Search files..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full md:w-64 pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#66B2D6]/10 focus:border-[#66B2D6] transition-all"
@@ -299,16 +299,16 @@ export default function UserFilesPage() {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-24 gap-4">
                         <div className="w-12 h-12 border-4 border-gray-100 border-t-[#66B2D6] rounded-full animate-spin"></div>
-                        <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] animate-pulse">Scanning Clusters...</p>
+                        <p className="text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] animate-pulse">Loading files...</p>
                     </div>
                 ) : filteredFiles.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-24 text-center">
                         <div className="w-20 h-20 bg-gray-50 rounded-[2rem] flex items-center justify-center mb-6 shadow-inner border border-gray-100 rotate-6 group-hover:rotate-0 transition-transform duration-500">
                             <HardDrive className="w-10 h-10 text-gray-200" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">No Active Nodes Found</h3>
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">No Files Found</h3>
                         <p className="text-xs font-medium text-gray-400 max-w-xs leading-relaxed uppercase tracking-wider">
-                            The requested subdirectory contains zero verified file pointers.
+                            This user hasn't uploaded any files yet.
                         </p>
                     </div>
                 ) : (
@@ -326,14 +326,14 @@ export default function UserFilesPage() {
                                         <button
                                             onClick={() => !isRenaming && handleViewClick(file)}
                                             className="p-1.5 text-gray-400 hover:text-[#66B2D6] hover:bg-[#66B2D6]/5 rounded-lg transition-all"
-                                            title="Secure View"
+                                            title="View File"
                                         >
                                             <Eye className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => !isRenaming && handleRenameClick(file)}
                                             className="p-1.5 text-gray-400 hover:text-[#66B2D6] hover:bg-[#66B2D6]/5 rounded-lg transition-all"
-                                            title="Modify Header"
+                                            title="Rename File"
                                         >
                                             <Pencil className="w-4 h-4" />
                                         </button>
@@ -347,14 +347,14 @@ export default function UserFilesPage() {
                                     <div className="flex items-center gap-2">
                                         <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">{getFileType(file.name)}</span>
                                         <div className="w-1 h-1 bg-gray-200 rounded-full"></div>
-                                        <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">VERIFIED</span>
+                                        <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">FILE</span>
                                     </div>
                                 </div>
 
                                 <div className="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
                                     <div className="flex items-center gap-1.5 text-[9px] font-bold text-gray-400 uppercase tracking-tighter">
                                         <ShieldCheck className="w-3 h-3 text-emerald-500" />
-                                        Protocols Active
+                                        Secure
                                     </div>
                                     <ChevronRight className="w-3 h-3 text-gray-200 group-hover/card:translate-x-1 transition-transform" />
                                 </div>
@@ -366,10 +366,10 @@ export default function UserFilesPage() {
             
             <div className="px-8 py-5 bg-gray-50/50 border-t border-gray-100 flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[10px] font-black text-gray-300 uppercase tracking-widest">
-                    <Lock className="w-3.5 h-3.5 text-indigo-500" /> Administrative Clearance: Level 4
+                    <Lock className="w-3.5 h-3.5 text-indigo-500" /> Admin Access
                 </div>
                 <div className="text-[10px] font-bold text-gray-400">
-                    Total Nodes: {filteredFiles.length}
+                    Total Files: {filteredFiles.length}
                 </div>
             </div>
         </div>
@@ -389,12 +389,12 @@ export default function UserFilesPage() {
                    </button>
                 </div>
                 
-                <h3 className="text-xl font-bold text-gray-900 tracking-tight mb-2">Modify Protocol Header</h3>
-                <p className="text-xs font-medium text-gray-400 mb-8 uppercase tracking-wider">Updating target pointer metadata</p>
+                <h3 className="text-xl font-bold text-gray-900 tracking-tight mb-2">Rename File</h3>
+                <p className="text-xs font-medium text-gray-400 mb-8 uppercase tracking-wider">Enter a new name for this file</p>
 
                 <div className="space-y-6">
                     <div>
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2 px-1">NEW IDENTIFIER</label>
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2 px-1">NEW NAME</label>
                         <input
                             ref={renameInputRef}
                             type="text"
@@ -415,13 +415,13 @@ export default function UserFilesPage() {
                             disabled={!newFileName.trim() || !!extensionError || isRenaming}
                             className="w-full py-4 bg-[#66B2D6] text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-[#66B2D6]/20 hover:bg-[#5aa0c1] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                         >
-                            {isRenaming ? <Loader2 className="w-4 h-4 animate-spin" /> : "Commit Changes"}
+                            {isRenaming ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Changes"}
                         </button>
                         <button
                             onClick={() => setShowRenameModal(false)}
                             className="w-full py-4 bg-white text-gray-400 hover:text-gray-900 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all"
                         >
-                            Abort Operation
+                            Cancel
                         </button>
                     </div>
                 </div>
@@ -440,8 +440,8 @@ export default function UserFilesPage() {
                         <ShieldCheck className="w-6 h-6" />
                     </div>
                     <div>
-                        <p className="text-white text-sm font-bold">Secure Environment</p>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Temporary Egress Active</p>
+                        <p className="text-white text-sm font-bold">File Preview</p>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">Viewing mode</p>
                     </div>
                 </div>
                 <button
@@ -472,11 +472,8 @@ export default function UserFilesPage() {
             </div>
             
             <div className="flex items-center gap-8 py-4">
-                <div className="flex items-center gap-2 text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">
-                    <Clock className="w-4 h-4" /> 00:00 SESSION TIME
-                </div>
                 <button className="flex items-center gap-2 px-6 py-2 bg-white/5 hover:bg-white/10 rounded-full text-[10px] font-black text-white uppercase tracking-widest border border-white/10 transition-all">
-                    <Download className="w-3.5 h-3.5" /> Secure Egress
+                    <Download className="w-3.5 h-3.5" /> Download File
                 </button>
             </div>
           </div>

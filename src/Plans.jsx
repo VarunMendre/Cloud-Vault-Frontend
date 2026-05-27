@@ -142,22 +142,45 @@ function classNames(...cls) {
   return cls.filter(Boolean).join(" ");
 }
 
-function Price({ value }) {
+function AnimatedPrice({ value, isYearly }) {
+  const [displayValue, setDisplayValue] = useState(value);
+
+  useEffect(() => {
+    let start = displayValue;
+    const end = value;
+    if (start === end) return;
+    
+    const duration = 400; // 400ms rapid count
+    const startTime = performance.now();
+    
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // ease out expo
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const current = Math.round(start + (end - start) * easeProgress);
+      setDisplayValue(current);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        setDisplayValue(end);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [value]);
+
+  if (displayValue === 0) {
+    return <span className="text-4xl font-bold tracking-tight text-slate-900">Free</span>;
+  }
+
   return (
-    <div className="flex items-baseline gap-1.5">
-      {value === 0 ? (
-        <span className="text-5xl font-black tracking-tighter text-text-main group-hover:scale-105 transition-transform">
-          Free
-        </span>
-      ) : (
-        <>
-          <span className="text-xl font-black text-muted mb-1 opacity-50">₹</span>
-          <span className="text-5xl font-black tracking-tighter text-text-main group-hover:scale-105 transition-transform">
-            {value}
-          </span>
-        </>
-      )}
-    </div>
+    <>
+      <span className="text-lg font-semibold text-slate-700">₹</span>
+      <span className="text-4xl font-bold tracking-tight text-slate-900">{displayValue}</span>
+      <span className="mb-[6px] text-sm text-slate-500">/month</span>
+    </>
   );
 }
 
@@ -233,15 +256,7 @@ function PlanCard({ plan, onSelect, isLoading, isDisabled }) {
       {/* Price */}
       <div className="mb-6 mt-2 flex flex-col gap-0.5">
         <div className="flex items-end gap-1">
-          {yearlyMonthly === 0 ? (
-            <span className="text-4xl font-bold tracking-tight text-slate-900">Free</span>
-          ) : (
-            <>
-              <span className="text-lg font-semibold text-slate-700">₹</span>
-              <span className="text-4xl font-bold tracking-tight text-slate-900">{yearlyMonthly}</span>
-              <span className="mb-[6px] text-sm text-slate-500">/month</span>
-            </>
-          )}
+          <AnimatedPrice value={yearlyMonthly} isYearly={plan.period === "/year"} />
         </div>
         {plan.period === "/year" && plan.price !== 0 && (
           <div className="flex flex-col">
@@ -446,11 +461,11 @@ export default function Plans() {
       )}
       
       <header className="mb-16 text-center relative max-w-3xl mx-auto">
-        <h1 className="text-4xl sm:text-6xl font-black text-text-main mb-6 tracking-tighter leading-tight animate-fadeIn">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight animate-fadeIn">
           Select Your <span className="text-primary">Cloud Plan</span>
         </h1>
-        <p className="text-lg font-bold text-muted leading-relaxed">
-          Unlock unlimited potential with secure, high-speed storage tailored for your digital life.
+        <p className="text-lg font-medium text-slate-500 leading-relaxed max-w-2xl mx-auto">
+          Unlock unlimited potential with secure, high-speed storage tailored for your digital life. Simple, transparent pricing.
         </p>
       </header>
 
@@ -541,44 +556,39 @@ function SuccessModal({ subscriptionId, onClose }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-text-main/60 backdrop-blur-md"></div>
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-md bg-card rounded-[40px] shadow-strong p-10 text-center animate-scaleIn border border-border overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-2 bg-secondary group overflow-hidden">
-           {activating && <div className="h-full bg-primary animate-progress-indeterminate opacity-40"></div>}
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 text-center animate-scaleIn border border-slate-200 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-100 overflow-hidden">
+           {activating && <div className="h-full bg-primary animate-progress-indeterminate opacity-80"></div>}
         </div>
 
         {/* Icon Container */}
-        <div className={`mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-[24px] shadow-inner transition-all duration-700 ${activating ? 'bg-secondary' : 'bg-green-50 animate-bounce'}`}>
-          <div className={`flex h-14 w-14 items-center justify-center rounded-[18px] text-white shadow-lg transition-colors duration-700`}
-            style={{ backgroundColor: activating ? 'var(--color-primary)' : 'var(--color-accent)' }}>
+        <div className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl transition-all duration-500 ${activating ? 'bg-slate-50 border border-slate-100' : 'bg-green-50 border border-green-100'}`}>
+          <div className={`flex h-12 w-12 items-center justify-center rounded-xl text-white shadow-sm transition-colors duration-500`}
+            style={{ backgroundColor: activating ? '#66B2D6' : '#10B981' }}>
             {activating ? (
-               <svg className="w-7 h-7 animate-spin" fill="none" viewBox="0 0 24 24">
-                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-               </svg>
+               <Loader2 className="w-6 h-6 animate-spin" />
             ) : (
-              <svg className="w-8 h-8 animate-in zoom-in duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
+              <Check className="w-6 h-6 animate-in zoom-in duration-500" />
             )}
           </div>
         </div>
         
-        <h2 className="text-3xl font-black text-text-main mb-3 tracking-tight">
-          {activating ? "Verifying..." : "You're All Set!"}
+        <h2 className="text-2xl font-bold text-slate-900 mb-3 tracking-tight">
+          {activating ? "Activating your plan..." : "You're All Set!"}
         </h2>
-        <p className="text-sm font-bold text-muted mb-10 max-w-[280px] mx-auto leading-relaxed">
+        <p className="text-sm font-medium text-slate-500 mb-8 max-w-[280px] mx-auto leading-relaxed">
           {activating 
-            ? "We are synchronizing your workspace with our high-speed cloud clusters." 
-            : "Your premium access is now live. Prepare for a seamless cloud experience."}
+            ? "Please wait while we set up your new workspace and apply your plan limits." 
+            : "Your premium access is now live. Enjoy your new features."}
         </p>
 
         {!activating && (
-          <div className="p-4 rounded-2xl bg-accent/10 border-2 border-accent/20 flex items-center justify-center gap-3">
-             <div className="w-2 h-2 rounded-full bg-accent animate-ping"></div>
-             <span className="text-xs font-black text-accent uppercase tracking-widest">Redirecting to Dashboard</span>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center gap-2">
+             <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+             <span className="text-xs font-semibold text-slate-600">Redirecting to Dashboard</span>
           </div>
         )}
       </div>
@@ -599,64 +609,49 @@ function CountdownModal({ countdown, onCancel }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-text-main/60 backdrop-blur-md"></div>
+      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-md bg-white rounded-[40px] shadow-strong overflow-hidden animate-scaleIn border border-border">
-        {/* Progress Bar at Top */}
-        <div className="absolute top-0 left-0 right-0 h-2 bg-secondary">
-          <div 
-            className="h-full bg-primary transition-all ease-linear shadow-[0_0_10px_2px_rgba(var(--color-primary-rgb),0.3)]"
-            style={{ 
-              width: `${progress}%`, 
-              transitionDuration: '3000ms'
-            }}
-          ></div>
-        </div>
-
-        <div className="p-10 text-center">
+      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden animate-scaleIn border border-slate-200">
+        <div className="p-8 text-center">
           {/* Close button */}
           <button
             onClick={onCancel}
-            className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center bg-secondary/50 text-muted hover:text-text-main hover:bg-secondary rounded-2xl transition-all"
+            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
 
           {/* Icon */}
-          <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-[24px] bg-secondary shadow-inner">
-            <div className="flex h-14 w-14 items-center justify-center rounded-[18px] text-white bg-primary shadow-lg shadow-primary/20">
-              <ShieldCheck className="w-7 h-7" />
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 border border-blue-100">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl text-white bg-[#66B2D6] shadow-sm">
+              <ShieldCheck className="w-5 h-5" />
             </div>
           </div>
           
-          <h2 className="text-3xl font-black text-text-main mb-3 tracking-tight">Security Handshake</h2>
-          <p className="text-sm font-bold text-muted mb-10 leading-relaxed">
-            Establishing a <span className="text-primary">secure tunnel</span> to our encrypted payment gateway...
+          <h2 className="text-2xl font-bold text-slate-900 mb-2 tracking-tight">Secure Checkout</h2>
+          <p className="text-sm font-medium text-slate-500 mb-8 leading-relaxed">
+            Connecting to our secure payment gateway...
           </p>
           
           {/* Countdown Container */}
-          <div className="mb-10 relative">
-            <div className="text-8xl font-black text-text-main opacity-5 select-none absolute inset-0 flex items-center justify-center">
+          <div className="mb-8 relative flex justify-center items-center">
+            <div className="text-6xl font-bold text-slate-900 relative z-10 animate-pulse">
               {countdown}
             </div>
-            <div className="text-7xl font-black text-text-main relative z-10 animate-bounce">
-              {countdown}
-            </div>
-            <div className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mt-2">Seconds remaining</div>
           </div>
 
           <div className="flex flex-col gap-4 text-center">
-            <div className="flex items-center justify-center gap-2.5 px-4 py-2 bg-emerald-50 text-emerald-600 rounded-xl w-fit mx-auto border border-emerald-100">
-               <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
-               <span className="text-[10px] font-black uppercase tracking-widest">TLS 1.3 Encryption Active</span>
+            <div className="flex items-center justify-center gap-2 px-3 py-1.5 bg-slate-50 text-slate-600 rounded-lg w-fit mx-auto border border-slate-200">
+               <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+               <span className="text-[11px] font-semibold">Secure connection established</span>
             </div>
             
             <button
               onClick={onCancel}
-              className="mt-4 text-xs font-black text-muted hover:text-red-500 transition-colors uppercase tracking-widest border-b-2 border-transparent hover:border-red-100 pb-1 w-fit mx-auto"
+              className="mt-2 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
             >
-              Cancel Transaction
+              Cancel Checkout
             </button>
           </div>
         </div>

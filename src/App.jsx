@@ -24,6 +24,7 @@ import ContactUs from "./ContactUs";
 import LandingPage from "./LandingPage";
 import { useAuth } from "./context/AuthContext";
 import LoadingOverlay from "./components/LoadingOverlay";
+import GlobalToast from "./components/GlobalToast";
 
 const isLandingDomain = 
   window.location.hostname === "cloudvault.cloud" || 
@@ -134,6 +135,7 @@ function App() {
     <>
       {isAuthenticating && !isPublicPage && <LoadingOverlay />}
       <RouterProvider router={router} />
+      <GlobalToast />
     </>
   );
 }

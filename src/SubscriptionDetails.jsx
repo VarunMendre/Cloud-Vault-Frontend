@@ -396,8 +396,8 @@ export default function SubscriptionDetails() {
           <div className="bg-white rounded-3xl border border-gray-200 shadow-sm p-8 group">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Live Utilization</span>
-                <h3 className="text-lg font-bold text-gray-900">Storage Grid</h3>
+                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Current Storage</span>
+                <h3 className="text-lg font-bold text-gray-900">Storage Usage</h3>
               </div>
               <div className="w-10 h-10 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center shadow-inner">
                 <Database className="w-5 h-5 text-[#66B2D6] group-hover:scale-110 transition-transform" />
@@ -431,7 +431,7 @@ export default function SubscriptionDetails() {
                      <div className="w-8 h-8 bg-white border border-gray-200 rounded-lg flex items-center justify-center shadow-sm">
                         <Zap className="w-4 h-4 text-[#66B2D6]" />
                      </div>
-                     <span className="text-xs font-bold text-gray-600">Vortex Speed</span>
+                     <span className="text-xs font-bold text-gray-600">Download Speed</span>
                   </div>
                   <span className="text-[9px] font-black px-2 py-1 bg-[#66B2D6] text-white rounded-md tracking-widest uppercase">{data.limits.prioritySpeed}</span>
                </div>
@@ -449,37 +449,32 @@ export default function SubscriptionDetails() {
           </div>
         </div>
 
-        {/* Operational Grid */}
         <div className="flex items-center gap-4 mb-8">
           <div className="h-px bg-gray-200 flex-1"></div>
-          <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Operational Telemetry</span>
+          <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Usage Statistics</span>
           <div className="h-px bg-gray-200 flex-1"></div>
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatsCard 
             icon={<HardDrive className="w-5 h-5 text-[#66B2D6]" />} 
-            title="Total Assets" 
+            title="Total Files" 
             value={data.stats.totalFiles} 
-            subtitle="Payload"
           />
           <StatsCard 
             icon={<Info className="w-5 h-5 text-green-500" />} 
-            title="External Links" 
+            title="Shared Files" 
             value={data.stats.sharedFiles} 
-            subtitle="Public Node"
           />
           <StatsCard 
             icon={<Users className="w-5 h-5 text-purple-500" />} 
-            title="Sessions" 
+            title="Connected Devices" 
             value={`${data.stats.devicesConnected} / ${data.stats.maxDevices || 3}`} 
-            subtitle="Live Nodes"
           />
           <StatsCard 
             icon={<ArrowRight className="w-5 h-5 text-orange-500" />} 
-            title="Ingress Count" 
+            title="Uploads this Cycle" 
             value={data.stats.uploadsDuringSubscription} 
-            subtitle="Lifecycle"
           />
         </div>
       </div>
