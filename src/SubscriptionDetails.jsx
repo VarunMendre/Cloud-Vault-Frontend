@@ -29,13 +29,14 @@ function classNames(...classes) {
 }
 
 export default function SubscriptionDetails() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingInvoice, setLoadingInvoice] = useState(false);
   const [cancelling, setCancelling] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const navigate = useNavigate();
 
   async function handleViewInvoice() {
@@ -82,12 +83,24 @@ export default function SubscriptionDetails() {
   }
 
   useEffect(() => {
+    // Check for success status from Razorpay redirect
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("status") === "success") {
+      setSuccessMessage("Your payment was successful and your premium subscription is now active! Welcome to CloudVault.");
+      // Clean up the URL search params so the message doesn't keep appearing on refresh
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
     async function fetchDetails() {
       try {
         setLoading(true);
         const res = await getSubscriptionDetails();
         if (res && res.activePlan && ["active", "past_due"].includes(res.activePlan.status)) {
           setData(res);
+          // Refresh user context so the header and storage stats update immediately
+          refreshUser();
         } else {
           navigate("/plans", { replace: true });
         }
@@ -98,7 +111,7 @@ export default function SubscriptionDetails() {
       }
     }
     fetchDetails();
-  }, [navigate]);
+  }, [navigate, refreshUser]);
 
   if (loading) {
     return (
@@ -135,6 +148,24 @@ export default function SubscriptionDetails() {
                 <p className="text-xs font-medium text-gray-400 mt-1">{errorMessage}</p>
               </div>
               <button onClick={() => setErrorMessage(null)} className="text-gray-300 hover:text-gray-900 p-1">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Success Notification */}
+        {successMessage && (
+          <div className="fixed top-8 right-8 z-[100] max-w-sm w-full animate-slideInRight">
+            <div className="bg-white border border-green-100 rounded-2xl shadow-xl p-4 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <CheckCircle2 className="w-5 h-5 text-green-500" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-gray-900">Success!</p>
+                <p className="text-xs font-medium text-gray-400 mt-1">{successMessage}</p>
+              </div>
+              <button onClick={() => setSuccessMessage(null)} className="text-gray-300 hover:text-gray-900 p-1">
                 <X className="w-4 h-4" />
               </button>
             </div>
