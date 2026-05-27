@@ -36,7 +36,10 @@ export default function SubscriptionDetails() {
   const [cancelling, setCancelling] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [showSuccessOverlay, setShowSuccessOverlay] = useState(() => {
+    return new URLSearchParams(window.location.search).get("status") === "success";
+  });
+  const [activating, setActivating] = useState(true);
   const navigate = useNavigate();
 
   async function handleViewInvoice() {
@@ -83,35 +86,39 @@ export default function SubscriptionDetails() {
   }
 
   useEffect(() => {
-    // Check for success status from Razorpay redirect
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("status") === "success") {
-      setSuccessMessage("Your payment was successful and your premium subscription is now active! Welcome to CloudVault.");
-      // Clean up the URL search params so the message doesn't keep appearing on refresh
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-  }, []);
-
-  useEffect(() => {
     async function fetchDetails() {
       try {
         setLoading(true);
         const res = await getSubscriptionDetails();
         if (res && res.activePlan && ["active", "past_due"].includes(res.activePlan.status)) {
           setData(res);
-          // Refresh user context so the header and storage stats update immediately
           refreshUser();
+          
+          if (showSuccessOverlay) {
+            setActivating(false);
+            setTimeout(() => {
+              setShowSuccessOverlay(false);
+              // Clean up the URL search params so refresh works nicely
+              window.history.replaceState({}, document.title, window.location.pathname);
+            }, 2500);
+          }
         } else {
-          navigate("/plans", { replace: true });
+          // If we are in the middle of activation success overlay, don't boot them to /plans immediately
+          // since the self-healing sync might take a second to reconcile.
+          if (!showSuccessOverlay) {
+            navigate("/plans", { replace: true });
+          }
         }
       } catch (err) {
-        navigate("/plans", { replace: true });
+        if (!showSuccessOverlay) {
+          navigate("/plans", { replace: true });
+        }
       } finally {
         setLoading(false);
       }
     }
     fetchDetails();
-  }, [navigate, refreshUser]);
+  }, [navigate, refreshUser, showSuccessOverlay]);
 
   if (loading) {
     return (
@@ -154,20 +161,46 @@ export default function SubscriptionDetails() {
           </div>
         )}
 
-        {/* Success Notification */}
-        {successMessage && (
-          <div className="fixed top-8 right-8 z-[100] max-w-sm w-full animate-slideInRight">
-            <div className="bg-white border border-green-100 rounded-2xl shadow-xl p-4 flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-5 h-5 text-green-500" />
+        {/* Success / Activation Overlay */}
+        {showSuccessOverlay && (
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/45 backdrop-blur-md animate-fadeIn">
+            <div className="relative w-full max-w-md bg-white rounded-[40px] shadow-2xl p-10 text-center border border-gray-100 overflow-hidden animate-scaleIn">
+              {/* Top Progress bar */}
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gray-100 overflow-hidden">
+                {activating && <div className="h-full bg-[#66B2D6] animate-pulse w-full"></div>}
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-bold text-gray-900">Success!</p>
-                <p className="text-xs font-medium text-gray-400 mt-1">{successMessage}</p>
+
+              {/* Icon Container */}
+              <div className={`mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-[24px] shadow-inner transition-all duration-700 ${activating ? 'bg-gray-50' : 'bg-green-50 animate-bounce'}`}>
+                <div className={`flex h-14 w-14 items-center justify-center rounded-[18px] text-white shadow-lg transition-colors duration-700 ${activating ? 'bg-[#66B2D6]' : 'bg-green-500'}`}>
+                  {activating ? (
+                     <svg className="w-7 h-7 animate-spin" fill="none" viewBox="0 0 24 24">
+                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                     </svg>
+                  ) : (
+                    <svg className="w-8 h-8 animate-in zoom-in duration-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  )}
+                </div>
               </div>
-              <button onClick={() => setSuccessMessage(null)} className="text-gray-300 hover:text-gray-900 p-1">
-                <X className="w-4 h-4" />
-              </button>
+              
+              <h2 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">
+                {activating ? "Activating Plan..." : "You're All Set!"}
+              </h2>
+              <p className="text-sm font-bold text-gray-400 mb-10 max-w-[280px] mx-auto leading-relaxed">
+                {activating 
+                  ? "We are synchronizing your workspace with our high-speed cloud clusters." 
+                  : "Your premium access is now live. Prepare for a seamless cloud experience."}
+              </p>
+
+              {!activating && (
+                <div className="p-4 rounded-2xl bg-green-50 border-2 border-green-100 flex items-center justify-center gap-3">
+                   <div className="w-2 h-2 rounded-full bg-green-500 animate-ping"></div>
+                   <span className="text-xs font-black text-green-600 uppercase tracking-widest">Opening Dashboard</span>
+                </div>
+              )}
             </div>
           </div>
         )}
