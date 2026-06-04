@@ -449,53 +449,78 @@ export default function UserSettings() {
                                 )}
 
                                 {!hasPassword && (
-                                    <div>
-                                        <Label>Set a password</Label>
-                                        <PasswordStrengthIndicator
-                                            value={newPassword}
-                                            onChange={(val) => setNewPassword(val)}
-                                            showScore={true}
-                                            showVisibilityToggle={true}
-                                            placeholder="Min. 4 characters"
-                                            inputProps={{ className: inputCls, disabled: submitting }}
-                                        />
-                                    </div>
+                                    <>
+                                        <div>
+                                            <Label>Set a password</Label>
+                                            <PasswordStrengthIndicator
+                                                value={newPassword}
+                                                onChange={(val) => setNewPassword(val)}
+                                                showScore={true}
+                                                showVisibilityToggle={true}
+                                                placeholder="Min. 4 characters"
+                                                inputProps={{ className: inputCls, disabled: submitting }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label>Re-type the password</Label>
+                                            <PasswordStrengthIndicator
+                                                value={confirmPassword}
+                                                compareValue={newPassword}
+                                                onChange={(val) => setConfirmPassword(val)}
+                                                showVisibilityToggle={true}
+                                                placeholder="Retype password"
+                                                inputProps={{ className: inputCls, disabled: submitting }}
+                                            />
+                                        </div>
+                                    </>
                                 )}
                                 {hasPassword && (
-                                    <div>
-                                        <Label>Current Password</Label>
-                                        <div className="relative">
-                                            <input
-                                                type={showCurrentPassword ? "text" : "password"}
-                                                value={currentPassword}
-                                                onChange={(e) => setCurrentPassword(e.target.value)}
-                                                placeholder="Enter current password"
-                                                className={inputCls}
-                                                required
-                                                disabled={submitting}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#718096] hover:text-[#1A202C]"
-                                            >
-                                                {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                            </button>
+                                    <>
+                                        <div>
+                                            <Label>Current Password</Label>
+                                            <div className="relative">
+                                                <input
+                                                    type={showCurrentPassword ? "text" : "password"}
+                                                    value={currentPassword}
+                                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                                    placeholder="Enter current password"
+                                                    className={inputCls}
+                                                    required
+                                                    disabled={submitting}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#718096] hover:text-[#1A202C]"
+                                                >
+                                                    {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                </button>
+                                            </div>
                                         </div>
-                                    </div>
+                                        <div>
+                                            <Label>New password</Label>
+                                            <PasswordStrengthIndicator
+                                                value={newPassword}
+                                                onChange={(val) => setNewPassword(val)}
+                                                showScore={true}
+                                                showVisibilityToggle={true}
+                                                placeholder="Min. 4 characters"
+                                                inputProps={{ className: inputCls, disabled: submitting }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label>Confirm new password</Label>
+                                            <PasswordStrengthIndicator
+                                                value={confirmPassword}
+                                                compareValue={newPassword}
+                                                onChange={(val) => setConfirmPassword(val)}
+                                                showVisibilityToggle={true}
+                                                placeholder="Confirm new password"
+                                                inputProps={{ className: inputCls, disabled: submitting }}
+                                            />
+                                        </div>
+                                    </>
                                 )}
-
-                                <div>
-                                    <Label>{hasPassword ? "New password" : "Re-type the password"}</Label>
-                                    <PasswordStrengthIndicator
-                                        value={confirmPassword}
-                                        compareValue={newPassword}
-                                        onChange={(val) => setConfirmPassword(val)}
-                                        showVisibilityToggle={true}
-                                        placeholder={hasPassword ? "Min. 4 characters" : "Retype password"}
-                                        inputProps={{ className: inputCls, disabled: submitting }}
-                                    />
-                                </div>
 
                                 <div className="pt-2">
                                      <button 
