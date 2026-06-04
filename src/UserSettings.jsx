@@ -453,6 +453,7 @@ export default function UserSettings() {
                                         <div>
                                             <Label>Set a password</Label>
                                             <PasswordStrengthIndicator
+                                                label=""
                                                 value={newPassword}
                                                 onChange={(val) => setNewPassword(val)}
                                                 showScore={true}
@@ -464,6 +465,7 @@ export default function UserSettings() {
                                         <div>
                                             <Label>Re-type the password</Label>
                                             <PasswordStrengthIndicator
+                                                label=""
                                                 value={confirmPassword}
                                                 compareValue={newPassword}
                                                 onChange={(val) => setConfirmPassword(val)}
@@ -500,6 +502,7 @@ export default function UserSettings() {
                                         <div>
                                             <Label>New password</Label>
                                             <PasswordStrengthIndicator
+                                                label=""
                                                 value={newPassword}
                                                 onChange={(val) => setNewPassword(val)}
                                                 showScore={true}
@@ -511,6 +514,7 @@ export default function UserSettings() {
                                         <div>
                                             <Label>Confirm new password</Label>
                                             <PasswordStrengthIndicator
+                                                label=""
                                                 value={confirmPassword}
                                                 compareValue={newPassword}
                                                 onChange={(val) => setConfirmPassword(val)}
