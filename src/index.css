@@ -373,3 +373,114 @@ body {
   opacity: 1 !important;
   transform: translateY(0) translateX(0) !important;
 }
+
+/* User Management - Subscription Column Styling */
+.subscription-cell {
+  vertical-align: middle;
+}
+
+.subscription-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.subscription-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 9999px; /* Pill badge */
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.subscription-badge svg {
+  flex-shrink: 0;
+}
+
+.subscription-badge.badge-active {
+  background-color: rgba(34, 197, 94, 0.08);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.16);
+}
+
+.subscription-badge.badge-active:hover {
+  background-color: rgba(34, 197, 94, 0.15);
+  transform: translateY(-1px);
+}
+
+.subscription-badge.badge-paused {
+  background-color: rgba(245, 158, 11, 0.08);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.16);
+}
+
+.subscription-badge.badge-paused:hover {
+  background-color: rgba(245, 158, 11, 0.15);
+  transform: translateY(-1px);
+}
+
+.subscription-badge.badge-free {
+  background-color: rgba(100, 116, 139, 0.08);
+  color: #475569;
+  border: 1px solid rgba(100, 116, 139, 0.16);
+}
+
+.subscription-badge.badge-free:hover {
+  background-color: rgba(100, 116, 139, 0.15);
+  transform: translateY(-1px);
+}
+
+.subscription-actions {
+  display: inline-flex;
+  align-items: center;
+}
+
+.subscription-btn {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 9999px; /* Pill action buttons to match the badges */
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.subscription-btn.btn-pause {
+  background-color: transparent;
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.subscription-btn.btn-pause:hover {
+  background-color: rgba(245, 158, 11, 0.08);
+  border-color: #d97706;
+  transform: translateY(-1px);
+}
+
+.subscription-btn.btn-pause:active {
+  transform: translateY(0);
+}
+
+.subscription-btn.btn-resume {
+  background-color: #2d8b8b;
+  color: #ffffff;
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px rgba(45, 139, 139, 0.2);
+}
+
+.subscription-btn.btn-resume:hover {
+  background-color: #1a7a7a;
+  box-shadow: 0 4px 6px rgba(45, 139, 139, 0.3);
+  transform: translateY(-1px);
+}
+
+.subscription-btn.btn-resume:active {
+  transform: translateY(0);
+}

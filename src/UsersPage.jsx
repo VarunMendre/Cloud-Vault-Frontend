@@ -639,31 +639,35 @@ function UserRow({ user, currentUser, onView, onRoleChange, onLogout, onDelete, 
         </div>
       </td>
       {currentUser.role === "Owner" && (
-        <td className="px-6 py-4">
-           {user.razorpaySubscriptionId ? (
-             <div className="space-y-1.5">
-               {user.subscriptionStatus === "paused" ? (
-                  <div className="flex items-center gap-1.5 text-amber-600 bg-amber-50 px-2 py-1 rounded text-[11px] font-semibold w-fit border border-amber-100">
-                    <Pause className="w-3 h-3" />
-                    <span>Paused</span>
-                  </div>
-               ) : (
-                  <div className="flex items-center gap-1.5 text-[#22C55E] bg-[#22C55E]/10 px-2 py-1 rounded text-[11px] font-semibold w-fit border border-[#22C55E]/20">
-                    <ShieldCheck className="w-3 h-3" />
-                    <span>Active Plan</span>
-                  </div>
-               )}
-               <div className="flex gap-3">
-                  {user.subscriptionStatus === "paused" ? (
-                    <button onClick={() => onResume(user)} className="text-[11px] font-semibold text-[#2D8B8B] hover:underline">Resume</button>
-                  ) : (
-                    <button onClick={() => onPause(user)} className="text-[11px] font-semibold text-amber-600 hover:underline">Pause Plan</button>
-                  )}
+        <td className="px-6 py-4 subscription-cell">
+           <div className="subscription-container">
+             {user.razorpaySubscriptionId ? (
+               <>
+                 {user.subscriptionStatus === "paused" ? (
+                    <div className="subscription-badge badge-paused">
+                      <Pause className="w-3 h-3" />
+                      <span>Paused</span>
+                    </div>
+                 ) : (
+                    <div className="subscription-badge badge-active">
+                      <ShieldCheck className="w-3 h-3" />
+                      <span>Active Plan</span>
+                    </div>
+                 )}
+                 <div className="subscription-actions">
+                    {user.subscriptionStatus === "paused" ? (
+                       <button onClick={() => onResume(user)} className="subscription-btn btn-resume">Resume</button>
+                    ) : (
+                       <button onClick={() => onPause(user)} className="subscription-btn btn-pause">Pause Plan</button>
+                    )}
+                 </div>
+               </>
+             ) : (
+               <div className="subscription-badge badge-free">
+                 <span>Free Plan</span>
                </div>
-             </div>
-           ) : (
-             <span className="text-[12px] text-[#718096] font-medium">Free Plan</span>
-           )}
+             )}
+           </div>
         </td>
       )}
       <td className="px-6 py-4 text-right">
