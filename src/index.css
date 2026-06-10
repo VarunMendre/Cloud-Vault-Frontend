@@ -125,6 +125,7 @@
   --animate-marquee: marquee 20s linear infinite;
   --animate-progressIndeterminate: progressIndeterminate 1.5s ease-in-out infinite;
   --animate-caret-blink: caret-blink 1.25s ease-out infinite;
+  --animate-shimmer: shimmer 1.8s linear infinite;
   --animate-marching-ants: marching-ants 1s linear infinite;
 }
 
@@ -179,6 +180,10 @@ body {
 
 .animate-progressIndeterminate {
   animation: var(--animate-progressIndeterminate);
+}
+
+.animate-shimmer {
+  animation: var(--animate-shimmer);
 }
 
 /* Smooth Transitions */

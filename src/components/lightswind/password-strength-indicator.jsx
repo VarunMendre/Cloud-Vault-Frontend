@@ -162,8 +162,9 @@ export function PasswordStrengthIndicator({
         {displayValue && (
           <div className="absolute right-10 top-1/2 -translate-y-1/2">
             <div className={cn(
-              "w-6 h-6 rounded-full flex items-center justify-center transition-colors duration-300",
-              level === StrengthLevel.WEAK ? "bg-red-500" : level === StrengthLevel.MEDIUM ? "bg-orange-500" : "bg-green-500"
+              "w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm",
+              level === StrengthLevel.WEAK ? "bg-red-500" : level === StrengthLevel.MEDIUM ? "bg-orange-500" : "bg-green-500",
+              isMatching && "scale-110 shadow-[0_0_0_6px_rgba(34,197,94,0.12)] animate-pulse"
             )}>
               {level === StrengthLevel.WEAK ? (
                 <X className="h-4 w-4 text-white" />
@@ -182,7 +183,12 @@ export function PasswordStrengthIndicator({
             key={i}
             className={cn(
               "h-full flex-1 rounded-full transition-all duration-300",
-              i < Math.min(Math.ceil(score / 1.5), 4) ? strengthColors[level] : "bg-gray-200"
+              i < Math.min(Math.ceil(score / 1.5), 4)
+                ? cn(
+                    strengthColors[level],
+                    isMatching && "animate-shimmer bg-[length:200%_100%] bg-[linear-gradient(90deg,#22c55e_0%,#86efac_50%,#22c55e_100%)]"
+                  )
+                : "bg-gray-200"
             )}
           />
         ))}
@@ -190,17 +196,32 @@ export function PasswordStrengthIndicator({
       
       {/* Strength/Match label */}
       {showScore && level !== StrengthLevel.EMPTY && (
-        <p className={cn(
-          "text-xs font-medium transition-colors duration-300",
-          level === StrengthLevel.WEAK ? "text-red-500" :
-          level === StrengthLevel.MEDIUM ? "text-orange-500" :
-          level === StrengthLevel.STRONG ? "text-green-500" :
-          "text-emerald-500"
-        )}>
-          {displayLabel}
-        </p>
+        <div
+          className={cn(
+            "flex items-center gap-2 text-xs font-medium transition-all duration-300",
+            isMatching && "animate-fadeIn"
+          )}
+        >
+          <span
+            className={cn(
+              "inline-flex h-5 w-5 items-center justify-center rounded-full text-white shadow-sm",
+              level === StrengthLevel.WEAK ? "bg-red-500" : "bg-emerald-500"
+            )}
+          >
+            {isMatching ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+          </span>
+          <p
+            className={cn(
+              level === StrengthLevel.WEAK ? "text-red-500" :
+              level === StrengthLevel.MEDIUM ? "text-orange-500" :
+              level === StrengthLevel.STRONG ? "text-green-500" :
+              "text-emerald-500"
+            )}
+          >
+            {displayLabel}
+          </p>
+        </div>
       )}
     </div>
   );
 }
-
