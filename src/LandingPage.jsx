@@ -12,7 +12,9 @@ import {
   FolderSync,
   Link,
   HardDrive,
-  ChevronRight
+  ChevronRight,
+  FileText,
+  Settings
 } from 'lucide-react';
 import Footer from './components/Footer';
 
@@ -68,81 +70,42 @@ const LandingPage = () => {
     }
   };
 
-  const featureHighlights = [
+  const coreFeatures = [
     {
-      icon: <FolderSync className="w-8 h-8 text-[#66B2D6]" />,
-      title: 'Import from Google Drive',
-      description: 'Seamlessly import your existing files directly from Google Drive with our one-click integration. No manual downloads needed — just pick and import.',
-      illustration: (
-        <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-[#E6FAF5] to-[#f0f9ff] rounded-2xl flex items-center justify-center overflow-hidden group">
-          {/* Central icon */}
-          <div className="relative z-10 w-24 h-24 bg-white rounded-2xl shadow-medium flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-            <FolderSync className="w-12 h-12 text-[#66B2D6]" />
-          </div>
-          {/* Floating elements */}
-          <div className="absolute top-6 right-8 w-12 h-12 bg-white/80 rounded-xl shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '3s' }}>
-            <Upload className="w-6 h-6 text-[#A7DDE9]" />
-          </div>
-          <div className="absolute bottom-8 left-8 w-10 h-10 bg-white/80 rounded-lg shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }}>
-            <Cloud className="w-5 h-5 text-[#66B2D6]" />
-          </div>
-          <div className="absolute top-10 left-12 w-8 h-8 bg-[#66B2D6]/10 rounded-full animate-pulse" style={{ animationDuration: '2.5s' }}></div>
-          <div className="absolute bottom-12 right-12 w-6 h-6 bg-[#A7DDE9]/20 rounded-full animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }}></div>
-          {/* Connection lines */}
-          <div className="absolute top-1/2 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#66B2D6]/20 to-transparent"></div>
-          <div className="absolute top-0 left-1/2 w-[1px] h-full bg-gradient-to-b from-transparent via-[#66B2D6]/20 to-transparent"></div>
-        </div>
-      ),
+      icon: <Shield className="w-6 h-6 text-blue-500" />,
+      bgClass: 'bg-blue-50',
+      title: 'Enterprise-Grade Security',
+      description: 'Secure access with OAuth (Google & GitHub), 2FA, and encrypted storage. Your data is protected by industry-leading security standards.',
     },
     {
-      icon: <Link className="w-8 h-8 text-[#66B2D6]" />,
-      title: 'Seamless File Sharing',
-      description: 'Share files and folders via public links or directly with specific users. Assign Viewer or Editor roles for granular control over who sees what.',
-      illustration: (
-        <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-[#f0f9ff] to-[#E6FAF5] rounded-2xl flex items-center justify-center overflow-hidden group">
-          {/* Central icon */}
-          <div className="relative z-10 w-24 h-24 bg-white rounded-2xl shadow-medium flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-            <Share2 className="w-12 h-12 text-[#66B2D6]" />
-          </div>
-          {/* User avatars */}
-          <div className="absolute top-8 left-10 w-11 h-11 bg-[#66B2D6] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-soft animate-pulse" style={{ animationDuration: '3s' }}>A</div>
-          <div className="absolute top-6 right-10 w-11 h-11 bg-[#A7DDE9] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-soft animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }}>B</div>
-          <div className="absolute bottom-8 right-16 w-11 h-11 bg-[#2C3E50] rounded-full flex items-center justify-center text-white font-bold text-sm shadow-soft animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }}>C</div>
-          {/* Link icon */}
-          <div className="absolute bottom-10 left-12 w-10 h-10 bg-white/80 rounded-lg shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '2.5s' }}>
-            <Link className="w-5 h-5 text-[#66B2D6]" />
-          </div>
-          {/* Connecting dots */}
-          <div className="absolute top-1/3 left-1/4 w-2 h-2 bg-[#66B2D6]/30 rounded-full"></div>
-          <div className="absolute top-2/3 right-1/4 w-2 h-2 bg-[#A7DDE9]/30 rounded-full"></div>
-        </div>
-      ),
+      icon: <FileText className="w-6 h-6 text-purple-500" />,
+      bgClass: 'bg-purple-50',
+      title: 'Intelligent File Management',
+      description: 'Upload any file type with drag-and-drop ease. Organize with grid views, powerful search, and instant previews for documents and media.',
     },
     {
-      icon: <HardDrive className="w-8 h-8 text-[#66B2D6]" />,
-      title: 'Expand Your Storage',
-      description: 'Upgrade your plan anytime to unlock more storage, connect more devices, and enjoy priority upload speeds. Flexible monthly billing via Razorpay.',
-      illustration: (
-        <div className="relative w-full aspect-[4/3] bg-gradient-to-br from-[#E6FAF5] to-[#f0f9ff] rounded-2xl flex items-center justify-center overflow-hidden group">
-          {/* Central icon */}
-          <div className="relative z-10 w-24 h-24 bg-white rounded-2xl shadow-medium flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-            <HardDrive className="w-12 h-12 text-[#66B2D6]" />
-          </div>
-          {/* Storage bars */}
-          <div className="absolute bottom-8 left-8 right-8 space-y-2">
-            <div className="h-2 bg-white/60 rounded-full overflow-hidden"><div className="h-full w-[30%] bg-[#66B2D6] rounded-full"></div></div>
-            <div className="h-2 bg-white/60 rounded-full overflow-hidden"><div className="h-full w-[60%] bg-[#A7DDE9] rounded-full"></div></div>
-            <div className="h-2 bg-white/60 rounded-full overflow-hidden"><div className="h-full w-[85%] bg-gradient-to-r from-[#66B2D6] to-[#A7DDE9] rounded-full"></div></div>
-          </div>
-          {/* Floating elements */}
-          <div className="absolute top-6 right-8 w-12 h-12 bg-white/80 rounded-xl shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '3s' }}>
-            <Zap className="w-6 h-6 text-[#66B2D6]" />
-          </div>
-          <div className="absolute top-8 left-10 w-10 h-10 bg-white/80 rounded-lg shadow-soft flex items-center justify-center animate-pulse" style={{ animationDuration: '4s', animationDelay: '1s' }}>
-            <Shield className="w-5 h-5 text-[#A7DDE9]" />
-          </div>
-        </div>
-      ),
+      icon: <Cloud className="w-6 h-6 text-green-500" />,
+      bgClass: 'bg-green-50',
+      title: 'Seamless Cloud Integration',
+      description: 'Import directly from Google Drive and enjoy lightning-fast global access via CloudFront CDN and AWS S3 storage.',
+    },
+    {
+      icon: <Share2 className="w-6 h-6 text-orange-500" />,
+      bgClass: 'bg-orange-50',
+      title: 'Advanced Sharing Controls',
+      description: 'Share securely with granular permissions. Control who views or edits your files with role-based access and real-time activity logs.',
+    },
+    {
+      icon: <Settings className="w-6 h-6 text-pink-500" />,
+      bgClass: 'bg-pink-50',
+      title: 'Comprehensive Admin Tools',
+      description: 'Manage users, monitor storage usage, and control system-wide settings from a powerful, centralized dashboard.',
+    },
+    {
+      icon: <Zap className="w-6 h-6 text-amber-500" />,
+      bgClass: 'bg-amber-50',
+      title: 'Lightning Fast Performance',
+      description: 'Experience zero latency with optimized global content delivery, ensuring your files are always available when you need them.',
     },
   ];
 
@@ -241,9 +204,8 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-4 relative">
-            {/* Connecting Lines (desktop only) */}
-            <div className="hidden md:block absolute top-16 left-[calc(33.33%+0.5rem)] w-[calc(33.33%-2.5rem)] h-[2px] bg-gradient-to-r from-[#66B2D6] to-[#A7DDE9] z-0"></div>
-            <div className="hidden md:block absolute top-16 right-[calc(33.33%+0.5rem)] w-[calc(33.33%-2.5rem)] h-[2px] bg-gradient-to-r from-[#A7DDE9] to-[#66B2D6] z-0"></div>
+            {/* Connecting Line (desktop only) */}
+            <div className="hidden md:block absolute top-[72px] left-[16.67%] right-[16.67%] h-0.5 border-t-2 border-dashed border-[#66B2D6]/40 z-0"></div>
 
             {/* Step 1 */}
             <div ref={addRevealRef} style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)', transitionDelay: '0.1s' }} className="relative z-10 flex flex-col items-center text-center p-8 rounded-2xl hover:bg-[#fafdff] transition-colors group">
@@ -278,103 +240,149 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* ════════ Feature Highlights — Alternating Rows ════════ */}
+      {/* ════════ Google Drive Integration (New Section [Img 1]) ════════ */}
       <section className="py-24 px-4 bg-[#fafdff]">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20" ref={addRevealRef} style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)' }}>
-            <span className="inline-block px-4 py-1.5 rounded-full bg-[#E6FAF5] text-[#66B2D6] font-bold text-sm mb-4 tracking-wide">FEATURES</span>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#2C3E50]">Powerful Features, Built for You</h2>
+        <div
+          ref={addRevealRef}
+          style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)' }}
+          className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 md:gap-16"
+        >
+          {/* Text Content */}
+          <div className="w-full md:w-1/2">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-[#2C3E50] mb-6 leading-[1.15]">
+              Seamless integration with your favorite tool
+            </h2>
+            <p className="text-lg text-[#A3C5D9] mb-8 leading-relaxed font-medium">
+              Connect Storemystuff with your existing workflow. Securely import specific files from Google Drive with complete control. No auto-syncing—<span className="text-[#66B2D6] font-bold">you choose exactly what to transfer</span>.
+            </p>
+            <ul className="space-y-4">
+              {[
+                "Selective Google Drive Import",
+                "User Consent Required",
+                "Download selected file to our servers",
+                "Access, Share & Manage"
+              ].map((text, idx) => (
+                <li key={idx} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-500 flex-shrink-0 shadow-sm border border-blue-100">
+                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" strokeWidth="4" stroke="currentColor">
+                      <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <span className="text-[#2C3E50] font-semibold text-base">{text}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="space-y-24">
-            {featureHighlights.map((feature, index) => {
-              const isReversed = index % 2 !== 0;
-              return (
-                <div
-                  key={index}
-                  ref={addRevealRef}
-                  style={{
-                    opacity: 0,
-                    transform: isReversed ? 'translateX(40px)' : 'translateX(-40px)',
-                    transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
-                  }}
-                  className={`flex flex-col ${
-                    isReversed ? 'md:flex-row-reverse' : 'md:flex-row'
-                  } items-center gap-10 md:gap-16`}
-                >
-                  {/* Illustration */}
-                  <div className="w-full md:w-1/2 flex-shrink-0">
-                    {feature.illustration}
+          {/* Card Mockup */}
+          <div className="w-full md:w-1/2 flex justify-center">
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-6 md:p-8 max-w-md w-full relative">
+              {/* Card Header */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-extrabold text-xl shadow-md">
+                    G
                   </div>
-
-                  {/* Text */}
-                  <div className="w-full md:w-1/2">
-                    <div className="w-14 h-14 rounded-xl bg-[#E6FAF5] flex items-center justify-center mb-5">
-                      {feature.icon}
-                    </div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-[#2C3E50] mb-4">{feature.title}</h3>
-                    <p className="text-[#A3C5D9] text-lg leading-relaxed mb-6">{feature.description}</p>
-                    <button
-                      onClick={handleGetStarted}
-                      className="inline-flex items-center gap-2 text-[#66B2D6] font-bold hover:gap-3 transition-all"
-                    >
-                      Learn More <ChevronRight className="w-5 h-5" />
-                    </button>
+                  <div>
+                    <h4 className="text-lg font-bold text-slate-800 leading-tight">Google Drive Import</h4>
+                    <p className="text-xs text-slate-400 mt-0.5 font-medium">Select files • No auto-sync</p>
                   </div>
                 </div>
-              );
-            })}
+                <div className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></div>
+              </div>
+
+              {/* File Rows */}
+              <div className="space-y-4">
+                {/* File 1 (DOC) */}
+                <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded bg-blue-600 flex items-center justify-center text-white shadow-sm">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" strokeWidth="3.5" stroke="currentColor">
+                        <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase tracking-wider">DOC</span>
+                    <span className="text-sm font-semibold text-slate-700">Project_Specs.doc</span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400">Ready</span>
+                </div>
+
+                {/* File 2 (XLS) */}
+                <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded bg-blue-600 flex items-center justify-center text-white shadow-sm">
+                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" strokeWidth="3.5" stroke="currentColor">
+                        <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded uppercase tracking-wider">XLS</span>
+                    <span className="text-sm font-semibold text-slate-700">Q4_Budget.xlsx</span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400">Ready</span>
+                </div>
+
+                {/* File 3 (PDF) */}
+                <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 opacity-60">
+                  <div className="flex items-center gap-3">
+                    <div className="w-5 h-5 rounded border-2 border-slate-300 bg-white"></div>
+                    <span className="text-[10px] font-bold text-red-500 bg-red-50 px-2 py-0.5 rounded uppercase tracking-wider">PDF</span>
+                    <span className="text-sm font-semibold text-slate-400">Old_Report.pdf</span>
+                  </div>
+                  <span className="text-xs font-bold text-slate-300">Skipped</span>
+                </div>
+              </div>
+
+              {/* Button */}
+              <button 
+                onClick={handleGetStarted}
+                className="w-full mt-6 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-md hover:shadow-lg active:scale-[0.98] cursor-pointer"
+              >
+                Import 2 Selected Files
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════ Everything you need to manage your digital assets (New Section [Img 2]) ════════ */}
+      <section className="py-24 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div
+            ref={addRevealRef}
+            style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.7s cubic-bezier(0.16, 1, 0.3, 1)' }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-5xl font-extrabold text-[#2C3E50] mb-4">
+              Everything you need to manage your digital assets
+            </h2>
+            <p className="text-[#A3C5D9] text-lg max-w-2xl mx-auto font-medium">
+              Powerful features designed for speed, security, and collaboration.
+            </p>
+          </div>
+
+          <div
+            ref={addRevealRef}
+            style={{ opacity: 0, transform: 'translateY(30px)', transition: 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)', transitionDelay: '0.1s' }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            {coreFeatures.map((feat, idx) => (
+              <div 
+                key={idx} 
+                className="p-8 rounded-2xl bg-[#f8fafc] border border-slate-100 hover:border-[#66B2D6] hover:bg-white hover:shadow-lg transition-all duration-300 group"
+              >
+                <div className={`w-12 h-12 rounded-xl ${feat.bgClass} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  {feat.icon}
+                </div>
+                <h3 className="text-xl font-bold text-[#2C3E50] mb-3">{feat.title}</h3>
+                <p className="text-[#A3C5D9] text-sm leading-relaxed font-medium">{feat.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ════════ Pricing / Plans Section ════════ */}
       <LandingPlansSection onGetStarted={handleGetStarted} addRevealRef={addRevealRef} />
-
-      {/* Features Grid */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#2C3E50] mb-4">Everything You Need</h2>
-            <div className="w-20 h-1.5 bg-[#66B2D6] mx-auto rounded-full"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="p-8 rounded-2xl bg-[#fafdff] border border-gray-50 hover:border-[#66B2D6] transition-all group">
-              <div className="w-14 h-14 rounded-xl bg-white shadow-soft flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Shield className="w-7 h-7 text-[#66B2D6]" />
-              </div>
-              <h3 className="text-xl font-bold text-[#2C3E50] mb-3">Enterprise Security</h3>
-              <p className="text-[#A3C5D9] leading-relaxed">
-                Your data is encrypted at rest and in transit using S3 industry standards in the ap-south-1 region.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="p-8 rounded-2xl bg-[#fafdff] border border-gray-50 hover:border-[#66B2D6] transition-all group">
-              <div className="w-14 h-14 rounded-xl bg-white shadow-soft flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Zap className="w-7 h-7 text-[#66B2D6]" />
-              </div>
-              <h3 className="text-xl font-bold text-[#2C3E50] mb-3">Lightning Speed</h3>
-              <p className="text-[#A3C5D9] leading-relaxed">
-                Powered by AWS CloudFront, experience minimal latency for uploads and downloads anywhere.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="p-8 rounded-2xl bg-[#fafdff] border border-gray-50 hover:border-[#66B2D6] transition-all group">
-              <div className="w-14 h-14 rounded-xl bg-white shadow-soft flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Share2 className="w-7 h-7 text-[#66B2D6]" />
-              </div>
-              <h3 className="text-xl font-bold text-[#2C3E50] mb-3">Seamless Sharing</h3>
-              <p className="text-[#A3C5D9] leading-relaxed">
-                Share files and folders with specific users or via public links with customizable permissions.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Trust Section */}
       <section className="py-20 px-4">
