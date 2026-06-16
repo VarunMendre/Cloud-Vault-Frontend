@@ -505,8 +505,42 @@ const LANDING_PLANS = [
 
 function LandingPlanCard({ plan, mode, onGetStarted }) {
   const isYearly = mode === 'yearly';
-  const displayPrice = isYearly && !plan.isFree ? Math.floor(plan.yearlyPrice / 12) : plan.price;
+  const targetPrice = isYearly && !plan.isFree ? Math.floor(plan.yearlyPrice / 12) : plan.price;
   const displayFeatures = isYearly && !plan.isFree && plan.yearlyFeatures ? plan.yearlyFeatures : plan.features;
+
+  const [animatedPrice, setAnimatedPrice] = useState(targetPrice);
+
+  useEffect(() => {
+    if (plan.isFree) {
+      setAnimatedPrice(0);
+      return;
+    }
+
+    const start = animatedPrice;
+    const end = targetPrice;
+    if (start === end) return;
+
+    const duration = 250; // fast but clear animation (250ms)
+    const frameRate = 1000 / 60; // ~60fps
+    const totalFrames = Math.max(1, Math.round(duration / frameRate));
+    let frame = 0;
+
+    const easeOutCubic = (x) => 1 - Math.pow(1 - x, 3);
+
+    const timer = setInterval(() => {
+      frame++;
+      const progress = easeOutCubic(frame / totalFrames);
+      const current = Math.round(start + (end - start) * progress);
+      setAnimatedPrice(current);
+
+      if (frame >= totalFrames) {
+        clearInterval(timer);
+        setAnimatedPrice(end);
+      }
+    }, frameRate);
+
+    return () => clearInterval(timer);
+  }, [targetPrice]);
 
   return (
     <div
@@ -558,12 +592,12 @@ function LandingPlanCard({ plan, mode, onGetStarted }) {
       {/* Price */}
       <div className="mb-6 mt-2 flex flex-col gap-0.5">
         <div className="flex items-end gap-1">
-          {displayPrice === 0 ? (
+          {plan.isFree ? (
             <span className="text-4xl font-bold tracking-tight text-slate-900">Free</span>
           ) : (
             <>
               <span className="text-lg font-semibold text-slate-700">₹</span>
-              <span className="text-4xl font-bold tracking-tight text-slate-900">{displayPrice}</span>
+              <span className="text-4xl font-bold tracking-tight text-slate-900">{animatedPrice}</span>
               <span className="mb-[6px] text-sm text-slate-500">/month</span>
             </>
           )}
