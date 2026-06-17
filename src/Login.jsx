@@ -120,8 +120,8 @@ const Login = () => {
   useEffect(() => {
     console.group("OAuth Debug Info");
     console.log("Current Origin:", window.location.origin);
-    console.log("Google Client ID (Auth):", import.meta.env.VITE_GOOGLE_OAUTH_CLIENT_ID);
-    console.log("Google Client ID (Drive):", import.meta.env.VITE_GOOGLE_CLIENT_ID);
+    console.log("Google Client ID (Auth):", import.meta.env.VITE_GOOGLE_LOGIN_CLIENT_ID);
+    console.log("Google Client ID (Drive):", import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID);
     console.log("Note: Ensure these origins are registered in Google Cloud Console.");
     console.groupEnd();
   }, []);

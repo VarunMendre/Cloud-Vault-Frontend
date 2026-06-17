@@ -3,11 +3,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Alert, AlertDescription } from "./lightswind/alert";
 
-// Ideally these should be in a config file or env variables
-// But for now we use process.env as per React standard
-// HARDCODED FIX: Environment variable VITE_GOOGLE_CLIENT_ID was not being picked up correctly.
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_DRIVE_CLIENT_ID;
+const API_KEY = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY;
 const SCOPE = "https://www.googleapis.com/auth/drive.file";
 
 export default function ImportFromDrive({ onFilesSelected, className, disabled }) {
