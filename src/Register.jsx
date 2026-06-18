@@ -444,7 +444,6 @@ const Register = () => {
                           console.log("Login Failed");
                           setIsGoogleLoading(false);
                         }}
-                        useOneTap
                       />
                     </div>
                   )}

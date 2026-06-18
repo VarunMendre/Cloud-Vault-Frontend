@@ -21,7 +21,7 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
 
   useEffect(() => {
     let gapiScript;
-    let gisScript;
+    let gisPoll;
 
     const loadGapi = () => {
       if (window.gapi) {
@@ -55,25 +55,35 @@ export default function ImportFromDrive({ onFilesSelected, className, disabled }
         return;
       }
 
-      gisScript = document.createElement("script");
-      gisScript.src = "https://accounts.google.com/gsi/client";
-      gisScript.async = true;
-      gisScript.defer = true;
-      gisScript.onload = () => {
+      gisPoll = window.setInterval(() => {
+        if (window.google?.accounts?.oauth2) {
+          window.clearInterval(gisPoll);
+          setGisLoaded(true);
+        }
+      }, 100);
+
+      window.setTimeout(() => {
+        if (!window.google?.accounts?.oauth2) {
+          window.clearInterval(gisPoll);
+          setError("Failed to load Google Authentication library.");
+        }
+      }, 10000);
+    };
+
+    const loadGisImmediatelyIfReady = () => {
+      if (window.google?.accounts?.oauth2) {
         setGisLoaded(true);
-      };
-      gisScript.onerror = () => {
-        console.error("Failed to load GIS script");
-        setError("Failed to load Google Authentication library.");
-      };
-      document.body.appendChild(gisScript);
+      }
     };
 
     loadGapi();
+    loadGisImmediatelyIfReady();
     loadGis();
 
     return () => {
-      // Don't remove scripts as they might be needed for rest of session
+      if (gisPoll) {
+        window.clearInterval(gisPoll);
+      }
     };
   }, []);
 

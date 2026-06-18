@@ -320,16 +320,15 @@ const Login = () => {
                         setIsGoogleLoading(false);
                       }
                     }}
-                    shape="rectangular"
-                    theme="outline"
-                    text="continue_with"
-                    size="large"
-                    width={googleBtnWidth}
+                        shape="rectangular"
+                        theme="outline"
+                        text="continue_with"
+                        size="large"
+                        width={googleBtnWidth}
                     onError={() => {
                       console.log("Login Failed");
                       setIsGoogleLoading(false);
                     }}
-                    useOneTap
                   />
                 </div>
               )}
