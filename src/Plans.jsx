@@ -410,6 +410,9 @@ export default function Plans() {
       // Redirect to the Portfolio Bridge instead of opening local popup
       const bridgeUrl = new URL("https://cerulean-meringue-2d043b.netlify.app/checkout.html");
       bridgeUrl.searchParams.set("sub_id", res.subscriptionId);
+      if (res.razorpayKeyId) {
+        bridgeUrl.searchParams.set("key_id", res.razorpayKeyId);
+      }
       bridgeUrl.searchParams.set("plan", plan.name);
       bridgeUrl.searchParams.set("desc", `${plan.storage} Storage - ${plan.tagline}`);
       if (user?.email) bridgeUrl.searchParams.set("email", user.email);
