@@ -90,7 +90,7 @@ export default function SubscriptionDetails() {
       try {
         setLoading(true);
         const res = await getSubscriptionDetails();
-        if (res && res.activePlan && ["active", "past_due"].includes(res.activePlan.status)) {
+        if (res && res.activePlan && ["active", "past_due", "created", "authenticated", "pending"].includes(res.activePlan.status)) {
           setData(res);
           refreshUser();
           if (showSuccessOverlay) {
