@@ -47,7 +47,7 @@ export default function ChangePlan() {
           getSubscriptionDetails(),
           getEligiblePlans()
         ]);
-        if (details && details.activePlan && details.activePlan.status === "active") {
+        if (details && details.activePlan && ["active", "past_due", "created", "authenticated", "pending"].includes(details.activePlan.status)) {
           setCurrentPlan(details);
           setEligiblePlans(eligible?.eligiblePlans || []);
           setEmptyMessage(eligible?.message || "");
@@ -129,7 +129,7 @@ export default function ChangePlan() {
         userEmail={user?.email || "guest@example.com"}
         userPicture={user?.picture || ""}
         userRole={user?.role || "User"}
-        subscriptionId={user?.subscriptionId}
+        subscriptionId={user?.subscriptionId || currentPlan?.activePlan?.planId}
         subscriptionStatus={user?.subscriptionStatus || "active"}
       />
 
@@ -221,9 +221,11 @@ export default function ChangePlan() {
                     <Clock className="w-3.5 h-3.5 text-[#2B8B8F]" />
                     <span className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Next Renewal</span>
                   </div>
-                  <div className="text-2xl font-semibold text-[#1D1D1D] tracking-tight">{currentPlan.activePlan.nextBillingDate}</div>
+                  <div className="text-2xl font-semibold text-[#1D1D1D] tracking-tight">
+                    {["created", "pending"].includes(currentPlan.activePlan.status) ? "Pending" : currentPlan.activePlan.nextBillingDate}
+                  </div>
                   <span className="inline-block mt-2 text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-lg">
-                    Terminating in {currentPlan.activePlan.daysLeft} days
+                    {["created", "pending"].includes(currentPlan.activePlan.status) ? "Awaiting Activation" : `Terminating in ${currentPlan.activePlan.daysLeft} days`}
                   </span>
                 </div>
               </div>

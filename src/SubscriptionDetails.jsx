@@ -134,7 +134,7 @@ export default function SubscriptionDetails() {
         userEmail={user?.email || "guest@example.com"}
         userPicture={user?.picture || ""}
         userRole={user?.role || "User"}
-        subscriptionId={user?.subscriptionId}
+        subscriptionId={user?.subscriptionId || data?.activePlan?.planId}
         subscriptionStatus={user?.subscriptionStatus || "active"}
       />
 
@@ -257,7 +257,7 @@ export default function SubscriptionDetails() {
           </div>
           <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-[#E5E7EB] shadow-sm self-start md:self-auto">
             <Clock className="w-3.5 h-3.5 text-[#2B8B8F]" />
-            <span className="text-xs font-medium text-[#6B7280] uppercase tracking-wider">Next bill: {data.activePlan.nextBillingDate}</span>
+            <span className="text-xs font-medium text-[#6B7280] uppercase tracking-wider">Next bill: {["created", "pending"].includes(data.activePlan.status) ? "Pending" : data.activePlan.nextBillingDate}</span>
           </div>
         </header>
 
@@ -330,9 +330,11 @@ export default function SubscriptionDetails() {
                   <Clock className="w-3.5 h-3.5 text-[#2B8B8F]" />
                   <span className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Next Renewal</span>
                 </div>
-                <div className="text-lg font-semibold text-[#1D1D1D] tracking-tight">{data.activePlan.nextBillingDate}</div>
+                <div className="text-lg font-semibold text-[#1D1D1D] tracking-tight">
+                  {["created", "pending"].includes(data.activePlan.status) ? "Pending" : data.activePlan.nextBillingDate}
+                </div>
                 <span className="inline-block mt-2 text-[10px] font-semibold text-[#2B8B8F] bg-[#E0F5F3] px-2 py-0.5 rounded-lg">
-                  {data.activePlan.daysLeft} days left
+                  {["created", "pending"].includes(data.activePlan.status) ? "Awaiting Activation" : `${data.activePlan.daysLeft} days left`}
                 </span>
               </div>
               <div className="p-4 rounded-xl bg-[#F8F9FA] border border-[#E5E7EB]">
