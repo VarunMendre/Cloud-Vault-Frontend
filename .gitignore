@@ -2,3 +2,9 @@ node_modules
 .env
 /dist
 CLAUDE.md
+
+# Locally installed UI design skills and their generated prompt assets
+.agents/skills/
+.claude/skills/
+.github/prompts/
+/skills-lock.json
