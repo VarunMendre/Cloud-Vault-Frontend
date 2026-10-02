@@ -11,9 +11,9 @@ import {
   Search,
   Share2,
   Upload,
-  UserRoundPlus,
 } from 'lucide-react';
 import Footer from './components/Footer';
+import LandingStepsSection from './LandingStepsSection';
 import './LandingPage.css';
 
 import dashboardImg from './assets/screenshots/dashboard.png';
@@ -105,48 +105,8 @@ const faqItems = [
   },
 ];
 
-const sharingDashboardPreview = {
-  src: subscriptionImg,
-  alt: 'CloudVault file sharing dashboard with upload and permission management shortcuts.',
-  width: 1024,
-  height: 633,
-  caption: 'CloudVault file sharing dashboard',
-};
-
-const gettingStartedSteps = [
-  {
-    icon: UserRoundPlus,
-    title: 'Create your account',
-    description: 'Sign up with email, Google, or GitHub.',
-    detailTitle: 'Choose how to sign in',
-    detail:
-      'Create a CloudVault account with the sign-in method that works for you.',
-    options: ['Email and password', 'Google', 'GitHub'],
-  },
-  {
-    icon: Upload,
-    title: 'Add your files',
-    description: 'Upload from your device or choose files from Google Drive.',
-    detailTitle: 'Bring in the files you need',
-    detail:
-      'Upload from your device or select the Google Drive files you want to import. Drive files are not synced automatically.',
-    options: ['From your device', 'Select from Google Drive'],
-    image: sharingDashboardPreview,
-  },
-  {
-    icon: Share2,
-    title: 'Organize and share',
-    description: 'Find what you need and choose viewer or editor access when sharing.',
-    detailTitle: 'Share with the right access',
-    detail:
-      'Keep files organized, then choose viewer or editor permissions when you share.',
-    image: sharingDashboardPreview,
-  },
-];
-
 const LandingPage = () => {
   const navigate = useNavigate();
-  const [activeStep, setActiveStep] = useState(0);
 
   const handleGetStarted = () => {
     const isLandingDomain =
@@ -341,151 +301,7 @@ const LandingPage = () => {
           </div>
         </section>
 
-        <section className="landing-steps landing-section" id="how-it-works" aria-labelledby="landing-steps-title">
-          <div className="landing-steps-grid" aria-hidden="true" />
-          <div className="landing-container landing-steps-content">
-            <div className="landing-steps-heading landing-reveal" ref={addRevealRef}>
-              <p className="landing-steps-label">How CloudVault works</p>
-              <h2 id="landing-steps-title">Get started in a few steps.</h2>
-              <p>
-                Create an account, bring in your files, then decide how to share them.
-              </p>
-            </div>
-
-            <div className="landing-flow-track landing-reveal" ref={addRevealRef}>
-              {gettingStartedSteps.map((step, index) => {
-                const Icon = step.icon;
-                const isActive = activeStep === index;
-
-                return (
-                  <div className="landing-flow-track-item" key={step.title}>
-                    <button
-                      aria-controls="landing-flow-panel"
-                      aria-pressed={isActive}
-                      className={`landing-flow-step${isActive ? ' is-active' : ''}`}
-                      onClick={() => setActiveStep(index)}
-                      type="button"
-                    >
-                      <span className="landing-flow-step-header">
-                        <span className="landing-flow-step-number">
-                          {String(index + 1).padStart(2, '0')}
-                        </span>
-                        <span className="landing-flow-step-indicator">
-                          {isActive ? 'Selected' : 'Select step'}
-                        </span>
-                      </span>
-                      <span className="landing-flow-step-main">
-                        <span className="landing-flow-step-icon" aria-hidden="true">
-                          <Icon size={21} strokeWidth={1.8} />
-                        </span>
-                        <span className="landing-flow-step-copy">
-                          <span className="landing-flow-step-title">{step.title}</span>
-                          <span className="landing-flow-step-description">{step.description}</span>
-                        </span>
-                      </span>
-                    </button>
-                    {index < gettingStartedSteps.length - 1 && (
-                      <span className="landing-flow-connector" aria-hidden="true">
-                        <ArrowRight size={19} strokeWidth={1.8} />
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            <section
-              aria-label={`Step ${activeStep + 1}: ${gettingStartedSteps[activeStep].title}`}
-              aria-live="polite"
-              className="landing-flow-panel landing-reveal"
-              id="landing-flow-panel"
-              ref={addRevealRef}
-            >
-              <div className="landing-flow-panel-header">
-                <span className="landing-flow-panel-brand">
-                  <span className="landing-brand-mark" aria-hidden="true">
-                    <Cloud size={17} strokeWidth={2} />
-                  </span>
-                  CloudVault
-                </span>
-                <span className="landing-flow-panel-count">
-                  Step {activeStep + 1} of {gettingStartedSteps.length}
-                </span>
-              </div>
-
-              <div
-                key={activeStep}
-                className={`landing-flow-panel-body${gettingStartedSteps[activeStep].image ? ' has-image' : ''}`}
-              >
-                <div className="landing-flow-panel-copy">
-                  <h3>{gettingStartedSteps[activeStep].detailTitle}</h3>
-                  <p>{gettingStartedSteps[activeStep].detail}</p>
-
-                  {gettingStartedSteps[activeStep].options && (
-                    <ul className="landing-flow-options">
-                      {gettingStartedSteps[activeStep].options.map((option) => (
-                        <li key={option}>
-                          <Check size={16} strokeWidth={2} aria-hidden="true" />
-                          {option}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-
-                {gettingStartedSteps[activeStep].image && (
-                  <figure className="landing-flow-image">
-                    <img
-                      src={gettingStartedSteps[activeStep].image.src}
-                      alt={gettingStartedSteps[activeStep].image.alt}
-                      width={gettingStartedSteps[activeStep].image.width}
-                      height={gettingStartedSteps[activeStep].image.height}
-                      loading="lazy"
-                    />
-                    <figcaption>{gettingStartedSteps[activeStep].image.caption}</figcaption>
-                  </figure>
-                )}
-              </div>
-
-              <div className="landing-flow-panel-footer">
-                <span className="landing-flow-step-status">
-                  Step {activeStep + 1} of {gettingStartedSteps.length}
-                </span>
-                <div className="landing-flow-panel-actions">
-                  <button
-                    className="landing-flow-button landing-flow-button-previous"
-                    disabled={activeStep === 0}
-                    onClick={() => setActiveStep((step) => Math.max(0, step - 1))}
-                    type="button"
-                  >
-                    Previous
-                  </button>
-                  {activeStep < gettingStartedSteps.length - 1 ? (
-                    <button
-                      className="landing-flow-button landing-flow-button-next"
-                      onClick={() =>
-                        setActiveStep((step) => Math.min(gettingStartedSteps.length - 1, step + 1))
-                      }
-                      type="button"
-                    >
-                      Next step
-                      <ArrowRight size={16} aria-hidden="true" />
-                    </button>
-                  ) : (
-                    <button
-                      className="landing-flow-button landing-flow-button-next"
-                      onClick={handleGetStarted}
-                      type="button"
-                    >
-                      Create a free account
-                      <ArrowRight size={16} aria-hidden="true" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </section>
-          </div>
-        </section>
+        <LandingStepsSection onGetStarted={handleGetStarted} addRevealRef={addRevealRef} />
 
         <section className="landing-faq landing-section" id="faq" aria-labelledby="landing-faq-title">
           <div className="landing-container landing-faq-grid">
