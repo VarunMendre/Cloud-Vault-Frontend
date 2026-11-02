@@ -1,18 +1,18 @@
-import React from 'react';
 import { Shield, Lock, Eye, FileText, Mail, ChevronRight, ShieldCheck, Clock } from 'lucide-react';
+import './PublicInfoPages.css';
 
 const PrivacyPolicy = () => {
     return (
-        <div className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto space-y-8 animate-fadeIn">
+        <div className="public-info-page">
+            <div className="public-info-container">
                 
                 {/* Protocol Header */}
-                <div className="flex items-center gap-4 px-4">
-                    <div className="w-12 h-12 bg-white rounded-2xl border border-gray-200 shadow-sm flex items-center justify-center rotate-3">
+                <div className="public-info-header">
+                    <div className="public-info-header-icon">
                         <Shield className="w-6 h-6 text-[#66B2D6]" />
                     </div>
                     <div>
-                        <h2 className="text-xs font-black text-[#66B2D6] uppercase tracking-[0.3em] mb-1">Compliance System</h2>
+                        <h2 className="text-xs font-black text-[#66B2D6] uppercase tracking-[0.3em] mb-1">Privacy and data</h2>
                         <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400">
                             <Clock className="w-3 h-3" />
                             UPDATED: JAN 16, 2026
@@ -20,12 +20,12 @@ const PrivacyPolicy = () => {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-[2.5rem] border border-gray-200 shadow-sm overflow-hidden">
-                    <div className="px-8 py-12 md:px-12">
-                        <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-4">Privacy Framework</h1>
-                        <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-12">Establishing data sovereignty protocols</p>
+                <div className="public-info-card">
+                    <div className="public-info-card-body">
+                        <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-4">Privacy Policy</h1>
+                        <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-12">How we collect, use, and protect your information.</p>
 
-                        <div className="space-y-12">
+                        <div className="public-info-sections space-y-12">
                             <section className="group">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-[#66B2D6]/30 transition-colors">
@@ -89,7 +89,7 @@ const PrivacyPolicy = () => {
                             </section>
                         </div>
 
-                        <div className="mt-20 pt-12 border-t border-gray-100">
+                        <div className="public-info-callout mt-20 pt-12 border-t border-gray-100">
                             <div className="bg-gray-50 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 border border-gray-100">
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 tracking-tight mb-1">Privacy Support</h3>
@@ -109,7 +109,7 @@ const PrivacyPolicy = () => {
                 </div>
 
                 {/* Brand Footer */}
-                <div className="text-center pt-8">
+                <div className="public-info-footer text-center pt-8">
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Secured by CloudVault Infrastucture</p>
                 </div>
             </div>

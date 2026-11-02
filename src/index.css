@@ -1,6 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+:root {
+  --cv-primary: #2563EB;
+  --cv-primary-hover: #1D4ED8;
+  --cv-accent: #D97706;
+  --cv-background: #F8FAFC;
+  --cv-surface: #FFFFFF;
+  --cv-surface-muted: #F1F5F9;
+  --cv-text: #0F172A;
+  --cv-text-muted: #475569;
+  --cv-border: #CBD5E1;
+  --cv-danger: #B91C1C;
+  --cv-danger-background: #FEF2F2;
+  --cv-success: #166534;
+  --cv-success-background: #F0FDF4;
+  --cv-focus: #1D4ED8;
+}
+
 @theme {
   /* Core Palette */
   --color-primary: #5FA8C6;

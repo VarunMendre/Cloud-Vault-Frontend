@@ -1,18 +1,18 @@
-import React from 'react';
 import { RefreshCw, CreditCard, Truck, AlertCircle, Mail, ChevronRight, Clock, ShieldCheck } from 'lucide-react';
+import './PublicInfoPages.css';
 
 const RefundPolicy = () => {
     return (
-        <div className="min-h-screen bg-gray-50 py-16 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-3xl mx-auto space-y-8 animate-fadeIn">
+        <div className="public-info-page">
+            <div className="public-info-container">
                 
                 {/* Financial Header */}
-                <div className="flex items-center gap-4 px-4">
-                    <div className="w-12 h-12 bg-white rounded-2xl border border-gray-200 shadow-sm flex items-center justify-center rotate-6">
+                <div className="public-info-header">
+                    <div className="public-info-header-icon">
                         <CreditCard className="w-6 h-6 text-[#66B2D6]" />
                     </div>
                     <div>
-                        <h2 className="text-xs font-black text-[#66B2D6] uppercase tracking-[0.3em] mb-1">Financial Protocols</h2>
+                        <h2 className="text-xs font-black text-[#66B2D6] uppercase tracking-[0.3em] mb-1">Billing information</h2>
                         <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400">
                             <Clock className="w-3 h-3" />
                             VERSION 2.0 // JAN 16, 2026
@@ -20,12 +20,12 @@ const RefundPolicy = () => {
                     </div>
                 </div>
 
-                <div className="bg-white rounded-[2.5rem] border border-gray-200 shadow-sm overflow-hidden">
-                    <div className="px-8 py-12 md:px-12">
+                <div className="public-info-card">
+                    <div className="public-info-card-body">
                         <h1 className="text-4xl font-bold text-gray-900 tracking-tight mb-4">Refund & Cancellation</h1>
-                        <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-12">Governing storage dividends and credit allocations</p>
+                        <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mb-12">Information about paid plans, cancellations, and service delivery.</p>
 
-                        <div className="space-y-12">
+                        <div className="public-info-sections space-y-12">
                             <section className="group">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-[#66B2D6]/30 transition-colors">
@@ -71,7 +71,7 @@ const RefundPolicy = () => {
                             </section>
                         </div>
 
-                        <div className="mt-20 pt-12 border-t border-gray-100">
+                        <div className="public-info-callout mt-20 pt-12 border-t border-gray-100">
                             <div className="bg-[#66B2D6]/5 rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 border border-[#66B2D6]/10">
                                 <div>
                                     <h3 className="text-lg font-bold text-gray-900 tracking-tight mb-1">Financial Support</h3>
@@ -90,7 +90,7 @@ const RefundPolicy = () => {
                     </div>
                 </div>
 
-                <div className="text-center pt-8">
+                <div className="public-info-footer text-center pt-8">
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Secured by CloudVault Infrastructure</p>
                 </div>
             </div>

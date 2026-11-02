@@ -8,3 +8,7 @@ CLAUDE.md
 .claude/skills/
 .github/prompts/
 /skills-lock.json
+
+prompt.txt
+UI_UX_GUIDE.md
+CLAUDE.md
