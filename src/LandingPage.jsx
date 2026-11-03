@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Check, Cloud, Folder, HardDrive, Link2, Share2 } from "lucide-react";
 import "./LandingPage.css";
 
-import dashboardImage from "./assets/screenshots/dashboard.png";
+import dashboardImage from "./assets/screenshots/cloudvault-drive-dashboard.png";
 import settingsImage from "./assets/screenshots/settings.png";
 import subscriptionImage from "./assets/screenshots/subscription.png";
 
@@ -133,7 +133,12 @@ const LandingPage = () => {
 
           <figure className="landing-hero-visual">
             <div className="landing-image-frame">
-              <img src={dashboardImage} alt="CloudVault file sharing dashboard" width="1024" height="533" />
+              <img
+                src={dashboardImage}
+                alt="CloudVault drive with file upload, folder creation, search, and file list"
+                width="1406"
+                height="768"
+              />
             </div>
             <figcaption>Files and sharing, in one clear view.</figcaption>
           </figure>

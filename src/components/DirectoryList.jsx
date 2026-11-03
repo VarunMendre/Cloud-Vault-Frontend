@@ -2,6 +2,7 @@ import DirectoryItem from "./DirectoryItem";
 
 function DirectoryList({
   items,
+  directoryStats,
   handleRowClick,
   activeContextMenu,
   contextMenuPos,
@@ -28,6 +29,7 @@ function DirectoryList({
           <DirectoryItem
             key={item.id}
             item={item}
+            directoryStats={directoryStats}
             handleRowClick={handleRowClick}
             activeContextMenu={activeContextMenu}
             contextMenuPos={contextMenuPos}

@@ -27,7 +27,6 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("viewer");
   const [sharedUsers, setSharedUsers] = useState([]);
-  const [owner, setOwner] = useState(null);
   const [shareLink, setShareLink] = useState(null);
   const [linkRole, setLinkRole] = useState("viewer");
   const [linkEnabled, setLinkEnabled] = useState(false);
@@ -41,6 +40,8 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [userToRemove, setUserToRemove] = useState(null);
+  const [isRemovingAccess, setIsRemovingAccess] = useState(false);
 
   useEffect(() => {
     const previousFocus = document.activeElement;
@@ -97,7 +98,6 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
 
       if (response.ok) {
         const data = await response.json();
-        setOwner(data.owner);
         setSharedUsers(data.sharedWith);
         setShareLink(data.shareLink);
         if (data.shareLink && data.shareLink.enabled) {
@@ -186,40 +186,17 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
     }
   };
 
-  const handleUpdateAccess = async (userId, newRole) => {
-    try {
-      const response = await fetch(
-        `${BASE_URL}/share/${resourceType}/${resourceId}/share/${userId}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ role: newRole }),
-        }
-      );
-
-      if (response.ok) {
-        setSuccess("Access level updated!");
-        fetchSharedUsers();
-        setTimeout(() => setSuccess(""), 3000);
-      } else {
-        const data = await response.json();
-        setError(data.error || "Failed to update access");
-      }
-    } catch (err) {
-      console.error("Error updating access:", err);
-      setError("Error updating access level");
-    }
+  const handleRemoveAccess = async (userId) => {
+    const user = sharedUsers.find((sharedUser) => sharedUser.userId === userId);
+    if (user) setUserToRemove(user);
   };
 
-  const handleRemoveAccess = async (userId) => {
-    if (!confirm("Are you sure you want to remove this user's access?")) {
-      return;
-    }
-
+  const confirmRemoveAccess = async () => {
+    if (!userToRemove) return;
+    setIsRemovingAccess(true);
     try {
       const response = await fetch(
-        `${BASE_URL}/share/${resourceType}/${resourceId}/share/${userId}`,
+        `${BASE_URL}/share/${resourceType}/${resourceId}/share/${userToRemove.userId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -227,8 +204,11 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
       );
 
       if (response.ok) {
-        setSuccess("Access removed successfully!");
-        fetchSharedUsers();
+        const removedName = userToRemove.name || userToRemove.email;
+        setUserToRemove(null);
+        setError("");
+        setSuccess(`Access removed for ${removedName}.`);
+        await fetchSharedUsers();
         setTimeout(() => setSuccess(""), 3000);
       } else {
         const data = await response.json();
@@ -237,6 +217,8 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
     } catch (err) {
       console.error("Error removing access:", err);
       setError("Error removing access");
+    } finally {
+      setIsRemovingAccess(false);
     }
   };
 
@@ -706,21 +688,13 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
                         </div>
                         <div className="cv-share-user-email">{user.email}</div>
                       </div>
-                      <select
-                        value={user.role}
-                        onChange={(e) => handleUpdateAccess(user.userId, e.target.value)}
-                        className="cv-share-access-role"
-                        aria-label={`Access level for ${user.name}`}
-                      >
-                        <option value="viewer">Viewer</option>
-                        <option value="editor">Editor</option>
-                      </select>
                       <button
                         type="button"
                         onClick={() => handleRemoveAccess(user.userId)}
                         title="Remove access"
                         aria-label={`Remove ${user.name}'s access`}
                         className="cv-share-remove-access"
+                        disabled={isRemovingAccess}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -731,6 +705,57 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
             </div>
           )}
         </div>
+        {userToRemove && (
+          <div
+            className="cv-share-confirm-overlay"
+            onClick={(event) => {
+              if (event.target === event.currentTarget && !isRemovingAccess) {
+                setUserToRemove(null);
+              }
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Escape" && !isRemovingAccess) {
+                event.stopPropagation();
+                setUserToRemove(null);
+              }
+            }}
+          >
+            <section
+              className="cv-share-confirm-dialog"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="cv-share-remove-title"
+              aria-describedby="cv-share-remove-description"
+            >
+              <span className="cv-share-confirm-icon" aria-hidden="true">
+                <Trash2 size={21} />
+              </span>
+              <h3 id="cv-share-remove-title">Remove access?</h3>
+              <p id="cv-share-remove-description">
+                {userToRemove.name || userToRemove.email} will no longer be able to access this item.
+              </p>
+              <div className="cv-share-confirm-actions">
+                <button
+                  type="button"
+                  className="cv-share-confirm-cancel"
+                  onClick={() => setUserToRemove(null)}
+                  disabled={isRemovingAccess}
+                  autoFocus
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="cv-share-confirm-remove"
+                  onClick={confirmRemoveAccess}
+                  disabled={isRemovingAccess}
+                >
+                  {isRemovingAccess ? "Removing…" : "Remove access"}
+                </button>
+              </div>
+            </section>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -62,6 +62,7 @@ function DirectoryView() {
   // Lists of items
   const [directoriesList, setDirectoriesList] = useState([]);
   const [filesList, setFilesList] = useState([]);
+  const [directoryStats, setDirectoryStats] = useState({});
 
   // Loading state
   const [isLoading, setIsLoading] = useState(true);
@@ -192,6 +193,139 @@ function DirectoryView() {
     getDirectoryItems();
     setActiveContextMenu(null);
   }, [dirId]);
+
+  useEffect(() => {
+    if (directoriesList.length === 0) {
+      setDirectoryStats({});
+      return;
+    }
+
+    const controller = new AbortController();
+    const queue = [];
+    const queuedIds = new Set();
+    const contentsById = new Map();
+    const failedIds = new Set();
+
+    for (const directory of directoriesList) {
+      if (directory.id == null) continue;
+      const id = String(directory.id);
+      if (!queuedIds.has(id)) {
+        queuedIds.add(id);
+        queue.push(id);
+      }
+    }
+
+    setDirectoryStats(
+      Object.fromEntries(queue.map((id) => [id, { status: "loading" }]))
+    );
+
+    async function loadDirectoryContents() {
+      const worker = async () => {
+        while (queue.length > 0 && !controller.signal.aborted) {
+          const id = queue.shift();
+          try {
+            const response = await fetch(`${BASE_URL}/directory/${id}`, {
+              credentials: "include",
+              signal: controller.signal,
+            });
+            if (!response.ok) {
+              throw new Error(`Directory request failed (${response.status})`);
+            }
+
+            const data = await response.json();
+            if (!Array.isArray(data.directories) || !Array.isArray(data.files)) {
+              throw new Error("Directory response is missing its contents");
+            }
+
+            contentsById.set(id, data);
+            for (const child of data.directories) {
+              if (child.id == null) continue;
+              const childId = String(child.id);
+              if (!queuedIds.has(childId)) {
+                queuedIds.add(childId);
+                queue.push(childId);
+              }
+            }
+          } catch {
+            if (controller.signal.aborted) return;
+            failedIds.add(id);
+          }
+        }
+      };
+
+      const workerCount = Math.min(4, queue.length);
+      await Promise.all(Array.from({ length: workerCount }, () => worker()));
+      if (controller.signal.aborted) return;
+
+      const statsById = new Map();
+      const calculateStats = (id, visiting = new Set()) => {
+        if (visiting.has(id) || failedIds.has(id)) return null;
+        if (statsById.has(id)) return statsById.get(id);
+
+        const data = contentsById.get(id);
+        if (!data) return null;
+
+        const nextVisiting = new Set(visiting);
+        nextVisiting.add(id);
+        let sizeBytes = 0;
+        let itemCount = data.files.length;
+
+        for (const file of data.files) {
+          const size = Number(file.size);
+          if (!Number.isFinite(size) || size < 0) {
+            sizeBytes = null;
+            break;
+          }
+          sizeBytes += size;
+        }
+
+        for (const child of data.directories) {
+          itemCount += 1;
+          if (child.id == null) {
+            itemCount = null;
+            sizeBytes = null;
+            continue;
+          }
+
+          const childStats = calculateStats(String(child.id), nextVisiting);
+          if (!childStats) {
+            itemCount = null;
+            sizeBytes = null;
+            continue;
+          }
+
+          if (itemCount !== null && childStats.itemCount !== null) {
+            itemCount += childStats.itemCount;
+          } else {
+            itemCount = null;
+          }
+          if (sizeBytes !== null && childStats.sizeBytes !== null) {
+            sizeBytes += childStats.sizeBytes;
+          } else {
+            sizeBytes = null;
+          }
+        }
+
+        const stats = { sizeBytes, itemCount };
+        statsById.set(id, stats);
+        return stats;
+      };
+
+      const nextStats = {};
+      for (const directory of directoriesList) {
+        if (directory.id == null) continue;
+        const id = String(directory.id);
+        const stats = calculateStats(id);
+        nextStats[id] = stats
+          ? { status: "ready", ...stats }
+          : { status: "unavailable" };
+      }
+      setDirectoryStats(nextStats);
+    }
+
+    loadDirectoryContents();
+    return () => controller.abort();
+  }, [BASE_URL, directoriesList]);
 
   /**
    * Decide file icon - Safely handle item object or string
@@ -865,7 +999,13 @@ function DirectoryView() {
       await handleFetchErrors(response);
       setNewDirname("New Folder");
       setShowCreateDirModal(false);
-      getDirectoryItems();
+      const didRefresh = await getDirectoryItems();
+      showToast(
+        didRefresh
+          ? "Folder created successfully."
+          : "Folder created, but the list couldn’t be refreshed.",
+        didRefresh ? "success" : "warning"
+      );
     } catch (error) {
       setErrorMessage(error.message);
       showToast(error.message, "error");
@@ -917,12 +1057,19 @@ function DirectoryView() {
 
       await handleFetchErrors(response);
 
+      const itemType = renameType === "file" ? "File" : "Folder";
       setShowRenameModal(false);
       setRenameValue("");
       setRenameType(null);
       setRenameId(null);
       setRenameVersion(undefined);
-      getDirectoryItems();
+      const didRefresh = await getDirectoryItems();
+      showToast(
+        didRefresh
+          ? `${itemType} renamed successfully.`
+          : `${itemType} renamed, but the list couldn’t be refreshed.`,
+        didRefresh ? "success" : "warning"
+      );
     } catch (error) {
       setErrorMessage(error.message);
       showToast(error.message, "error");
@@ -1004,8 +1151,15 @@ function DirectoryView() {
           return a.name.localeCompare(b.name);
         case "date":
           return new Date(b.updatedAt) - new Date(a.updatedAt);
-        case "size":
-          return (b.size || 0) - (a.size || 0);
+        case "size": {
+          const aSize = a.isDirectory
+            ? directoryStats[a.id]?.sizeBytes
+            : a.size;
+          const bSize = b.isDirectory
+            ? directoryStats[b.id]?.sizeBytes
+            : b.size;
+          return (bSize || 0) - (aSize || 0);
+        }
         default:
           return 0;
       }
@@ -1516,9 +1670,27 @@ function DirectoryView() {
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-gray-400">Size</span>
                         <span className="text-gray-600 font-medium">
-                          {item.isDirectory ? `${item.fileCount || 0} items` : formatSize(item.size)}
+                          {item.isDirectory
+                            ? directoryStats[item.id]?.status === "loading"
+                              ? "Calculating…"
+                              : directoryStats[item.id]?.sizeBytes != null
+                                ? formatSize(directoryStats[item.id].sizeBytes)
+                                : "Unavailable"
+                            : formatSize(item.size)}
                         </span>
                       </div>
+                      {item.isDirectory && (
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-gray-400">Items</span>
+                          <span className="text-gray-600 font-medium">
+                            {directoryStats[item.id]?.status === "loading"
+                              ? "Calculating…"
+                              : directoryStats[item.id]?.itemCount != null
+                                ? `${directoryStats[item.id].itemCount} ${directoryStats[item.id].itemCount === 1 ? "item" : "items"}`
+                                : "Unavailable"}
+                          </span>
+                        </div>
+                      )}
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-gray-400">Modified</span>
                         <span className="text-gray-600 font-medium">
@@ -1603,6 +1775,7 @@ function DirectoryView() {
           // List View
           <DirectoryList
             items={combinedItems}
+            directoryStats={directoryStats}
             handleRowClick={handleRowClick}
             activeContextMenu={activeContextMenu}
             subscriptionStatus={user?.subscriptionStatus}

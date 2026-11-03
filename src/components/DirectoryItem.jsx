@@ -4,6 +4,7 @@ import { Folder } from "lucide-react";
 
 function DirectoryItem({
   item,
+  directoryStats,
   handleRowClick,
   activeContextMenu,
   contextMenuPos,
@@ -30,6 +31,19 @@ function DirectoryItem({
     return parts.length > 1 ? parts[parts.length - 1].toUpperCase() : null;
   };
   const ext = getExt(item.name);
+  const folderStats = item.isDirectory ? directoryStats?.[item.id] : null;
+  const folderSize =
+    folderStats?.status === "loading"
+      ? "Calculating…"
+      : folderStats?.status === "ready" && folderStats.sizeBytes !== null
+        ? formatSize(folderStats.sizeBytes)
+        : "Unavailable";
+  const folderItemCount =
+    folderStats?.status === "loading"
+      ? "Calculating…"
+      : folderStats?.status === "ready" && folderStats.itemCount !== null
+        ? `${folderStats.itemCount} ${folderStats.itemCount === 1 ? "item" : "items"}`
+        : "Unavailable";
 
   // Short date + time
   const formatDate = (ds) => {
@@ -86,10 +100,18 @@ function DirectoryItem({
             Size:{" "}
             <span className="text-gray-500">
               {item.isDirectory
-                ? `${item.fileCount || 0} items`
+                ? folderSize
                 : formatSize(item.size || 0)}
             </span>
           </span>
+          {item.isDirectory && (
+            <>
+              <span className="text-gray-300">•</span>
+              <span>
+                Items: <span className="text-gray-500">{folderItemCount}</span>
+              </span>
+            </>
+          )}
           <span className="text-gray-300">•</span>
           <span>
             Modified:{" "}

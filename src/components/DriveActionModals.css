@@ -771,6 +771,109 @@
   background: var(--cv-danger-background);
 }
 
+.cv-share-remove-access:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.cv-share-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(15 23 42 / 52%);
+  backdrop-filter: blur(2px);
+  animation: cv-action-modal-fade-in 150ms ease-out both;
+}
+
+.cv-share-confirm-dialog {
+  width: min(100%, 420px);
+  padding: 26px;
+  border: 1px solid var(--cv-border);
+  border-radius: 16px;
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  box-shadow: 0 24px 64px rgb(15 23 42 / 24%);
+  animation: cv-action-modal-rise 180ms ease-out both;
+}
+
+.cv-share-confirm-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid #FECACA;
+  border-radius: 12px;
+  color: var(--cv-danger);
+  background: var(--cv-danger-background);
+}
+
+.cv-share-confirm-dialog h3 {
+  margin: 18px 0 0;
+  color: var(--cv-text);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.cv-share-confirm-dialog > p {
+  margin: 8px 0 0;
+  color: var(--cv-text-muted);
+  font-size: 14px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.cv-share-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.cv-share-confirm-actions button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.cv-share-confirm-cancel {
+  border-color: var(--cv-border) !important;
+  color: var(--cv-text);
+  background: var(--cv-surface);
+}
+
+.cv-share-confirm-cancel:hover:not(:disabled) {
+  background: var(--cv-surface-muted);
+}
+
+.cv-share-confirm-remove {
+  color: #fff;
+  background: var(--cv-danger);
+}
+
+.cv-share-confirm-remove:hover:not(:disabled) {
+  background: #991B1B;
+}
+
+.cv-share-confirm-actions button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.cv-share-confirm-actions button:focus-visible {
+  outline: 3px solid var(--cv-focus);
+  outline-offset: 2px;
+}
+
 .cv-share-empty {
   padding: 36px 16px;
   text-align: center;
@@ -908,12 +1011,25 @@
     flex-wrap: wrap;
   }
 
-  .cv-share-access-row > div.flex-1 {
-    min-width: calc(100% - 110px);
+  .cv-share-access-row > .cv-share-user-copy {
+    min-width: 0;
   }
 
-  .cv-share-access-row > .cv-share-user-copy {
-    min-width: calc(100% - 110px);
+  .cv-share-confirm-overlay {
+    padding: 12px;
+  }
+
+  .cv-share-confirm-dialog {
+    padding: 22px;
+  }
+
+  .cv-share-confirm-actions {
+    flex-direction: column-reverse;
+  }
+
+  .cv-share-confirm-actions button {
+    width: 100%;
+    min-height: 46px;
   }
 }
 
@@ -942,6 +1058,8 @@
   .cv-share-dialog,
   .cv-rename-dialog *,
   .cv-share-dialog *,
+  .cv-share-confirm-overlay,
+  .cv-share-confirm-dialog *,
   .cv-share-loading span {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
