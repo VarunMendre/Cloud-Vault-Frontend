@@ -12,6 +12,8 @@ import {
   AlertCircle,
   Loader2
 } from "lucide-react";
+import PropTypes from "prop-types";
+import "./DriveActionModals.css";
 function RenameModal({
   renameType,
   renameValue,
@@ -22,12 +24,15 @@ function RenameModal({
   isProcessing = false,
 }) {
   const inputRef = useRef(null);
+  const initialRenameValueRef = useRef(renameValue);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
 
-      const dotIndex = renameValue.lastIndexOf(".");
+      const dotIndex = initialRenameValueRef.current.lastIndexOf(".");
       if (dotIndex > 0) {
         inputRef.current.setSelectionRange(0, dotIndex);
       } else {
@@ -37,7 +42,7 @@ function RenameModal({
 
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        onClose();
+        onCloseRef.current();
       }
     };
     document.addEventListener("keydown", handleKeyDown);
@@ -62,21 +67,21 @@ function RenameModal({
   const getIcon = (type) => {
     switch (type) {
       case "folder":
-        return <Folder className="w-8 h-8" style={{ color: '#66B2D6' }} />;
+        return <Folder />;
       case "image":
-        return <Image className="w-8 h-8" style={{ color: '#9333EA' }} />;
+        return <Image />;
       case "video":
-        return <Video className="w-8 h-8" style={{ color: '#DC2626' }} />;
+        return <Video />;
       case "audio":
-        return <Music className="w-8 h-8" style={{ color: '#EAB308' }} />;
+        return <Music />;
       case "pdf":
-        return <FileText className="w-8 h-8" style={{ color: '#DC2626' }} />;
+        return <FileText />;
       case "code":
-        return <FileCode className="w-8 h-8" style={{ color: '#10B981' }} />;
+        return <FileCode />;
       case "archive":
-        return <Archive className="w-8 h-8" style={{ color: '#F97316' }} />;
+        return <Archive />;
       default:
-        return <File className="w-8 h-8" style={{ color: '#A3C5D9' }} />;
+        return <File />;
     }
   };
 
@@ -84,74 +89,69 @@ function RenameModal({
   const typeLabel = renameType === "directory" ? "FOLDER" : getFileType(renameValue).toUpperCase();
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 p-4 animate-fadeIn modal-backdrop">
-      <div className="bg-card rounded-2xl shadow-strong max-w-md w-full animate-scaleIn overflow-hidden border border-border">
-        {/* Header */}
-        <div className="px-6 py-6 border-b border-border bg-secondary/30">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white shadow-sm ring-1 ring-border">
-              <Edit3 className="w-7 h-7 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-text-main">
-                Rename {renameType === "file" ? "File" : "Folder"}
-              </h3>
-              <p className="text-xs text-muted mt-0.5 font-medium">
-                Give your {renameType === "file" ? "file" : "folder"} a descriptive name
-              </p>
-            </div>
+    <div className="cv-rename-overlay">
+      <section
+        className="cv-rename-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cv-rename-title"
+      >
+        <header className="cv-rename-header">
+          <span className="cv-rename-header-icon" aria-hidden="true">
+            <Edit3 size={21} />
+          </span>
+          <div>
+            <p className="cv-rename-eyebrow">File organization</p>
+            <h2 id="cv-rename-title">
+              Rename {renameType === "file" ? "file" : "folder"}
+            </h2>
+            <p>Choose a clear name that’s easy to find later.</p>
           </div>
-        </div>
+        </header>
 
-        {/* Content */}
         <form onSubmit={onRenameSubmit}>
-          <div className="px-6 py-8">
-            {/* Current Item Info */}
-            <div className="flex items-center gap-4 mb-8 p-4 bg-background border-2 border-border border-dashed rounded-xl">
-              <div className="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center bg-white shadow-sm ring-1 ring-border">
+          <div className="cv-rename-content">
+            <div className="cv-rename-current">
+              <span className="cv-rename-file-icon" aria-hidden="true">
                 {getIcon(itemType)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-bold text-text-main truncate text-sm" title={renameValue}>
+              </span>
+              <div className="cv-rename-current-copy">
+                <span>Current name</span>
+                <p title={renameValue}>
                   {renameValue}
-                </div>
-                <div className="text-[10px] font-bold text-primary bg-secondary inline-block px-2 py-0.5 rounded-lg mt-1 tracking-widest">
-                  {typeLabel}
-                </div>
+                </p>
               </div>
+              <span className="cv-rename-type">{typeLabel}</span>
             </div>
 
-            {/* Input Field */}
-            <div className="mb-8">
-              <label className="block text-sm font-bold text-text-main mb-2.5 ml-1">
+            <div className="cv-rename-field">
+              <label htmlFor="cv-rename-input">
                 New Name
               </label>
               <input
                 ref={inputRef}
+                id="cv-rename-input"
                 type="text"
                 value={renameValue}
                 onChange={(e) => setRenameValue(e.target.value)}
-                className={`w-full px-5 py-4 bg-background border-2 rounded-xl transition-all duration-300 focus:outline-none focus:ring-4 text-text-main font-semibold ${
-                  extensionError 
-                    ? "border-red-500 focus:border-red-500 focus:ring-red-100" 
-                    : "border-border focus:border-primary focus:ring-primary/10"
-                }`}
-                placeholder={`Enter new name`}
+                className={extensionError ? "has-error" : ""}
+                aria-invalid={Boolean(extensionError)}
+                aria-describedby={extensionError ? "cv-rename-error" : undefined}
+                placeholder="Enter a new name"
               />
               {extensionError && (
-                <div className="mt-3 text-[11px] font-bold text-red-600 flex items-center gap-1.5 px-3 py-2 bg-red-50 rounded-lg animate-fadeIn border border-red-100">
-                  <AlertCircle className="w-3.5 h-3.5" />
+                <p id="cv-rename-error" className="cv-rename-error" role="alert">
+                  <AlertCircle size={16} aria-hidden="true" />
                   <span>{extensionError}</span>
-                </div>
+                </p>
               )}
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4">
+            <div className="cv-rename-actions">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-6 py-4 text-sm font-bold text-text-main bg-white border-2 border-border rounded-xl transition-all duration-300 hover:bg-secondary hover:border-primary/30"
+                className="cv-rename-cancel"
                 disabled={isProcessing}
               >
                 Cancel
@@ -159,23 +159,33 @@ function RenameModal({
               <button
                 type="submit"
                 disabled={!renameValue.trim() || !!extensionError || isProcessing}
-                className="flex-1 px-6 py-4 text-sm font-bold text-white bg-button rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-button/20 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md"
+                className="cv-rename-submit"
               >
                 {isProcessing ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Saving...</span>
+                    <Loader2 size={17} className="cv-rename-spinner" />
+                    <span>Saving…</span>
                   </>
                 ) : (
-                  "Save Changes"
+                  "Save changes"
                 )}
               </button>
             </div>
           </div>
         </form>
-      </div>
+      </section>
     </div>
   );
 }
+
+RenameModal.propTypes = {
+  renameType: PropTypes.oneOf(["file", "directory"]).isRequired,
+  renameValue: PropTypes.string.isRequired,
+  setRenameValue: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onRenameSubmit: PropTypes.func.isRequired,
+  extensionError: PropTypes.string,
+  isProcessing: PropTypes.bool,
+};
 
 export default RenameModal;

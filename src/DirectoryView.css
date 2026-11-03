@@ -1,0 +1,971 @@
+.drive-page {
+  min-height: 100svh;
+  padding-bottom: 48px;
+  color: var(--cv-text);
+  background: var(--cv-background);
+}
+
+.drive-page > header {
+  border-color: var(--cv-border);
+  background: var(--cv-surface);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 5%);
+}
+
+.drive-page > header > div {
+  width: min(100% - 48px, 1200px);
+  padding-inline: 0;
+}
+
+.drive-page > header button,
+.drive-page > header [role="button"] {
+  min-height: 44px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.drive-page > header .bg-primary,
+.drive-page > header button.bg-button {
+  background-color: var(--cv-primary);
+}
+
+.drive-page > header button.bg-primary:hover,
+.drive-page > header button.bg-button:hover {
+  background-color: var(--cv-primary-hover);
+}
+
+.drive-page > header .text-primary {
+  color: var(--cv-primary);
+}
+
+.drive-page > header button:focus-visible,
+.drive-page > header [role="button"]:focus-visible,
+.drive-page :where(a, button, input, select):focus-visible {
+  outline: 3px solid var(--cv-focus);
+  outline-offset: 3px;
+}
+
+.drive-page .drive-content-shell,
+.drive-page .drive-items-shell {
+  width: min(100% - 48px, 1200px);
+  max-width: 1200px;
+  padding-inline: 0;
+}
+
+.drive-page .drive-content-shell {
+  padding-top: 24px;
+  padding-bottom: 0;
+}
+
+.drive-page .drive-upload-panel {
+  min-height: 0;
+  padding: clamp(24px, 4vw, 36px);
+  border: 1px dashed var(--cv-border);
+  border-radius: 18px;
+  background: var(--cv-surface);
+  box-shadow: 0 4px 16px rgb(15 23 42 / 3%);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.drive-page .drive-upload-panel:not(.marching-ants-border):hover {
+  border-color: var(--cv-primary);
+  box-shadow: 0 8px 24px rgb(15 23 42 / 6%);
+}
+
+.drive-page .drive-upload-panel .drive-upload-icon {
+  border: 1px solid #DBEAFE;
+  border-radius: 14px;
+  color: var(--cv-primary);
+  background: #EFF6FF;
+}
+
+.drive-page .drive-upload-panel h2 {
+  color: var(--cv-text);
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+
+.drive-page .drive-upload-panel > div > div > p {
+  color: var(--cv-text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.drive-page .drive-primary-action,
+.drive-page .drive-create-action,
+.drive-page .drive-import-action {
+  min-height: 44px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.drive-page .drive-primary-action:not(:disabled) {
+  border: 1px solid var(--cv-primary);
+  color: #fff;
+  background: var(--cv-primary);
+  box-shadow: 0 2px 6px rgb(37 99 235 / 16%);
+}
+
+.drive-page .drive-primary-action:not(:disabled):hover {
+  background: var(--cv-primary-hover);
+  box-shadow: 0 4px 10px rgb(37 99 235 / 20%);
+}
+
+.drive-page .drive-create-action:not(:disabled),
+.drive-page .drive-import-action:not(:disabled) {
+  border: 1px solid var(--cv-border);
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  box-shadow: none;
+}
+
+.drive-page .drive-create-action:not(:disabled):hover,
+.drive-page .drive-import-action:not(:disabled):hover {
+  border-color: var(--cv-primary);
+  color: var(--cv-primary);
+  background: var(--cv-surface);
+  box-shadow: 0 2px 8px rgb(15 23 42 / 6%);
+}
+
+.drive-page .drive-import-action > button,
+.drive-page button.drive-import-action {
+  min-height: 44px;
+}
+
+.drive-page .drive-toolbar {
+  align-items: stretch;
+  margin-top: 28px;
+}
+
+.drive-page .drive-toolbar input,
+.drive-page .drive-toolbar select,
+.drive-page .drive-toolbar > button {
+  min-height: 48px;
+  border: 1px solid var(--cv-border);
+  border-radius: 10px;
+  color: var(--cv-text);
+  background-color: var(--cv-surface);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.drive-page .drive-toolbar input {
+  padding-block: 12px;
+}
+
+.drive-page .drive-toolbar input::placeholder {
+  color: var(--cv-text-muted);
+  opacity: 1;
+}
+
+.drive-page .drive-toolbar input:focus,
+.drive-page .drive-toolbar select:focus {
+  border-color: var(--cv-primary);
+  box-shadow: 0 0 0 3px rgb(37 99 235 / 16%);
+}
+
+.drive-page .drive-toolbar > button:hover,
+.drive-page .drive-toolbar select:hover {
+  border-color: var(--cv-primary);
+  background-color: var(--cv-surface-muted);
+}
+
+.drive-page .drive-breadcrumb {
+  min-height: 44px;
+  gap: 2px;
+  overflow-x: auto;
+  color: var(--cv-text-muted);
+  scrollbar-width: thin;
+}
+
+.drive-page .drive-breadcrumb button,
+.drive-page .drive-breadcrumb > span:last-child {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--cv-text-muted);
+  white-space: nowrap;
+}
+
+.drive-page .drive-breadcrumb button:hover {
+  color: var(--cv-primary);
+}
+
+.drive-page .drive-items-shell {
+  padding-bottom: 40px;
+}
+
+.drive-page .drive-items-shell > .drive-empty-state {
+  margin: 0;
+  padding: 48px 24px;
+  border: 1px solid var(--cv-border);
+  border-radius: 16px;
+  color: var(--cv-text-muted);
+  background: var(--cv-surface);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.drive-page .drive-grid {
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.drive-page .drive-grid-card {
+  min-width: 0;
+  border-color: var(--cv-border);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgb(15 23 42 / 3%);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.drive-page .drive-grid-card:hover {
+  border-color: #94A3B8;
+  box-shadow: 0 8px 20px rgb(15 23 42 / 8%);
+  transform: translateY(-2px);
+}
+
+.drive-page .drive-grid-card h3 {
+  color: var(--cv-text);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.drive-page .drive-grid-card .drive-grid-icon {
+  border-color: var(--cv-border);
+  border-radius: 10px;
+  background: var(--cv-surface-muted);
+}
+
+.drive-page .drive-grid-card .drive-grid-meta {
+  color: var(--cv-text-muted);
+}
+
+.drive-page .drive-grid-meta > div > span:first-child {
+  color: var(--cv-text-muted);
+}
+
+.drive-page .drive-grid-meta > div > span:last-child {
+  color: var(--cv-text);
+  font-weight: 500;
+}
+
+.drive-page .drive-grid-card .drive-grid-actions {
+  border-color: var(--cv-border);
+}
+
+.drive-page .drive-grid-card .drive-grid-actions button {
+  min-height: 44px;
+  color: var(--cv-text-muted);
+  font-size: 13px;
+}
+
+.drive-page .drive-grid-card .drive-grid-actions button:hover {
+  color: var(--cv-primary);
+  background: var(--cv-surface-muted);
+}
+
+.drive-page .drive-grid-menu {
+  opacity: 1;
+}
+
+.drive-page .drive-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.drive-page .drive-list-row {
+  min-height: 64px;
+  gap: 16px;
+  border-color: var(--cv-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 3%);
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.drive-page .drive-list-row:hover {
+  border-color: #94A3B8;
+  background: var(--cv-surface);
+  box-shadow: 0 3px 10px rgb(15 23 42 / 5%);
+}
+
+.drive-page .drive-list-icon {
+  width: 40px;
+  height: 40px;
+  border-color: var(--cv-border);
+  border-radius: 10px;
+  background: var(--cv-surface-muted);
+}
+
+.drive-page .drive-list-name {
+  color: var(--cv-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.drive-page .drive-list-meta {
+  flex-wrap: wrap;
+  color: var(--cv-text-muted);
+  font-size: 12px;
+}
+
+.drive-page .drive-list-meta > span:nth-child(2) {
+  color: var(--cv-border);
+}
+
+.drive-page .drive-list-menu {
+  min-width: 40px;
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  color: var(--cv-text-muted);
+}
+
+.drive-page .drive-list-menu:hover {
+  color: var(--cv-primary);
+  background: var(--cv-surface-muted);
+}
+
+.drive-page .drive-status-alert {
+  width: min(100% - 48px, 1200px);
+  margin: 24px auto 0;
+  padding: 20px 24px;
+  border: 1px solid;
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.drive-page .drive-status-alert h2 {
+  color: inherit;
+}
+
+.drive-page .drive-status-alert p {
+  color: inherit;
+  line-height: 1.6;
+}
+
+.drive-page .drive-status-paused {
+  border-color: #FCD34D;
+  color: #78350F;
+  background: #FFFBEB;
+}
+
+.drive-page .drive-status-paused .drive-status-icon,
+.drive-page .drive-status-pending .drive-status-icon {
+  color: #92400E;
+  background: #FEF3C7;
+}
+
+.drive-page .drive-status-pending {
+  border-color: #FCD34D;
+  color: #78350F;
+  background: #FFFBEB;
+}
+
+.drive-page .drive-status-halted {
+  border-color: #FECACA;
+  color: #7F1D1D;
+  background: #FEF2F2;
+}
+
+.drive-page .drive-status-halted .drive-status-icon {
+  color: var(--cv-danger);
+  background: #FEE2E2;
+}
+
+.drive-page .drive-status-action {
+  min-height: 44px;
+  padding-inline: 16px;
+  border: 1px solid currentColor;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.drive-page > div[role="alert"] {
+  box-shadow: 0 8px 24px rgb(15 23 42 / 12%);
+}
+
+@media (max-width: 640px) {
+  .drive-page > header > div {
+    width: calc(100% - 32px);
+  }
+
+  .drive-page .drive-content-shell,
+  .drive-page .drive-items-shell {
+    width: calc(100% - 32px);
+  }
+
+  .drive-page .drive-content-shell {
+    padding-top: 16px;
+  }
+
+  .drive-page .drive-upload-panel {
+    padding: 24px 18px;
+  }
+
+  .drive-page .drive-toolbar {
+    margin-top: 20px;
+  }
+
+  .drive-page .drive-breadcrumb {
+    margin-top: 12px;
+  }
+
+  .drive-page .drive-list-row {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  .drive-page .drive-list-meta {
+    column-gap: 6px;
+    row-gap: 2px;
+  }
+
+  .drive-page .drive-status-alert {
+    width: calc(100% - 32px);
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drive-page *,
+  .drive-page *::before,
+  .drive-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.drive-delete-dialog {
+  width: min(calc(100% - 32px), 440px);
+  max-width: none;
+  max-height: min(90svh, 560px);
+  margin: auto;
+  padding: 0;
+  overflow: auto;
+  border: 1px solid var(--cv-border);
+  border-radius: 18px;
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  box-shadow: 0 24px 64px rgb(15 23 42 / 24%);
+}
+
+.drive-delete-dialog::backdrop {
+  background: rgb(15 23 42 / 48%);
+  backdrop-filter: blur(3px);
+}
+
+.drive-delete-card {
+  padding: 28px;
+}
+
+.drive-delete-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.drive-delete-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--cv-danger);
+  background: var(--cv-danger-background);
+}
+
+.drive-delete-heading h2 {
+  margin: 0;
+  color: var(--cv-text);
+  font-size: 20px;
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+.drive-delete-heading p,
+.drive-delete-description {
+  margin: 6px 0 0;
+  color: var(--cv-text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.drive-delete-item {
+  margin-top: 24px;
+  padding: 13px 15px;
+  overflow: hidden;
+  border: 1px solid var(--cv-border);
+  border-radius: 10px;
+  color: var(--cv-text);
+  background: var(--cv-surface-muted);
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.drive-delete-description {
+  margin-top: 12px;
+}
+
+.drive-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.drive-delete-actions button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.drive-delete-cancel {
+  border-color: var(--cv-border) !important;
+  color: var(--cv-text);
+  background: var(--cv-surface);
+}
+
+.drive-delete-cancel:hover {
+  background: var(--cv-surface-muted);
+}
+
+.drive-delete-confirm {
+  color: #fff;
+  background: var(--cv-danger);
+}
+
+.drive-delete-confirm:hover {
+  background: #991B1B;
+}
+
+.drive-delete-actions button:focus-visible {
+  outline: 3px solid var(--cv-focus);
+  outline-offset: 3px;
+}
+
+.drive-toast {
+  position: fixed;
+  right: 24px;
+  top: 84px;
+  bottom: auto;
+  z-index: 1100;
+  display: flex;
+  width: min(420px, calc(100vw - 32px));
+  align-items: flex-start;
+  gap: 14px;
+  overflow: hidden;
+  padding: 16px 16px 18px;
+  border: 1px solid var(--cv-border);
+  border-radius: 14px;
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  box-shadow: 0 12px 36px rgb(15 23 42 / 14%);
+  animation: drive-toast-enter 180ms ease-out both;
+}
+
+.drive-toast-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--cv-border);
+  border-radius: 10px;
+  color: var(--cv-primary);
+  background: #EFF6FF;
+}
+
+.drive-toast-success .drive-toast-icon {
+  border-color: #BBF7D0;
+  color: var(--cv-success);
+  background: var(--cv-success-background);
+}
+
+.drive-toast-error .drive-toast-icon {
+  border-color: #FECACA;
+  color: var(--cv-danger);
+  background: var(--cv-danger-background);
+}
+
+.drive-toast-warning .drive-toast-icon {
+  border-color: #FDE68A;
+  color: #92400E;
+  background: #FFFBEB;
+}
+
+.drive-toast-copy {
+  min-width: 0;
+  flex: 1;
+  padding-top: 1px;
+}
+
+.drive-toast-copy p {
+  margin: 0;
+  color: var(--cv-text);
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+.drive-toast-copy span {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  color: var(--cv-text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.drive-toast > button,
+.drive-upload-toast-controls button,
+.drive-upload-cancel {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  color: var(--cv-text-muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.drive-toast > button:hover,
+.drive-upload-toast-controls button:hover,
+.drive-upload-cancel:hover {
+  color: var(--cv-text);
+  background: var(--cv-surface-muted);
+}
+
+.drive-toast-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--cv-primary);
+  transform-origin: left;
+  animation: drive-toast-countdown 5s linear both;
+}
+
+.drive-toast-success .drive-toast-progress {
+  background: var(--cv-success);
+}
+
+.drive-toast-error .drive-toast-progress {
+  background: var(--cv-danger);
+}
+
+.drive-toast-warning .drive-toast-progress {
+  background: #D97706;
+}
+
+.drive-toast-progress.is-indeterminate {
+  width: 35%;
+  animation: drive-toast-indeterminate 1.2s ease-in-out infinite alternate;
+}
+
+.drive-toast-spinner {
+  animation: drive-toast-spin 1s linear infinite;
+}
+
+.drive-upload-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  width: min(420px, calc(100vw - 32px));
+  overflow: hidden;
+  border: 1px solid var(--cv-border);
+  border-radius: 16px;
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  box-shadow: 0 16px 44px rgb(15 23 42 / 14%);
+  animation: drive-toast-enter 180ms ease-out both;
+}
+
+.drive-upload-toast-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--cv-border);
+  background: var(--cv-surface);
+}
+
+.drive-upload-toast-header-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #DBEAFE;
+  border-radius: 11px;
+  color: var(--cv-primary);
+  background: #EFF6FF;
+}
+
+.drive-upload-toast-heading {
+  min-width: 0;
+  flex: 1;
+}
+
+.drive-upload-toast-heading h2 {
+  margin: 0;
+  color: var(--cv-text);
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+}
+
+.drive-upload-toast-heading p {
+  margin: 4px 0 0;
+  color: var(--cv-text-muted);
+  font-size: 13px;
+}
+
+.drive-upload-overall {
+  padding: 14px 18px 0;
+}
+
+.drive-upload-overall-copy,
+.drive-upload-file-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--cv-text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.drive-upload-overall-copy {
+  margin-bottom: 8px;
+  color: var(--cv-text);
+  font-weight: 600;
+}
+
+.drive-upload-progress-track {
+  position: relative;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--cv-surface-muted);
+}
+
+.drive-upload-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cv-primary);
+  transition: width 180ms ease;
+}
+
+.drive-upload-progress-track.is-error > span {
+  background: var(--cv-danger);
+}
+
+.drive-upload-progress-track.is-indeterminate > span {
+  width: 34%;
+  animation: drive-upload-indeterminate 1.2s ease-in-out infinite alternate;
+}
+
+.drive-upload-list {
+  display: grid;
+  max-height: min(380px, 52svh);
+  gap: 10px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 14px;
+  list-style: none;
+}
+
+.drive-upload-item {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--cv-border);
+  border-radius: 12px;
+  background: var(--cv-surface);
+}
+
+.drive-upload-file-icon {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--cv-text-muted);
+  background: var(--cv-surface-muted);
+}
+
+.drive-upload-file-icon.is-uploading,
+.drive-upload-file-icon.is-importing {
+  color: var(--cv-primary);
+  background: #EFF6FF;
+}
+
+.drive-upload-file-icon.is-success {
+  color: var(--cv-success);
+  background: var(--cv-success-background);
+}
+
+.drive-upload-file-icon.is-error {
+  color: var(--cv-danger);
+  background: var(--cv-danger-background);
+}
+
+.drive-upload-file-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.drive-upload-file-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.drive-upload-file-name {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--cv-text);
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.drive-upload-status {
+  flex: 0 0 auto;
+  color: var(--cv-text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.drive-upload-status.is-uploading,
+.drive-upload-status.is-importing {
+  color: var(--cv-primary);
+}
+
+.drive-upload-status.is-success {
+  color: var(--cv-success);
+}
+
+.drive-upload-status.is-error {
+  color: var(--cv-danger);
+}
+
+.drive-upload-file-meta {
+  margin-bottom: 7px;
+}
+
+.drive-upload-error {
+  margin: 7px 0 0;
+  color: var(--cv-danger);
+  font-size: 12px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.drive-upload-cancel {
+  width: 36px;
+  height: 36px;
+  margin: -2px -2px 0 0;
+}
+
+@keyframes drive-toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drive-toast-countdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+@keyframes drive-toast-indeterminate {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(300%); }
+}
+
+@keyframes drive-toast-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes drive-upload-indeterminate {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(310%); }
+}
+
+@media (max-width: 640px) {
+  .drive-toast,
+  .drive-upload-toast {
+    right: 16px;
+  }
+
+  .drive-toast {
+    top: 80px;
+    bottom: auto;
+  }
+
+  .drive-upload-toast {
+    bottom: 16px;
+    width: calc(100vw - 32px);
+  }
+
+  .drive-delete-card {
+    padding: 22px;
+  }
+
+  .drive-delete-actions {
+    flex-direction: column-reverse;
+  }
+
+  .drive-delete-actions button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drive-toast,
+  .drive-toast *,
+  .drive-upload-toast *,
+  .drive-delete-dialog * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

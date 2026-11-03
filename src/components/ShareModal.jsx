@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   X,
   Link,
@@ -10,12 +10,19 @@ import {
   Users,
   Pencil,
   UserCheck,
+  CheckCircle2,
+  AlertCircle,
 } from "lucide-react";
-import { Alert, AlertDescription } from "./lightswind/alert";
+import PropTypes from "prop-types";
+import "./DriveActionModals.css";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
+  const dialogRef = useRef(null);
+  const closeButtonRef = useRef(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
   const [activeTab, setActiveTab] = useState("shareLink");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("viewer");
@@ -34,6 +41,41 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const previousFocus = document.activeElement;
+    closeButtonRef.current?.focus();
+
+    const handleDialogKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onCloseRef.current();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+      const focusableElements = dialogRef.current?.querySelectorAll(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex="0"]'
+      );
+      if (!focusableElements?.length) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      if (event.shiftKey && (document.activeElement === firstElement || !dialogRef.current.contains(document.activeElement))) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && (document.activeElement === lastElement || !dialogRef.current.contains(document.activeElement))) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleDialogKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleDialogKeyDown);
+      previousFocus?.focus?.();
+    };
+  }, []);
 
   // Fetch shared users on mount or when resource changes
   useEffect(() => {
@@ -64,6 +106,7 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
         } else {
              setLinkEnabled(false);
         }
+        return data;
       } else {
         const data = await response.json();
         setError(data.error || "Failed to fetch shared users");
@@ -74,6 +117,7 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
     } finally {
       setLoading(false);
     }
+    return null;
   };
 
 
@@ -221,8 +265,16 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
       const data = await response.json();
 
       if (response.ok) {
-        setShareLink(data.shareLink);
+        const generatedLink = data.shareLink?.url
+          ? data.shareLink
+          : (await fetchSharedUsers())?.shareLink;
+        if (!generatedLink?.url) {
+          throw new Error("The link was created, but its URL could not be loaded. Please try again.");
+        }
+        setShareLink(generatedLink);
+        setLinkRole(generatedLink.role || linkRole);
         setLinkEnabled(true);
+        setError("");
         setSuccess("Share link generated!");
         setTimeout(() => setSuccess(""), 3000);
       } else {
@@ -230,7 +282,7 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
       }
     } catch (err) {
       console.error("Error generating link:", err);
-      setError("Error generating share link");
+      setError(err.message || "Error generating share link");
     }
   };
 
@@ -274,6 +326,7 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
       if (response.ok) {
         setShareLink(null);
         setLinkEnabled(false);
+        setError("");
         setSuccess("Share link disabled!");
         setTimeout(() => setSuccess(""), 3000);
       } else {
@@ -349,112 +402,100 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4 animate-fadeIn"
+      className="cv-share-overlay"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-slideUp"
+        ref={dialogRef}
+        className="cv-share-dialog"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cv-share-title"
       >
-        {/* Header */}
-        <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-white">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-md">
-              <Users className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold" style={{ color: '#2C3E50' }}>Share Document</h3>
-              <p className="text-sm mt-0.5" style={{ color: '#A3C5D9' }}>Collaborate with others</p>
+        <header className="cv-share-header">
+          <div className="cv-share-heading">
+            <span className="cv-share-heading-icon" aria-hidden="true">
+              <Users size={21} />
+            </span>
+            <div className="cv-share-heading-copy">
+              <p>Access and permissions</p>
+              <h2 id="cv-share-title">Share {resourceType === "directory" ? "folder" : "file"}</h2>
+              <span className="cv-share-resource-name" title={resourceName}>{resourceName || "Manage who can access this item"}</span>
             </div>
           </div>
           <button
+            ref={closeButtonRef}
+            type="button"
             onClick={onClose}
-            className="transition-colors p-2 rounded-lg hover:bg-opacity-10"
-            style={{ color: '#A3C5D9' }}
-            onMouseEnter={(e) => {
-              e.target.style.color = '#66B2D6';
-              e.target.style.backgroundColor = '#E6FAF5';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#A3C5D9';
-              e.target.style.backgroundColor = 'transparent';
-            }}
+            className="cv-share-close"
+            aria-label="Close sharing dialog"
           >
-            <X className="w-5 h-5" />
+            <X size={19} />
           </button>
-        </div>
+        </header>
 
-        {/* Tabs */}
-        <div className="flex border-b px-6" style={{ borderColor: '#D1DCE5', backgroundColor: '#fafdff' }}>
+        <nav className="cv-share-tabs" aria-label="Sharing options">
           <button
+            type="button"
             onClick={() => setActiveTab("shareLink")}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all relative border-b-2 ${
-              activeTab === "shareLink"
-                ? "bg-white"
-                : "hover:bg-gray-100"
-            }`}
+            className={`cv-share-tab${activeTab === "shareLink" ? " is-active" : ""}`}
+            aria-pressed={activeTab === "shareLink"}
             style={{
               color: activeTab === "shareLink" ? '#66B2D6' : '#2C3E50',
               borderColor: activeTab === "shareLink" ? '#66B2D6' : 'transparent'
             }}
-            onMouseEnter={(e) => activeTab !== "shareLink" && (e.target.style.color = '#2C3E50')}
-            onMouseLeave={(e) => activeTab !== "shareLink" && (e.target.style.color = '#2C3E50')}
           >
             <Link className="w-4 h-4" />
             Share Link
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab("emailInvite")}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all relative border-b-2 ${
-              activeTab === "emailInvite"
-                ? "bg-white"
-                : "hover:bg-gray-100"
-            }`}
+            className={`cv-share-tab${activeTab === "emailInvite" ? " is-active" : ""}`}
+            aria-pressed={activeTab === "emailInvite"}
             style={{
               color: activeTab === "emailInvite" ? '#66B2D6' : '#2C3E50',
               borderColor: activeTab === "emailInvite" ? '#66B2D6' : 'transparent'
             }}
-            onMouseEnter={(e) => activeTab !== "emailInvite" && (e.target.style.color = '#2C3E50')}
-            onMouseLeave={(e) => activeTab !== "emailInvite" && (e.target.style.color = '#2C3E50')}
           >
             <Mail className="w-4 h-4" />
             Email Invite
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab("sharedWith")}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-all relative border-b-2 ${
-              activeTab === "sharedWith"
-                ? "bg-white"
-                : "hover:bg-gray-100"
-            }`}
+            className={`cv-share-tab${activeTab === "sharedWith" ? " is-active" : ""}`}
+            aria-pressed={activeTab === "sharedWith"}
             style={{
               color: activeTab === "sharedWith" ? '#66B2D6' : '#2C3E50',
               borderColor: activeTab === "sharedWith" ? '#66B2D6' : 'transparent'
             }}
-            onMouseEnter={(e) => activeTab !== "sharedWith" && (e.target.style.color = '#2C3E50')}
-            onMouseLeave={(e) => activeTab !== "sharedWith" && (e.target.style.color = '#2C3E50')}
           >
             <UserCheck className="w-4 h-4" />
             Shared With
           </button>
-        </div>
+        </nav>
 
-        {/* Tab Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-180px)]">
+        <div className="cv-share-body">
 
           {/* Messages */}
           {error && (
-            <div className="fixed top-24 right-6 z-[100] max-w-sm w-full md:w-[380px]">
-              <Alert variant="destructive" withIcon duration={4000} dismissible onDismiss={() => setError("")} className="bg-white/95 backdrop-blur-md shadow-2xl border-red-100">
-                <AlertDescription className="font-semibold">{error}</AlertDescription>
-              </Alert>
+            <div className="cv-share-feedback is-error" role="alert">
+              <AlertCircle size={18} aria-hidden="true" />
+              <span>{error}</span>
+              <button type="button" onClick={() => setError("")} aria-label="Dismiss error">
+                <X size={16} />
+              </button>
             </div>
           )}
           {success && (
-            <div className="fixed top-24 right-6 z-[100] max-w-sm w-full md:w-[380px]">
-              <Alert variant="success" withIcon duration={3000} dismissible onDismiss={() => setSuccess("")} className="bg-white/95 backdrop-blur-md shadow-2xl border-green-100">
-                <AlertDescription className="font-semibold">{success}</AlertDescription>
-              </Alert>
+            <div className="cv-share-feedback is-success" role="status" aria-live="polite">
+              <CheckCircle2 size={18} aria-hidden="true" />
+              <span>{success}</span>
+              <button type="button" onClick={() => setSuccess("")} aria-label="Dismiss notification">
+                <X size={16} />
+              </button>
             </div>
           )}
 
@@ -462,71 +503,54 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
           {activeTab === "shareLink" && (
             <div className="space-y-6">
               {loading ? (
-                <div className="flex justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: '#66B2D6' }}></div>
+                <div className="cv-share-loading" role="status" aria-label="Loading sharing information">
+                  <span />
                 </div>
               ) : (
                 <>
                   {/* Toggle Share Link */}
-                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                  <div className="cv-share-link-toggle-row">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <Globe className="w-5 h-5 text-black" />
+                      <div className="cv-share-link-icon" aria-hidden="true">
+                        <Globe size={19} />
                       </div>
-                      <div>
-                        <h4 className="text-sm font-semibold" style={{ color: '#2C3E50' }}>Share with link</h4>
-                        <p className="text-xs" style={{ color: '#A3C5D9' }}>Anyone with the link can access</p>
-                      </div>
+                    <div>
+                      <h4 className="text-sm font-semibold">Share with link</h4>
+                      <p className="text-xs">Anyone with the link can access</p>
                     </div>
-                    <button
-                      onClick={handleToggleLink}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        linkEnabled ? "" : "bg-gray-300"
-                      }`}
-                      style={{ backgroundColor: linkEnabled ? '#66B2D6' : undefined }}
-                    >
-                      <span
-                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          linkEnabled ? "translate-x-6" : "translate-x-1"
-                        }`}
-                      />
-                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleToggleLink}
+                    className={`cv-share-toggle${linkEnabled ? " is-enabled" : ""}`}
+                    role="switch"
+                    aria-checked={linkEnabled}
+                    aria-label="Enable share link"
+                  >
+                    <span />
+                  </button>
                   </div>
 
                   {linkEnabled && shareLink && (
                     <>
                       {/* Permission Level */}
                       <div>
-                        <label className="block text-sm font-medium mb-2" style={{ color: '#2C3E50' }}>
+                        <label className="cv-share-label">
                           Permission level
                         </label>
-                        <div className="flex gap-2">
+                        <div className="cv-share-role-options">
                           <button
+                            type="button"
                             onClick={() => handleUpdateLinkRole("viewer")}
-                              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
-                                linkRole === "viewer"
-                                  ? "bg-blue-50"
-                                  : "border-gray-200 bg-white hover:border-gray-300"
-                              }`}
-                              style={{
-                                borderColor: linkRole === "viewer" ? '#66B2D6' : undefined,
-                                color: linkRole === "viewer" ? '#66B2D6' : '#2C3E50'
-                              }}
+                            className={`cv-share-role${linkRole === "viewer" ? " is-selected" : ""}`}
                           >
                             <Eye className="w-4 h-4" />
                             <span className="font-medium">Viewer</span>
                           </button>
                           <button
+                            type="button"
                             onClick={() => handleUpdateLinkRole("editor")}
-                              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
-                                linkRole === "editor"
-                                  ? "bg-blue-50"
-                                  : "border-gray-200 bg-white hover:border-gray-300"
-                              }`}
-                              style={{
-                                borderColor: linkRole === "editor" ? '#66B2D6' : undefined,
-                                color: linkRole === "editor" ? '#66B2D6' : '#2C3E50'
-                              }}
+                            className={`cv-share-role${linkRole === "editor" ? " is-selected" : ""}`}
                           >
                             <Pencil className="w-4 h-4" />
                             <span className="font-medium">Editor</span>
@@ -536,24 +560,21 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
 
                       {/* Share Link */}
                       <div>
-                        <label className="block text-sm font-medium mb-2" style={{ color: '#2C3E50' }}>
+                        <label className="cv-share-label">
                           Share link
                         </label>
-                        <div className="flex items-center gap-2 p-3 rounded-lg border" style={{ backgroundColor: '#fafdff', borderColor: '#D1DCE5' }}>
-                          <Link className="w-4 h-4 flex-shrink-0" style={{ color: '#A3C5D9' }} />
+                        <div className="cv-share-link-field">
+                          <Link className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                           <input
                             type="text"
                             value={shareLink.url}
                             readOnly
-                            className="flex-1 bg-transparent border-none text-sm focus:outline-none"
-                            style={{ color: '#2C3E50' }}
+                            aria-label="Share link"
                           />
                           <button
+                            type="button"
                             onClick={handleCopyLink}
-                            className="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors flex items-center gap-2"
-                            style={{ backgroundColor: '#66B2D6' }}
-                            onMouseEnter={(e) => e.target.style.backgroundColor = '#5aa0c0'}
-                            onMouseLeave={(e) => e.target.style.backgroundColor = '#66B2D6'}
+                            className="cv-share-primary-button"
                           >
                             <Copy className="w-3 h-3" />
                             {copiedLink ? "Copied!" : "Copy"}
@@ -571,7 +592,7 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
           {activeTab === "emailInvite" && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: '#2C3E50' }}>
+                <label className="cv-share-label">
                   Select users to invite
                 </label>
                 <input
@@ -579,36 +600,34 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
                   placeholder="Choose users to invite"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full px-4 py-2 bg-white border rounded-lg transition-all text-sm focus:outline-none"
-                  style={{ borderColor: '#D1DCE5', color: '#2C3E50' }}
-                  onFocus={(e) => e.target.style.borderColor = '#66B2D6'}
-                  onBlur={(e) => e.target.style.borderColor = '#D1DCE5'}
+                  className="cv-share-search"
+                  aria-label="Search users to invite"
                 />
               </div>
 
               {/* User List */}
-              <div className="border border-gray-200 rounded-lg max-h-64 overflow-y-auto">
+              <div className="cv-share-user-list">
                 {filteredUsers.map((user) => {
                   const isSelected = selectedUsers.find((u) => u.userId === user.userId);
                   return (
-                    <div
+                    <button
+                      type="button"
                       key={user.userId}
                       onClick={() => handleUserSelect(user)}
-                      className={`flex items-center gap-3 p-3 cursor-pointer transition-colors ${
-                        isSelected ? "bg-gray-100" : "hover:bg-gray-50"
-                      }`}
+                      className={`cv-share-user${isSelected ? " is-selected" : ""}`}
+                      aria-pressed={Boolean(isSelected)}
                     >
-                      <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center text-white font-semibold">
+                      <span className="cv-share-avatar">
                         {user.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate" style={{ color: '#2C3E50' }}>
+                      </span>
+                      <span className="cv-share-user-copy">
+                        <span className="cv-share-user-name">
                           {user.name}
-                        </div>
-                        <div className="text-xs truncate" style={{ color: '#A3C5D9' }}>{user.email}</div>
-                      </div>
+                        </span>
+                        <span className="cv-share-user-email">{user.email}</span>
+                      </span>
                       {isSelected && (
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center" style={{ backgroundColor: '#66B2D6' }}>
+                        <span className="cv-share-selected-icon" aria-hidden="true">
                           <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path
                               fillRule="evenodd"
@@ -616,21 +635,19 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
                               clipRule="evenodd"
                             />
                           </svg>
-                        </div>
+                        </span>
                       )}
-                    </div>
+                    </button>
                   );
                 })}
               </div>
 
               {/* Send Invites Button */}
               <button
+                type="button"
                 onClick={handleSendInvites}
                 disabled={selectedUsers.length === 0 || isSharing}
-                className="w-full px-4 py-3 text-sm font-medium text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                style={{ backgroundColor: '#66B2D6' }}
-                onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#5aa0c0')}
-                onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#66B2D6')}
+                className="cv-share-primary-button cv-share-invite-button"
               >
                 {isSharing
                   ? "Sending..."
@@ -644,66 +661,66 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
           {/* Shared With Tab */}
           {activeTab === "sharedWith" && (
             <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                  <UserCheck className="w-4 h-4 text-green-600" />
+              <div className="cv-share-access-heading">
+              <div className="cv-share-access-icon">
+                <UserCheck size={17} />
                 </div>
-                <h4 className="text-base font-semibold" style={{ color: '#2C3E50' }}>Users with Access</h4>
+              <h4>Users with access</h4>
               </div>
 
               {loading ? (
-                <div className="flex justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: '#66B2D6' }}></div>
+                <div className="cv-share-loading" role="status" aria-label="Loading sharing information">
+                  <span />
                 </div>
               ) : sharedUsers.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#E6FAF5' }}>
-                    <UserCheck className="w-8 h-8" style={{ color: '#A3C5D9' }} />
+                <div className="cv-share-empty">
+                  <div className="cv-share-empty-icon">
+                    <UserCheck size={26} />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2" style={{ color: '#2C3E50' }}>No users shared yet</h3>
-                  <p className="text-sm text-gray-500">
+                  <h3>No one has access yet</h3>
+                  <p>
                     Use the Email Invite tab to share this document with others.
                   </p>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="cv-share-access-list">
                   {sharedUsers.map((user) => (
                     <div
                       key={user.userId}
-                      className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors"
+                      className="cv-share-access-row"
                     >
                       {user.picture ? (
                         <img
                           src={user.picture}
                           alt={user.name}
-                          className="w-10 h-10 rounded-full object-cover"
+                          className="cv-share-avatar"
                         />
                       ) : (
-                        <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
+                        <div className="cv-share-avatar">
                           {user.name.charAt(0).toUpperCase()}
                         </div>
                       )}
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate" style={{ color: '#2C3E50' }}>
+                      <div className="cv-share-user-copy">
+                        <div className="cv-share-user-name">
                           {user.name}
                         </div>
-                        <div className="text-xs truncate" style={{ color: '#A3C5D9' }}>{user.email}</div>
+                        <div className="cv-share-user-email">{user.email}</div>
                       </div>
                       <select
                         value={user.role}
                         onChange={(e) => handleUpdateAccess(user.userId, e.target.value)}
-                        className="px-2 py-1 bg-white border rounded-md text-xs focus:outline-none"
-                        style={{ borderColor: '#D1DCE5', color: '#2C3E50' }}
-                        onFocus={(e) => e.target.style.borderColor = '#66B2D6'}
-                        onBlur={(e) => e.target.style.borderColor = '#D1DCE5'}
+                        className="cv-share-access-role"
+                        aria-label={`Access level for ${user.name}`}
                       >
                         <option value="viewer">Viewer</option>
                         <option value="editor">Editor</option>
                       </select>
                       <button
+                        type="button"
                         onClick={() => handleRemoveAccess(user.userId)}
                         title="Remove access"
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        aria-label={`Remove ${user.name}'s access`}
+                        className="cv-share-remove-access"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -718,5 +735,12 @@ function ShareModal({ resourceType, resourceId, resourceName, onClose }) {
     </div>
   );
 }
+
+ShareModal.propTypes = {
+  resourceType: PropTypes.oneOf(["file", "directory"]).isRequired,
+  resourceId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  resourceName: PropTypes.string,
+  onClose: PropTypes.func.isRequired,
+};
 
 export default ShareModal;

@@ -20,7 +20,7 @@ function DirectoryList({
   showToast,
 }) {
   return (
-    <div className="flex flex-col gap-1.5 mt-6">
+    <div className="drive-list flex flex-col gap-1.5 mt-6">
       {items.map((item) => {
         const uploadProgress = progressMap[item.id] || 0;
 

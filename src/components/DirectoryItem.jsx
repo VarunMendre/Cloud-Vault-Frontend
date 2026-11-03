@@ -45,13 +45,13 @@ function DirectoryItem({
   };
 
   const renderIcon = () => {
-    if (item.isDirectory) return <Folder className="w-5 h-5" style={{ color: "#66B2D6" }} />;
+    if (item.isDirectory) return <Folder className="w-5 h-5" style={{ color: "var(--cv-primary)" }} />;
     return getFileIcon(item);
   };
 
   return (
     <div
-      className="relative flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-xl cursor-pointer group transition-all duration-150 hover:bg-gray-50 hover:border-gray-400"
+      className="drive-list-row relative flex items-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-xl cursor-pointer group transition-all duration-150 hover:bg-gray-50 hover:border-gray-400"
       onClick={() =>
         !(activeContextMenu || isUploading)
           ? handleRowClick(item.isDirectory ? "directory" : "file", item.id)
@@ -60,14 +60,14 @@ function DirectoryItem({
       onContextMenu={(e) => handleContextMenu(e, item.id)}
     >
       {/* Icon */}
-      <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center border border-gray-100">
+      <div className="drive-list-icon flex-shrink-0 w-9 h-9 rounded-lg bg-gray-50 flex items-center justify-center border border-gray-100">
         {renderIcon()}
       </div>
 
       {/* Name + meta */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          <span className="font-semibold text-gray-800 text-sm truncate leading-snug">
+          <span className="drive-list-name font-semibold text-gray-800 text-sm truncate leading-snug">
             {item.name}
           </span>
           {ext && (
@@ -81,7 +81,7 @@ function DirectoryItem({
             </span>
           )}
         </div>
-        <div className="flex items-center gap-3 text-[11px] text-gray-400">
+        <div className="drive-list-meta flex items-center gap-3 text-[11px] text-gray-400">
           <span>
             Size:{" "}
             <span className="text-gray-500">
@@ -112,7 +112,8 @@ function DirectoryItem({
 
       {/* 3-dot menu – always visible */}
       <button
-        className="flex-shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all active:scale-95"
+        aria-label="More options"
+        className="drive-list-menu flex-shrink-0 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all active:scale-95"
         onClick={(e) => {
           e.stopPropagation();
           handleContextMenu(e, item.id);

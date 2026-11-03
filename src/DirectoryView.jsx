@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import DirectoryHeader from "./components/DirectoryHeader";
@@ -10,7 +10,10 @@ import DetailsPopup from "./components/DetailsPopup";
 import ImportFromDrive from "./components/ImportFromDrive";
 import { Alert, AlertTitle, AlertDescription } from "./components/lightswind/alert";
 import UploadToast from "./components/UploadToast";
+import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
+import DriveToast from "./components/DriveToast";
 import ContextMenu from "./components/ContextMenu";
+import "./DirectoryView.css";
 import { 
   Upload,
   FolderPlus, 
@@ -87,11 +90,15 @@ function DirectoryView() {
 
   // Details modal state
   const [detailsItem, setDetailsItem] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
 
   // Uploading states
   const fileInputRef = useRef(null);
   const [uploadQueue, setUploadQueue] = useState([]);
   const [allUploads, setAllUploads] = useState([]); // Track full batch for the toast
+  const [uploadStatusMap, setUploadStatusMap] = useState({});
+  const [uploadErrorMap, setUploadErrorMap] = useState({});
+  const cancelledUploadsRef = useRef(new Set());
   const uploadQueueRef = useRef([]);
   const [uploadXhrMap, setUploadXhrMap] = useState({});
   const [progressMap, setProgressMap] = useState({});
@@ -105,11 +112,13 @@ function DirectoryView() {
   const refreshStorageRef = useRef(null);
 
   // Toast state
-  const [toast, setToast] = useState({ show: false, message: "", type: "info" });
-  const showToast = (message, type = "info") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "info" }), 3000);
-  };
+  const [toast, setToast] = useState({ show: false, message: "", type: "info", id: 0 });
+  const showToast = useCallback((message, type = "info") => {
+    setToast({ show: true, message, type, id: Date.now() + Math.random() });
+  }, []);
+  const dismissToast = useCallback((id) => {
+    setToast((current) => current.id === id ? { ...current, show: false } : current);
+  }, []);
 
   // Context menu
   const [activeContextMenu, setActiveContextMenu] = useState(null);
@@ -169,9 +178,11 @@ function DirectoryView() {
       setPath(data.path || []);
       setDirectoriesList([...data.directories].reverse());
       setFilesList([...data.files].reverse());
+      return true;
     } catch (error) {
       setErrorMessage(error.message);
       showToast(error.message, "error");
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -190,11 +201,11 @@ function DirectoryView() {
     const isDir = typeof item === "object" ? item?.isDirectory : false;
 
     if (isDir) {
-      return <Folder className="w-5 h-5" style={{ color: '#66B2D6' }} />;
+      return <Folder className="w-5 h-5" style={{ color: "var(--cv-primary)" }} />;
     }
 
     if (!filename || typeof filename !== 'string') {
-      return <File className="w-5 h-5" style={{ color: '#A3C5D9' }} />;
+      return <File className="w-5 h-5" style={{ color: "var(--cv-primary)" }} />;
     }
 
     const ext = filename.split(".").pop().toLowerCase();
@@ -305,18 +316,13 @@ function DirectoryView() {
       // Add to upload UI
       setAllUploads((prev) => [importItem, ...prev]);
       setProgressMap((prev) => ({ ...prev, [tempId]: 0 }));
+      setUploadStatusMap((prev) => ({ ...prev, [tempId]: "importing" }));
+      setUploadErrorMap((prev) => {
+        const next = { ...prev };
+        delete next[tempId];
+        return next;
+      });
       setIsUploading(true);
-
-      // Simulate progress since we don't have real progress for server-side import
-      const progressInterval = setInterval(() => {
-        setProgressMap((prev) => {
-          const currentProgress = prev[tempId] || 0;
-          if (currentProgress < 90) {
-            return { ...prev, [tempId]: currentProgress + Math.random() * 10 };
-          }
-          return prev;
-        });
-      }, 1000);
 
       const response = await fetch(`${BASE_URL}/import/google-drive`, {
         method: "POST",
@@ -331,11 +337,9 @@ function DirectoryView() {
         }),
       });
 
-      clearInterval(progressInterval);
-
       if (response.status === 401) {
         navigate("/login");
-        return;
+        throw new Error("Your session expired. Sign in again to import this file.");
       }
 
       await handleFetchErrors(response);
@@ -344,6 +348,7 @@ function DirectoryView() {
       
       // Complete progress
       setProgressMap((prev) => ({ ...prev, [tempId]: 100 }));
+      setUploadStatusMap((prev) => ({ ...prev, [tempId]: "success" }));
       
       // Refresh directory items
       getDirectoryItems();
@@ -351,22 +356,56 @@ function DirectoryView() {
         refreshStorageRef.current();
       }
 
-      // Cleanup toast after short delay if no other uploads
+      // Keep the result visible briefly before clearing the completed import.
       setTimeout(() => {
-        if (uploadQueueRef.current.length === 0) {
+        setAllUploads((prev) => prev.filter((item) => item.id !== tempId));
+        setProgressMap((prev) => {
+          const next = { ...prev };
+          delete next[tempId];
+          return next;
+        });
+        setUploadStatusMap((prev) => {
+          const next = { ...prev };
+          delete next[tempId];
+          return next;
+        });
+        setUploadErrorMap((prev) => {
+          const next = { ...prev };
+          delete next[tempId];
+          return next;
+        });
+        if (uploadQueueRef.current.length === 0 && activeUploadsCount.current === 0) {
           setIsUploading(false);
-          setAllUploads((prev) => prev.filter(item => item.id !== tempId));
         }
-      }, 3000);
+      }, 5000);
       
     } catch (error) {
       console.error("Import from Drive failed:", error);
       setErrorMessage("Failed to import file from Google Drive: " + error.message);
       showToast("Failed to import from Drive: " + error.message, "error");
-      // Cleanup on error
-      setAllUploads((prev) => prev.filter(item => item.id !== tempId));
-    } finally {
-      // isUploading will be handled by the timeout or processQueue
+      setUploadStatusMap((prev) => ({ ...prev, [tempId]: "error" }));
+      setUploadErrorMap((prev) => ({ ...prev, [tempId]: error.message }));
+      setTimeout(() => {
+        setAllUploads((prev) => prev.filter((item) => item.id !== tempId));
+        setProgressMap((prev) => {
+          const next = { ...prev };
+          delete next[tempId];
+          return next;
+        });
+        setUploadStatusMap((prev) => {
+          const next = { ...prev };
+          delete next[tempId];
+          return next;
+        });
+        setUploadErrorMap((prev) => {
+          const next = { ...prev };
+          delete next[tempId];
+          return next;
+        });
+        if (uploadQueueRef.current.length === 0 && activeUploadsCount.current === 0) {
+          setIsUploading(false);
+        }
+      }, 5000);
     }
   }
 
@@ -517,6 +556,12 @@ function DirectoryView() {
 
     newItems.forEach((item) => {
       setProgressMap((prev) => ({ ...prev, [item.id]: 0 }));
+      setUploadStatusMap((prev) => ({ ...prev, [item.id]: "queued" }));
+      setUploadErrorMap((prev) => {
+        const next = { ...prev };
+        delete next[item.id];
+        return next;
+      });
     });
 
     setUploadQueue((prev) => [...prev, ...newItems]);
@@ -588,15 +633,17 @@ function DirectoryView() {
     if (uploadQueueRef.current.length === 0 && activeUploadsCount.current === 0) {
       setIsUploading(false);
       setUploadQueue([]);
-      // Reset allUploads after a delay to allow success state to be visible
+      // Keep terminal upload results visible briefly before clearing the batch.
       setTimeout(() => {
         setAllUploads([]);
-        setProgressMap({}); // Global cleanup of progress map
+        setProgressMap({});
+        setUploadStatusMap({});
+        setUploadErrorMap({});
         getDirectoryItems();
         if (refreshStorageRef.current) {
           refreshStorageRef.current();
         }
-      }, 3000);
+      }, 5000);
       return;
     }
 
@@ -608,6 +655,7 @@ function DirectoryView() {
       
       const tempId = currentItem.id;
       activeUploadsCount.current++;
+      setUploadStatusMap((prev) => ({ ...prev, [tempId]: "uploading" }));
 
       // Use an IIFE or separate async call to handle each upload independently
       (async (item, id) => {
@@ -618,6 +666,9 @@ function DirectoryView() {
           setFilesList((prev) =>
             prev.map((f) => (f.id === id ? { ...f, realFileId: fileId } : f))
           );
+          setAllUploads((prev) =>
+            prev.map((file) => file.id === id ? { ...file, realFileId: fileId } : file)
+          );
 
           console.log(`Uploading to S3: ${item.name}`);
           await uploadToS3(uploadUrl, item.file, fileId, (progress) => {
@@ -627,15 +678,23 @@ function DirectoryView() {
           console.log(`Completing upload: ${item.name}`);
           await completeUpload(fileId);
           console.log(`Successfully uploaded: ${item.name}`);
+          setProgressMap((prev) => ({ ...prev, [id]: 100 }));
+          setUploadStatusMap((prev) => ({ ...prev, [id]: "success" }));
         } catch (error) {
-          console.error(`Upload failed for ${item.name}:`, error);
+            if (cancelledUploadsRef.current.has(id)) {
+              cancelledUploadsRef.current.delete(id);
+              return;
+            }
+            console.error(`Upload failed for ${item.name}:`, error);
           setFilesList((prev) =>
             prev.filter((f) => f.id !== id && f.realFileId !== item.realFileId)
           );
-          setProgressMap((prev) => ({ ...prev, [id]: 0 }));
+          setUploadStatusMap((prev) => ({ ...prev, [id]: "error" }));
+          setUploadErrorMap((prev) => ({ ...prev, [id]: error.message }));
           setErrorMessage(`Upload failed for ${item.name}: ${error.message}`);
           showToast(`Upload failed: ${error.message}`, "error");
         } finally {
+          cancelledUploadsRef.current.delete(id);
           activeUploadsCount.current--;
           // After one completes, trigger the queue process again to fill the slot
           processUploadQueue();
@@ -648,18 +707,17 @@ function DirectoryView() {
    * Cancel an in-progress upload
    */
   async function handleCancelUpload(fileId) {
-    const xhr = uploadXhrMap[fileId];
-    if (xhr) {
-      xhr.abort();
-    }
+    const fileItem = filesList.find(
+      (f) => f.id === fileId || f.realFileId === fileId
+    );
+    const realId =
+      fileItem?.realFileId ||
+      (fileId.toString().startsWith("temp-") ? null : fileId);
 
     try {
-      const fileItem = filesList.find(
-        (f) => f.id === fileId || f.realFileId === fileId
-      );
-      const realId =
-        fileItem?.realFileId ||
-        (fileId.toString().startsWith("temp-") ? null : fileId);
+      const xhr = uploadXhrMap[fileId] || (realId ? uploadXhrMap[realId] : null);
+      if (fileItem?.id) cancelledUploadsRef.current.add(fileItem.id);
+      if (xhr) xhr.abort();
 
       if (realId) {
         console.log(`Notifying server to cancel upload for fileId: ${realId}`);
@@ -695,13 +753,30 @@ function DirectoryView() {
     );
 
     setProgressMap((prev) => {
-      const { [fileId]: _, ...rest } = prev;
-      return rest;
+      const next = { ...prev };
+      delete next[fileId];
+      if (fileItem?.id) delete next[fileItem.id];
+      return next;
+    });
+
+    setUploadStatusMap((prev) => {
+      const next = { ...prev };
+      delete next[fileId];
+      if (fileItem?.id) delete next[fileItem.id];
+      return next;
+    });
+
+    setUploadErrorMap((prev) => {
+      const next = { ...prev };
+      delete next[fileId];
+      if (fileItem?.id) delete next[fileItem.id];
+      return next;
     });
 
     setUploadXhrMap((prev) => {
       const copy = { ...prev };
       delete copy[fileId];
+      if (realId) delete copy[realId];
       return copy;
     });
 
@@ -714,62 +789,58 @@ function DirectoryView() {
   /**
    * Delete a file/directory
    */
-  async function handleDeleteFile(id) {
+  function handleDeleteFile(item) {
     setActiveContextMenu(null);
     if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
         showToast("Restricted access: Cannot delete files.", "warning");
         return;
     }
 
-    setToast({ show: true, message: "Deleting file...", type: "loading" });
-    setErrorMessage("");
-
-    try {
-      const response = await fetch(`${BASE_URL}/file/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      await handleFetchErrors(response);
-      
-      // Update UI immediately (optimistic update could be done here, but we re-fetch)
-      await getDirectoryItems();
-      
-      if (refreshStorageRef.current) {
-        refreshStorageRef.current();
-      }
-      showToast("File deleted successfully", "success");
-    } catch (error) {
-      setErrorMessage(error.message);
-      showToast(`Failed to delete file: ${error.message}`, "error");
-    }
+    setDeleteTarget({ ...item, isDirectory: false });
   }
 
-  async function handleDeleteDirectory(id) {
+  function handleDeleteDirectory(item) {
     setActiveContextMenu(null);
     if (["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())) {
         showToast("Restricted access: Cannot delete folders.", "warning");
         return;
     }
 
-    setToast({ show: true, message: "Deleting folder...", type: "loading" });
+    setDeleteTarget({ ...item, isDirectory: true });
+  }
+
+  async function confirmDelete() {
+    const item = deleteTarget;
+    if (!item) return;
+
+    setDeleteTarget(null);
+    setActiveContextMenu(null);
     setErrorMessage("");
+    const itemType = item.isDirectory ? "folder" : "file";
+    showToast(`Deleting ${itemType}…`, "loading");
 
     try {
-      const response = await fetch(`${BASE_URL}/directory/${id}`, {
+      const response = await fetch(
+        `${item.isDirectory ? `${BASE_URL}/directory` : `${BASE_URL}/file`}/${item.id}`,
+        {
         method: "DELETE",
         credentials: "include",
-      });
+        }
+      );
       await handleFetchErrors(response);
-      
-      await getDirectoryItems();
-      
+      const didRefresh = await getDirectoryItems();
       if (refreshStorageRef.current) {
         refreshStorageRef.current();
       }
-      showToast("Folder deleted successfully", "success");
+      showToast(
+        didRefresh
+          ? `${itemType === "folder" ? "Folder" : "File"} deleted successfully.`
+          : `${itemType === "folder" ? "Folder" : "File"} deleted, but the list couldn’t be refreshed.`,
+        didRefresh ? "success" : "warning"
+      );
     } catch (error) {
       setErrorMessage(error.message);
-      showToast(`Failed to delete folder: ${error.message}`, "error");
+      showToast(`Couldn’t delete ${itemType}: ${error.message}`, "error");
     }
   }
 
@@ -944,7 +1015,7 @@ function DirectoryView() {
   })();
 
   return (
-    <div className="min-h-screen pt-16">
+    <div className="drive-page min-h-screen pt-16">
 
 
       {/* Removed isImporting overlay to use unified UploadToast UI */}
@@ -970,14 +1041,14 @@ function DirectoryView() {
       {/* SUBSCRIPTION ALERTS */}
       {/* 1. PAUSED */}
       {user?.subscriptionStatus?.toLowerCase() === "paused" && (
-        <div className="mx-6 mt-6 p-6 rounded-2xl shadow-medium animate-fadeIn" style={{ backgroundColor: '#FFF3CD', border: '2px solid #FDB827' }}>
-           <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left" style={{ color: '#856404' }}>
-             <div className="p-4 rounded-2xl" style={{ backgroundColor: '#FDB827' }}>
-               <AlertTriangle className="w-10 h-10 text-white" />
+        <div className="drive-status-alert drive-status-paused mx-6 mt-6 p-6 rounded-2xl shadow-medium animate-fadeIn">
+           <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+             <div className="drive-status-icon p-4 rounded-2xl">
+               <AlertTriangle className="w-6 h-6" />
              </div>
              <div>
-               <h2 className="text-2xl font-bold" style={{ color: '#2C3E50' }}>Account Paused</h2>
-               <p className="text-sm mt-2" style={{ color: '#856404' }}>
+               <h2 className="text-xl font-semibold">Account Paused</h2>
+               <p className="text-sm mt-2">
                  Administrator has paused your account. Access is restricted.
                </p>
              </div>
@@ -987,19 +1058,19 @@ function DirectoryView() {
 
       {/* 2. PENDING (Grace Period) */}
       {user?.subscriptionStatus?.toLowerCase() === "pending" && (
-        <div className="mx-6 mt-6 p-6 bg-yellow-50 border-2 border-yellow-400 rounded-xl shadow-md">
-           <div className="flex flex-col sm:flex-row items-center gap-5 text-yellow-900 text-center sm:text-left">
-             <div className="p-4 bg-yellow-100 rounded-2xl">
-                <Info className="w-10 h-10 text-yellow-600 animate-pulse" />
+        <div className="drive-status-alert drive-status-pending mx-6 mt-6 p-6 bg-yellow-50 border-2 border-yellow-400 rounded-xl shadow-md">
+           <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+             <div className="drive-status-icon p-4 rounded-2xl">
+                <Info className="w-6 h-6" />
              </div>
              <div className="flex-1">
-               <h2 className="text-2xl font-bold">Payment Failed</h2>
-               <p className="text-sm text-yellow-800 mt-2">
-                 We couldn't process your renewal. You are in a grace period, but please update your payment method to avoid suspension.
+               <h2 className="text-xl font-semibold">Payment Failed</h2>
+               <p className="text-sm mt-2">
+                 We couldn&apos;t process your renewal. You are in a grace period, but please update your payment method to avoid suspension.
                </p>
                <button 
                   onClick={() => navigate("/subscription")}
-                  className="mt-3 px-4 py-2 bg-yellow-600 text-white rounded-lg font-bold hover:bg-yellow-700"
+                  className="drive-status-action mt-3 px-4 py-2 bg-yellow-600 text-white rounded-lg font-bold hover:bg-yellow-700"
                >
                  Retry Payment
                </button>
@@ -1010,19 +1081,19 @@ function DirectoryView() {
 
       {/* 3. HALTED / EXPIRED (Hard Block) */}
       {["halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && (
-        <div className="mx-6 mt-6 p-6 bg-red-50 border-2 border-red-400 rounded-xl shadow-md">
-           <div className="flex flex-col sm:flex-row items-center gap-5 text-red-900 text-center sm:text-left">
-             <div className="p-4 bg-red-100 rounded-2xl">
-                <X className="w-10 h-10 text-red-600" />
+        <div className="drive-status-alert drive-status-halted mx-6 mt-6 p-6 bg-red-50 border-2 border-red-400 rounded-xl shadow-md">
+           <div className="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+             <div className="drive-status-icon p-4 rounded-2xl">
+                <X className="w-6 h-6" />
              </div>
              <div className="flex-1">
-               <h2 className="text-2xl font-bold">Access Halted</h2>
-               <p className="text-sm text-red-800 mt-2">
+               <h2 className="text-xl font-semibold">Access Halted</h2>
+               <p className="text-sm mt-2">
                  Your subscription has expired or payment failed repeatedly. Downloads are blocked.
                </p>
                <button 
                   onClick={() => navigate("/subscription")}
-                  className="mt-3 px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700"
+                  className="drive-status-action mt-3 px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700"
                >
                  Fix Subscription
                </button>
@@ -1042,13 +1113,13 @@ function DirectoryView() {
       />
 
       {/* Upload Section with 3 Buttons */}
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 pt-5 sm:pt-8 pb-5 sm:pb-8">
+      <div className="drive-content-shell max-w-7xl mx-auto px-3 sm:px-6 pt-5 sm:pt-8 pb-5 sm:pb-8">
         <div 
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          className={`bg-white rounded-2xl p-4 sm:p-8 text-center shadow-soft transition-all duration-500 relative overflow-hidden min-h-[220px] flex flex-col items-center justify-center ${
+          className={`drive-upload-panel bg-white rounded-2xl p-4 sm:p-8 text-center shadow-soft transition-all duration-500 relative overflow-hidden min-h-[220px] flex flex-col items-center justify-center ${
             isDragging 
               ? "marching-ants-border shadow-glow scale-[1.01]" 
               : "border-2 border-dashed border-[#A7DDE9] hover:shadow-medium"
@@ -1080,13 +1151,13 @@ function DirectoryView() {
           
           <div className={`transition-all duration-300 ${isDragging ? "opacity-0 scale-95 blur-sm" : "opacity-100 scale-100"}`}>
           <div className="mb-4 sm:mb-6">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#E6FAF5' }}>
-              <Upload className="w-6 h-6 sm:w-8 sm:h-8" style={{ color: '#66B2D6' }} />
+            <div className="drive-upload-icon w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-2xl flex items-center justify-center">
+              <Upload className="w-6 h-6 sm:w-8 sm:h-8" />
             </div>
-            <h2 className="text-base sm:text-xl font-bold mb-1" style={{ color: '#2C3E50' }}>
+            <h2 className="text-base sm:text-xl font-bold mb-1">
               Upload Files or Create Directory
             </h2>
-            <p className="text-xs sm:text-sm" style={{ color: '#000000' }}>
+            <p className="text-xs sm:text-sm">
               Drag and drop files here, or click to select files
             </p>
           </div>
@@ -1104,16 +1175,11 @@ function DirectoryView() {
                   fileInputRef.current.click();
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
-                className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`drive-primary-action w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
                   ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())
                   ? "bg-slate-300 cursor-not-allowed"
                   : ""
                 }`}
-                style={
-                  !["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())
-                    ? { background: "linear-gradient(to right, #4F9FBC, #4593AD, #3A85A0)" }
-                    : undefined
-                }
               >
                 <Upload className="w-4 h-4" />
                 Upload Files {["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && "⚠️"}
@@ -1137,16 +1203,11 @@ function DirectoryView() {
                   setShowCreateDirModal(true);
                 }}
                 disabled={errorMessage === "Directory not found or you do not have access to it!" || isRenaming}
-                className={`w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+                className={`drive-create-action w-full sm:w-auto flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-white rounded-xl transition-all duration-300 font-bold text-xs sm:text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed ${
                   ["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())
                   ? "bg-slate-300 cursor-not-allowed"
                   : ""
                 }`}
-                style={
-                  !["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase())
-                    ? { background: "linear-gradient(to right, #22C55E, #1DB854, #18A84A)" }
-                    : undefined
-                }
               >
                 <FolderPlus className="w-4 h-4" />
                 Create Directory {["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) && "⚠️"}
@@ -1172,7 +1233,7 @@ function DirectoryView() {
                 <ImportFromDrive
                   onFilesSelected={handleDriveFileImport}
                   disabled={["paused", "halted", "expired"].includes(user?.subscriptionStatus?.toLowerCase()) || isRenaming}
-                  className={`w-full flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-text-main border-2 border-border rounded-xl shadow-sm transition-all duration-300 font-bold text-xs sm:text-sm ${
+                  className={`drive-import-action w-full flex items-center justify-center gap-2 px-4 sm:px-6 py-3 sm:py-3.5 text-text-main border-2 border-border rounded-xl shadow-sm transition-all duration-300 font-bold text-xs sm:text-sm ${
                     user?.subscriptionStatus?.toLowerCase() === "paused" || isRenaming
                       ? "bg-slate-100 cursor-not-allowed opacity-50 grayscale pointer-events-none"
                       : "bg-white hover:bg-secondary hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5"
@@ -1191,7 +1252,7 @@ function DirectoryView() {
       </div>
 
         {/* Search, View Toggle, and Filter Controls */}
-        <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+        <div className="drive-toolbar mt-4 sm:mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
           {/* Search Bar */}
           <div className="flex-1 relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -1200,6 +1261,7 @@ function DirectoryView() {
             <input
               type="text"
               placeholder="Search files and folders..."
+              aria-label="Search files and folders"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-4 py-3.5 bg-card border-2 border-border rounded-xl transition-all duration-300 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 text-text-main placeholder:text-muted"
@@ -1207,6 +1269,7 @@ function DirectoryView() {
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
                 className="absolute inset-y-0 right-0 pr-4 flex items-center text-muted hover:text-text-main transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -1237,6 +1300,7 @@ function DirectoryView() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sort files and folders"
               className="px-5 py-3.5 bg-card border-2 border-border rounded-xl font-bold text-sm transition-all duration-300 hover:border-primary/30 hover:bg-secondary text-text-main appearance-none pr-12 cursor-pointer shadow-sm hover:shadow-md outline-none focus:border-primary"
             >
               <option value="name">Sort by Name</option>
@@ -1250,10 +1314,11 @@ function DirectoryView() {
         </div>
 
         {/* Breadcrumb Navigation */}
-        <div className="mt-4 flex items-center text-sm text-gray-600">
+        <nav className="drive-breadcrumb mt-4 flex items-center text-sm text-gray-600" aria-label="Breadcrumb">
           {/* Home Icon */}
           <button
             onClick={() => navigate("/")}
+            aria-label="Go to My Drive"
             className="hover:text-black transition-colors"
           >
             <Home className="w-4 h-4" />
@@ -1291,7 +1356,7 @@ function DirectoryView() {
               <span className="text-gray-900 font-medium">My Drive</span>
             </>
           )}
-        </div>
+        </nav>
       </div>
 
       {showCreateDirModal && (
@@ -1341,7 +1406,15 @@ function DirectoryView() {
         />
       )}
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 pb-5 sm:pb-8">
+      {deleteTarget && (
+        <DeleteConfirmationModal
+          item={deleteTarget}
+          onCancel={() => setDeleteTarget(null)}
+          onConfirm={confirmDelete}
+        />
+      )}
+
+      <div className="drive-items-shell max-w-7xl mx-auto px-3 sm:px-6 pb-5 sm:pb-8">
         {isLoading ? (
           // ── Skeleton Loader ──────────────────────────────────────────
           viewMode === "grid" ? (
@@ -1388,18 +1461,18 @@ function DirectoryView() {
         ) : combinedItems.length === 0 ? (
           errorMessage ===
           "Directory not found or you do not have access to it!" ? (
-            <p className="text-center text-gray-500 py-12">
+            <p className="drive-empty-state text-center text-gray-500 py-12">
               Directory not found or you do not have access to it!
             </p>
           ) : (
-            <p className="text-center text-gray-500 py-12">
+            <p className="drive-empty-state text-center text-gray-500 py-12">
               This folder is empty. Upload files or create a folder to see some
               data.
             </p>
           )
         ) : viewMode === "grid" ? (
           // Grid View — clean card matching reference design
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 mt-5 sm:mt-8">
+          <div className="drive-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3 sm:gap-4 mt-5 sm:mt-8">
             {combinedItems.map((item) => {
               const gridExt = !item.isDirectory && item.name?.includes('.')
                 ? item.name.split('.').pop().toUpperCase()
@@ -1407,7 +1480,7 @@ function DirectoryView() {
               return (
                 <div
                   key={item.id}
-                  className="relative bg-white rounded-2xl border border-gray-300 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group flex flex-col"
+                  className="drive-grid-card relative bg-white rounded-2xl border border-gray-300 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer overflow-hidden group flex flex-col"
                   onClick={() =>
                     !(activeContextMenu || isUploading) && handleRowClick(item)
                   }
@@ -1415,7 +1488,7 @@ function DirectoryView() {
                 >
                   <div className="p-4 flex-1">
                     {/* File icon */}
-                    <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-3">
+                    <div className="drive-grid-icon w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-3">
                       {getFileIcon(item)}
                     </div>
 
@@ -1439,7 +1512,7 @@ function DirectoryView() {
                     ) : null}
 
                     {/* Size & Modified rows */}
-                    <div className="space-y-1.5 mt-1">
+                    <div className="drive-grid-meta space-y-1.5 mt-1">
                       <div className="flex justify-between items-center text-xs">
                         <span className="text-gray-400">Size</span>
                         <span className="text-gray-600 font-medium">
@@ -1460,7 +1533,7 @@ function DirectoryView() {
                   </div>
 
                   {/* Footer action buttons */}
-                  <div className="flex border-t border-gray-200">
+                  <div className="drive-grid-actions flex border-t border-gray-200">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -1494,7 +1567,8 @@ function DirectoryView() {
 
                   {/* 3-dot menu button (top-right) */}
                   <button
-                    className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all active:scale-95 opacity-0 group-hover:opacity-100"
+                    aria-label={`More options for ${item.name}`}
+                    className="drive-grid-menu absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all active:scale-95 opacity-0 group-hover:opacity-100"
                     onClick={(e) => {
                       e.stopPropagation();
                       if (!isRenaming) handleContextMenu(e, item.id);
@@ -1549,29 +1623,14 @@ function DirectoryView() {
         )}
       </div>
 
-      {/* Toast Notification */}
-      {toast.show && (
-        <div className="fixed top-24 right-6 z-[100] max-w-sm w-full md:w-[380px]">
-           <Alert 
-             variant={toast.type === "error" ? "destructive" : toast.type === "success" ? "success" : toast.type === "warning" ? "warning" : "info"}
-             withIcon
-             dismissible
-             duration={3000}
-             onDismiss={() => setToast({ ...toast, show: false })}
-             className="shadow-2xl bg-white/95 backdrop-blur-md border-gray-100"
-           >
-             <AlertDescription className="font-semibold">
-               {toast.message}
-
-             </AlertDescription>
-           </Alert>
-        </div>
-      )}
+      <DriveToast toast={toast} onDismiss={dismissToast} />
 
       {/* Upload Progress Toast */}
       <UploadToast
         uploadQueue={allUploads}
         progressMap={progressMap}
+        statusMap={uploadStatusMap}
+        errorMap={uploadErrorMap}
         isUploading={isUploading}
         onCancel={handleCancelUpload}
       />

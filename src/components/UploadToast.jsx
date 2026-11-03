@@ -1,158 +1,214 @@
-import { useState, useEffect } from "react";
-import { X, ChevronDown, ChevronUp, CheckCircle2, Loader2, File, Activity } from "lucide-react";
+import { useMemo, useState } from "react";
+import {
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  CircleAlert,
+  File,
+  LoaderCircle,
+  X,
+} from "lucide-react";
+import PropTypes from "prop-types";
 
-// Helper function to format file sizes
 const formatSize = (bytes) => {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
+  const units = ["B", "KB", "MB", "GB", "TB"];
+  const index = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  return `${(bytes / Math.pow(1024, index)).toFixed(index === 0 ? 0 : 1)} ${units[index]}`;
 };
 
-const UploadToast = ({ uploadQueue, progressMap, isUploading, onCancel }) => {
+const statusLabels = {
+  queued: "Waiting",
+  uploading: "Uploading",
+  importing: "Importing from Drive",
+  success: "Complete",
+  error: "Couldn’t upload",
+};
+
+function UploadToast({ uploadQueue = [], progressMap = {}, statusMap = {}, errorMap = {}, isUploading, onCancel }) {
   const [isMinimized, setIsMinimized] = useState(false);
-  const [showFinished, setShowFinished] = useState(false);
+  const activeUploads = uploadQueue;
 
-  const activeUploads = uploadQueue || [];
-  const currentTotal = activeUploads.length;
+  const summary = useMemo(() => {
+    let uploadedBytes = 0;
+    let totalBytes = 0;
+    let uploading = 0;
+    let queued = 0;
+    let completed = 0;
+    let failed = 0;
+    let importing = 0;
 
-  const totalProgress = activeUploads.length > 0
-    ? activeUploads.reduce((acc, file) => acc + (progressMap[file.id] || 0), 0) / activeUploads.length
-    : 0;
+    activeUploads.forEach((item) => {
+      const status = statusMap[item.id] || (isUploading ? "uploading" : "queued");
+      if (item.isImport) {
+        if (status === "importing") importing += 1;
+        if (status === "success") completed += 1;
+        if (status === "error") failed += 1;
+        return;
+      }
 
-  useEffect(() => {
-    if (!isUploading && currentTotal === 0 && activeUploads.length === 0) {
-        // null
-    } else if (!isUploading && currentTotal > 0) {
-        setShowFinished(true);
-        const timer = setTimeout(() => {
-          setShowFinished(false);
-        }, 5000);
-        return () => clearTimeout(timer);
-    }
-  }, [isUploading, currentTotal, activeUploads.length]);
+      totalBytes += item.size || 0;
+      uploadedBytes += (item.size || 0) * ((progressMap[item.id] || 0) / 100);
+      if (status === "uploading") uploading += 1;
+      else if (status === "queued") queued += 1;
+      else if (status === "success") completed += 1;
+      else if (status === "error") failed += 1;
+    });
 
-  if (activeUploads.length === 0 && !showFinished) return null;
+    return {
+      uploadedBytes,
+      totalBytes,
+      percent: totalBytes > 0 ? Math.min((uploadedBytes / totalBytes) * 100, 100) : 0,
+      uploading,
+      queued,
+      completed,
+      failed,
+      importing,
+      isActive: uploading > 0 || queued > 0 || importing > 0,
+    };
+  }, [activeUploads, isUploading, progressMap, statusMap]);
+
+  if (activeUploads.length === 0) return null;
+
+  const isActive = isUploading || summary.isActive;
+  const title = isActive
+    ? "File activity"
+    : summary.failed > 0
+      ? "Upload finished with errors"
+      : "Uploads complete";
+  const Subtitle = isActive
+    ? summary.importing > 0
+      ? "File transfer and Drive import status"
+      : "Live transfer progress"
+    : `${summary.completed} completed${summary.failed ? ` · ${summary.failed} failed` : ""}`;
+  const HeaderIcon = isActive ? LoaderCircle : summary.failed ? CircleAlert : CheckCircle2;
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[1000] w-[calc(100vw-32px)] sm:w-[360px] bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-[#E2E8F0] overflow-hidden transition-all duration-500 transform translate-y-0 animate-slideUp">
-      {/* Header */}
-      <div className="bg-[#2D8B8B] px-5 py-4 flex flex-col relative overflow-hidden">
-        {/* Decorative background circle */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-12 -mt-12"></div>
-        
-        <div className="flex items-center justify-between relative z-10">
-            <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                    {isUploading ? (
-                        <Activity className="w-5 h-5 text-white animate-pulse" />
-                    ) : (
-                        <CheckCircle2 className="w-5 h-5 text-white" />
-                    )}
-                </div>
-                <div>
-                   <span className="text-[15px] font-bold text-white tracking-tight block leading-tight">
-                      {isUploading ? `Uploading ${currentTotal} files` : "Upload Complete"}
-                   </span>
-                   {isUploading && <span className="text-[11px] font-medium text-white/80 block mt-0.5">Your files are being secured</span>}
-                </div>
-            </div>
-            <div className="flex items-center gap-1">
-                <button 
-                    onClick={() => setIsMinimized(!isMinimized)}
-                    className="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded-lg transition-colors text-white"
-                >
-                    {isMinimized ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                </button>
-                {!isUploading && (
-                    <button 
-                        onClick={() => setShowFinished(false)}
-                        className="w-8 h-8 flex items-center justify-center hover:bg-white/20 rounded-lg transition-colors text-white"
-                    >
-                        <X size={18} />
-                    </button>
-                )}
-            </div>
+    <section className="drive-upload-toast" aria-labelledby="drive-upload-toast-title">
+      <header className="drive-upload-toast-header">
+        <span className="drive-upload-toast-header-icon" aria-hidden="true">
+          <HeaderIcon className={isActive ? "drive-toast-spinner" : ""} size={20} />
+        </span>
+        <div className="drive-upload-toast-heading">
+          <h2 id="drive-upload-toast-title">{title}</h2>
+          <p>{Subtitle}</p>
         </div>
-        
-        {/* Total Batch Progress Bar */}
-        {isUploading && (
-            <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden relative z-10 mt-4">
-                <div 
-                    className="h-full bg-white rounded-full transition-all duration-500 ease-out"
-                    style={{ width: `${totalProgress}%` }}
-                />
-            </div>
-        )}
-      </div>
+        <div className="drive-upload-toast-controls">
+          <button
+            type="button"
+            onClick={() => setIsMinimized((value) => !value)}
+            aria-label={isMinimized ? "Expand upload activity" : "Minimize upload activity"}
+            aria-expanded={!isMinimized}
+          >
+            {isMinimized ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+          </button>
+        </div>
+      </header>
 
-      {/* Content */}
-      {!isMinimized && (
-        <div className="max-h-[380px] overflow-y-auto p-4 space-y-3 custom-scrollbar bg-white">
-          {activeUploads.map((item) => {
-            const progress = progressMap[item.id] || 0;
-            const uploadedBytes = (item.size * progress) / 100;
-            const isCompleted = progress >= 100;
-            
-            return (
-              <div key={item.id} className="p-3 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] transition-all hover:border-[#2D8B8B]/30 shadow-sm">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${isCompleted ? 'bg-[#F0FDF4]' : 'bg-[#F0F9FF]'}`}>
-                    <File size={18} className={isCompleted ? 'text-[#10B981]' : 'text-[#2D8B8B]'} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] font-semibold text-[#1A202C] truncate mb-0.5" title={item.name}>
-                      {item.name}
-                    </p>
-                    <div className="flex justify-between items-center">
-                        <p className="text-[11px] text-[#718096]">
-                          {formatSize(uploadedBytes)} / {formatSize(item.size)}
-                        </p>
-                        <span className={`text-[11px] font-bold ${isCompleted ? 'text-[#10B981]' : 'text-[#2D8B8B]'}`}>
-                           {progress.toFixed(0)}%
-                        </span>
-                    </div>
-                  </div>
-                  {onCancel && progress < 100 && isUploading && (
-                    <button 
-                      onClick={() => onCancel(item.id)}
-                      className="w-7 h-7 flex items-center justify-center text-[#A0AEC0] hover:text-[#DC2626] hover:bg-[#FEF2F2] rounded-md transition-all"
-                    >
-                      <X size={14} />
-                    </button>
-                  )}
-                </div>
-                <div className="w-full bg-[#E2E8F0] h-1.5 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full transition-all duration-300 ease-out ${isCompleted ? 'bg-[#10B981]' : 'bg-[#2D8B8B]'}`}
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-          
-          {!isUploading && currentTotal === 0 && showFinished && (
-            <div className="p-8 flex flex-col items-center text-center animate-fadeIn">
-              <div className="w-16 h-16 bg-[#F0FDF4] text-[#10B981] rounded-full flex items-center justify-center mb-4 border border-[#DCFCE7]">
-                <CheckCircle2 size={32} />
-              </div>
-              <h4 className="text-[17px] font-bold text-[#1A202C] mb-1">All Sync Complete</h4>
-              <p className="text-[13px] text-[#718096]">Your files are safely stored in your cloud drive.</p>
-              <button 
-                onClick={() => setShowFinished(false)}
-                className="mt-5 px-6 py-2 bg-[#F0F2F5] text-[#1A202C] text-[13px] font-semibold rounded-lg hover:bg-[#E2E8F0] transition-colors"
-              >
-                Close
-              </button>
-            </div>
-          )}
+      {summary.totalBytes > 0 && (
+        <div className="drive-upload-overall">
+          <div className="drive-upload-overall-copy">
+            <span>{formatSize(summary.uploadedBytes)} of {formatSize(summary.totalBytes)}</span>
+            <span>{summary.percent.toFixed(0)}%</span>
+          </div>
+          <div
+            className="drive-upload-progress-track"
+            role="progressbar"
+            aria-label="Overall file upload progress"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={Math.round(summary.percent)}
+          >
+            <span style={{ width: `${summary.percent}%` }} />
+          </div>
         </div>
       )}
-    </div>
+
+      {!isMinimized && (
+        <ul className="drive-upload-list">
+          {activeUploads.map((item) => {
+            const progress = Math.max(0, Math.min(progressMap[item.id] || 0, 100));
+            const status = statusMap[item.id] || (isUploading ? "uploading" : "queued");
+            const isFinished = status === "success" || status === "error";
+            const StatusIcon = status === "success" ? CheckCircle2 : status === "error" ? CircleAlert : File;
+
+            return (
+              <li className="drive-upload-item" key={item.id}>
+                <span className={`drive-upload-file-icon is-${status}`} aria-hidden="true">
+                  {status === "uploading" || status === "importing"
+                    ? <LoaderCircle className="drive-toast-spinner" size={18} />
+                    : <StatusIcon size={18} />}
+                </span>
+                <div className="drive-upload-file-body">
+                  <div className="drive-upload-file-heading">
+                    <p className="drive-upload-file-name" title={item.name}>{item.name}</p>
+                    <span className={`drive-upload-status is-${status}`}>{statusLabels[status] || statusLabels.queued}</span>
+                  </div>
+                  {item.isImport ? (
+                    <p className="drive-upload-file-meta">
+                      {status === "success"
+                        ? "Imported successfully"
+                        : status === "error"
+                          ? errorMap[item.id] || "Import failed"
+                          : "Progress will update when the import completes"}
+                    </p>
+                  ) : (
+                    <div className="drive-upload-file-meta">
+                      <span>{formatSize((item.size || 0) * progress / 100)} of {formatSize(item.size || 0)}</span>
+                      <span>{progress.toFixed(0)}%</span>
+                    </div>
+                  )}
+                  {item.isImport && status === "importing" ? (
+                    <div className="drive-upload-progress-track is-indeterminate" aria-label="Importing file">
+                      <span />
+                    </div>
+                  ) : (
+                    <div
+                      className={`drive-upload-progress-track${status === "error" ? " is-error" : ""}`}
+                      role="progressbar"
+                      aria-label={`${item.name} upload progress`}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={Math.round(progress)}
+                    >
+                      <span style={{ width: `${progress}%` }} />
+                    </div>
+                  )}
+                  {status === "error" && errorMap[item.id] && (
+                    <p className="drive-upload-error">{errorMap[item.id]}</p>
+                  )}
+                </div>
+                {!item.isImport && !isFinished && isActive && (
+                  <button
+                    type="button"
+                    className="drive-upload-cancel"
+                    onClick={() => onCancel?.(item.id)}
+                    aria-label={`Cancel ${item.name}`}
+                  >
+                    <X size={17} />
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
   );
+}
+
+UploadToast.propTypes = {
+  uploadQueue: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    size: PropTypes.number,
+    isImport: PropTypes.bool,
+  })),
+  progressMap: PropTypes.objectOf(PropTypes.number),
+  statusMap: PropTypes.objectOf(PropTypes.string),
+  errorMap: PropTypes.objectOf(PropTypes.string),
+  isUploading: PropTypes.bool,
+  onCancel: PropTypes.func,
 };
 
 export default UploadToast;
-

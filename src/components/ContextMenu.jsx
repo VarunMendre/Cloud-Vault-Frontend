@@ -52,8 +52,9 @@ function ContextMenu({
   /* ─── Item renderer ──────────────────────────────────────────────── */
   const Item = ({ icon, label, onClick, danger = false, disabled = false }) => (
     <button
+      type="button"
       className={[
-        "w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all text-left",
+        "drive-context-menu-item w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all text-left",
         disabled
           ? "opacity-30 cursor-not-allowed"
           : danger
@@ -96,7 +97,7 @@ function ContextMenu({
           <Item
             icon={<Trash2 className="w-4 h-4" />}
             label="Delete"
-            onClick={() => handleDeleteDirectory(item.id)}
+            onClick={() => handleDeleteDirectory(item)}
             danger
             disabled={isPaused}
           />
@@ -139,7 +140,7 @@ function ContextMenu({
           <Item
             icon={<Trash2 className="w-4 h-4" />}
             label="Delete"
-            onClick={() => handleDeleteFile(item.id)}
+            onClick={() => handleDeleteFile(item)}
             danger
             disabled={isPaused}
           />
