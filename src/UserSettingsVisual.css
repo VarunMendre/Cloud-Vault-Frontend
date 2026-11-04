@@ -1,0 +1,297 @@
+.settings-page {
+  min-height: 100vh;
+  background: var(--cv-background);
+}
+
+.settings-card {
+  border-color: var(--cv-border);
+  background: var(--cv-surface);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 4%), 0 10px 24px -18px rgb(15 23 42 / 20%);
+}
+
+.settings-input {
+  border-color: var(--cv-border);
+  color: var(--cv-text);
+  background: var(--cv-surface);
+}
+
+.settings-input:focus {
+  border-color: var(--cv-focus);
+}
+
+.settings-label {
+  line-height: 1.5;
+}
+
+.settings-button-primary {
+  min-height: 48px;
+  border: 1px solid var(--cv-primary);
+  color: var(--cv-surface);
+  background: var(--cv-primary);
+  font-weight: 650;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.settings-button-primary:hover:not(:disabled) {
+  border-color: var(--cv-primary-hover);
+  background: var(--cv-primary-hover);
+  box-shadow: 0 4px 12px rgb(37 99 235 / 18%);
+}
+
+.settings-button-primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.settings-button-secondary {
+  min-height: 48px;
+  border-color: var(--cv-border);
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.settings-button-secondary:hover:not(:disabled) {
+  border-color: var(--cv-primary);
+  background: var(--cv-surface-muted);
+}
+
+.settings-button-danger {
+  min-height: 48px;
+  border-color: color-mix(in srgb, var(--cv-danger) 24%, white);
+  color: var(--cv-danger);
+  background: var(--cv-danger-background);
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.settings-button-danger:hover {
+  background: color-mix(in srgb, var(--cv-danger) 8%, white);
+}
+
+.settings-page :where(button, input):focus-visible {
+  outline: 3px solid var(--cv-focus);
+  outline-offset: 2px;
+}
+
+.settings-page button[aria-label="Show password"],
+.settings-page button[aria-label="Hide password"] {
+  right: 0.25rem;
+  display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+}
+
+.settings-page .relative > .absolute.right-10 {
+  right: 3.25rem;
+}
+
+.settings-page .text-red-500 {
+  color: var(--cv-danger);
+}
+
+.settings-page .text-orange-500 {
+  color: #92400E;
+}
+
+.settings-page .text-green-500,
+.settings-page .text-emerald-500 {
+  color: var(--cv-success);
+}
+
+.settings-page .bg-red-500,
+.settings-page .bg-orange-500,
+.settings-page .bg-green-500,
+.settings-page .bg-emerald-500 {
+  background-color: var(--cv-success);
+}
+
+.settings-page .bg-red-500 {
+  background-color: var(--cv-danger);
+}
+
+.settings-page .bg-orange-500 {
+  background-color: #D97706;
+}
+
+.settings-modal-backdrop {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(15 23 42 / 52%);
+  backdrop-filter: blur(8px);
+  animation: settings-overlay-enter 160ms ease-out both;
+}
+
+.settings-modal {
+  width: min(100%, 440px);
+  padding: 28px;
+  border: 1px solid var(--cv-border);
+  border-radius: 16px;
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  box-shadow: 0 20px 48px rgb(15 23 42 / 20%);
+  animation: settings-modal-enter 180ms ease-out both;
+}
+
+.settings-modal-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 20px;
+  place-items: center;
+  border: 1px solid #DBEAFE;
+  border-radius: 12px;
+  color: var(--cv-primary);
+  background: #EFF6FF;
+}
+
+.settings-modal-icon-danger {
+  border-color: #FECACA;
+  color: var(--cv-danger);
+  background: var(--cv-danger-background);
+}
+
+.settings-modal-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 650;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+.settings-modal-copy {
+  margin: 10px 0 24px;
+  color: var(--cv-text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.settings-modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.settings-notification {
+  position: fixed;
+  z-index: 60;
+  right: 24px;
+  bottom: 24px;
+  width: min(420px, calc(100vw - 32px));
+  animation: settings-notification-enter 180ms ease-out both;
+}
+
+.settings-notification-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  overflow: hidden;
+  padding: 16px;
+  border: 1px solid var(--cv-border);
+  border-radius: 14px;
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  box-shadow: 0 12px 36px rgb(15 23 42 / 14%);
+}
+
+.settings-notification-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #BBF7D0;
+  border-radius: 10px;
+  color: var(--cv-success);
+  background: var(--cv-success-background);
+}
+
+.settings-notification-error .settings-notification-icon {
+  border-color: #FECACA;
+  color: var(--cv-danger);
+  background: var(--cv-danger-background);
+}
+
+.settings-notification-message {
+  min-width: 0;
+  flex: 1;
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+  color: var(--cv-text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.settings-notification-dismiss {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  margin: -2px -2px 0 0;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  color: var(--cv-text-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.settings-notification-dismiss:hover {
+  color: var(--cv-text);
+  background: var(--cv-surface-muted);
+}
+
+.settings-notification-dismiss:focus-visible {
+  outline: 3px solid var(--cv-focus);
+  outline-offset: 2px;
+}
+
+@keyframes settings-overlay-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes settings-modal-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes settings-notification-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 639px) {
+  .settings-page .settings-card {
+    padding: 1.25rem;
+  }
+
+  .settings-modal {
+    padding: 24px;
+  }
+
+  .settings-notification {
+    right: 16px;
+    bottom: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-page *,
+  .settings-page *::before,
+  .settings-page *::after,
+  .settings-modal-backdrop,
+  .settings-modal,
+  .settings-notification {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}

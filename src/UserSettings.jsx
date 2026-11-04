@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { PasswordStrengthIndicator } from "./components/lightswind/password-strength-indicator";
-import "./UserSettings.css";
+import "./UserSettingsVisual.css";
 
 const Card = ({ children, className = "" }) => (
   <div className={`settings-card rounded-2xl border p-6 ${className}`}>
@@ -80,6 +80,7 @@ export default function UserSettings() {
   
   // Custom modal states
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showLogoutAllConfirm, setShowLogoutAllConfirm] = useState(false);
   const [showNotification, setShowNotification] = useState({ show: false, message: "", type: "success" });
   const [pendingPasswordData, setPendingPasswordData] = useState(null);
 
@@ -247,10 +248,13 @@ export default function UserSettings() {
   };
 
   const handleLogoutAll = async () => {
-    if (window.confirm("Are you sure you want to log out of all devices?")) {
-      await fetch(`${BASE_URL}/user/logout-all`, { method: "POST", credentials: "include" });
-      navigate("/login");
-    }
+    setShowLogoutAllConfirm(true);
+  };
+
+  const confirmLogoutAll = async () => {
+    setShowLogoutAllConfirm(false);
+    await fetch(`${BASE_URL}/user/logout-all`, { method: "POST", credentials: "include" });
+    navigate("/login");
   };
 
   if (loading) {
@@ -622,13 +626,13 @@ export default function UserSettings() {
 
       {/* ── Modals & Notifications ─────────────────── */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm">
-          <div role="dialog" aria-modal="true" aria-labelledby="change-password-title" className="settings-card w-full max-w-sm rounded-2xl border p-6 shadow-xl animate-scaleIn">
-            <h3 id="change-password-title" className="mb-2 text-lg font-semibold text-[var(--cv-text)]">Change Password?</h3>
-            <p className="mb-6 text-sm leading-6 text-[var(--cv-text-muted)]">
+        <div className="settings-modal-backdrop">
+          <div role="dialog" aria-modal="true" aria-labelledby="change-password-title" className="settings-modal">
+            <h3 id="change-password-title" className="settings-modal-title">Change Password?</h3>
+            <p className="settings-modal-copy">
                 Are you sure you want to update your password? You might need to sign in again on other devices.
             </p>
-            <div className="flex gap-3">
+            <div className="settings-modal-actions">
                 <button onClick={() => setShowConfirmModal(false)} className={`${btnSecondaryCls} flex-1`}>Cancel</button>
                 <button onClick={confirmPasswordChange} className={`${btnPrimaryCls} flex-1`}>Confirm</button>
             </div>
@@ -636,16 +640,32 @@ export default function UserSettings() {
         </div>
       )}
 
+      {showLogoutAllConfirm && (
+        <div className="settings-modal-backdrop">
+          <div role="dialog" aria-modal="true" aria-labelledby="logout-all-title" className="settings-modal">
+            <div className="settings-modal-icon settings-modal-icon-danger" aria-hidden="true">
+              <ShieldAlert className="h-5 w-5" />
+            </div>
+            <h3 id="logout-all-title" className="settings-modal-title">Log out everywhere?</h3>
+            <p className="settings-modal-copy">Are you sure you want to log out of all devices?</p>
+            <div className="settings-modal-actions">
+              <button onClick={() => setShowLogoutAllConfirm(false)} className={`${btnSecondaryCls} flex-1`}>Cancel</button>
+              <button onClick={confirmLogoutAll} className={`${btnDangerCls} flex-1`}>Log out everywhere</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {showNotification.show && (
-        <div className="fixed bottom-4 right-4 z-50 max-w-[calc(100vw-2rem)] animate-slideUp sm:bottom-6 sm:right-6">
-           <div role="status" aria-live="polite" className={`settings-card flex items-center gap-3 rounded-xl border p-4 shadow-lg ${showNotification.type === 'error' ? 'border-[var(--cv-danger)]/25' : 'border-[var(--cv-primary)]/30'}`}>
+        <div className={`settings-notification ${showNotification.type === "error" ? "settings-notification-error" : "settings-notification-success"}`}>
+           <div role={showNotification.type === "error" ? "alert" : "status"} aria-live={showNotification.type === "error" ? "assertive" : "polite"} className="settings-notification-content">
                 {showNotification.type === 'error' ? (
-                     <AlertTriangle className="h-5 w-5 shrink-0 text-[var(--cv-danger)]" aria-hidden="true" />
+                     <span className="settings-notification-icon" aria-hidden="true"><AlertTriangle className="h-5 w-5" /></span>
                 ) : (
-                     <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--cv-primary)]" aria-hidden="true" />
+                     <span className="settings-notification-icon" aria-hidden="true"><CheckCircle2 className="h-5 w-5" /></span>
                 )}
-                <p className="text-sm font-medium text-[var(--cv-text)]">{showNotification.message}</p>
-                <button aria-label="Dismiss notification" onClick={() => setShowNotification({ ...showNotification, show: false })} className="ml-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-[var(--cv-text-muted)] hover:text-[var(--cv-text)]">
+                <p className="settings-notification-message">{showNotification.message}</p>
+                <button type="button" aria-label="Dismiss notification" onClick={() => setShowNotification({ ...showNotification, show: false })} className="settings-notification-dismiss">
                   <X className="h-4 w-4" aria-hidden="true" />
                 </button>
            </div>
