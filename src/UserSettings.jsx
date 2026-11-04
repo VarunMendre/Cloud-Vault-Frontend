@@ -6,7 +6,6 @@ import {
   ArrowLeft,
   Camera,
   Edit2,
-  Check,
   X,
   Shield,
   User,
@@ -14,7 +13,6 @@ import {
   LogOut,
   CheckCircle2,
   Key,
-  Database,
   Eye,
   EyeOff,
   ChevronRight,
@@ -24,30 +22,31 @@ import {
 } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { PasswordStrengthIndicator } from "./components/lightswind/password-strength-indicator";
+import "./UserSettings.css";
 
 const Card = ({ children, className = "" }) => (
-  <div className={`bg-white rounded-[16px] border border-[#E2E8F0] shadow-sm p-6 ${className}`}>
+  <div className={`settings-card rounded-2xl border p-6 ${className}`}>
     {children}
   </div>
 );
 
 const SectionHeader = ({ title, description }) => (
   <div className="mb-6">
-    <h3 className="text-[18px] font-bold text-[#1A202C]">{title}</h3>
-    {description && <p className="text-[14px] text-[#718096] mt-1">{description}</p>}
+    <h3 className="text-xl font-semibold text-[var(--cv-text)]">{title}</h3>
+    {description && <p className="mt-1 text-sm leading-6 text-[var(--cv-text-muted)]">{description}</p>}
   </div>
 );
 
-const Label = ({ children }) => (
-  <label className="block text-[14px] font-semibold text-[#1A202C] mb-2">
+const Label = ({ children, htmlFor }) => (
+  <label htmlFor={htmlFor} className="settings-label mb-2 block text-sm font-medium text-[var(--cv-text)]">
     {children}
   </label>
 );
 
-const inputCls = "w-full px-4 py-2.5 bg-[#F0F2F5] border border-transparent rounded-[10px] text-[15px] text-[#1A202C] focus:outline-none focus:border-[#2D8B8B] focus:bg-white transition-all placeholder:text-[#718096]";
-const btnPrimaryCls = "px-5 py-2.5 bg-[#2D8B8B] text-white rounded-[10px] text-[14px] font-semibold hover:bg-[#1A7A7A] transition-colors flex items-center justify-center gap-2 disabled:opacity-50";
-const btnSecondaryCls = "px-5 py-2.5 bg-white border border-[#E2E8F0] text-[#1A202C] rounded-[10px] text-[14px] font-semibold hover:bg-[#F0F2F5] transition-colors flex items-center justify-center gap-2 disabled:opacity-50";
-const btnDangerCls = "px-5 py-2.5 bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] rounded-[10px] text-[14px] font-semibold hover:bg-[#FEE2E2] transition-colors flex items-center justify-center gap-2";
+const inputCls = "settings-input w-full rounded-lg border px-4 py-3 pr-12 text-base transition-colors placeholder:text-[var(--cv-text-muted)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--cv-focus)]";
+const btnPrimaryCls = "settings-button-primary inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50";
+const btnSecondaryCls = "settings-button-secondary inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50";
+const btnDangerCls = "settings-button-danger inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border px-5 py-2.5 text-sm font-semibold transition-colors";
 
 export default function UserSettings() {
   const { user, refreshUser } = useAuth();
@@ -256,8 +255,8 @@ export default function UserSettings() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F0F2F5] flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-8 h-8 text-[#2D8B8B] animate-spin" />
+      <div className="settings-page flex min-h-screen flex-col items-center justify-center gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-[var(--cv-primary)]" aria-label="Loading settings" />
       </div>
     );
   }
@@ -269,7 +268,7 @@ export default function UserSettings() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] font-sans text-[#1A202C]">
+    <div className="settings-page min-h-screen font-sans text-[var(--cv-text)]">
       <DirectoryHeader
         userName={user?.name || "User"}
         userEmail={user?.email || ""}
@@ -279,35 +278,36 @@ export default function UserSettings() {
         subscriptionStatus={user?.subscriptionStatus || "active"}
       />
 
-      <div className="max-w-[1000px] mx-auto px-6 py-8 mt-16">
+      <main className="mx-auto mt-16 w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         
         {/* Breadcrumb & Title */}
         <div className="mb-8">
             <button 
                 onClick={() => navigate("/")}
-                className="flex items-center text-[13px] text-[#4A5568] hover:text-[#1A202C] transition-colors mb-4 gap-1 w-fit"
+                className="mb-4 inline-flex min-h-11 w-fit items-center gap-2 text-sm font-medium text-[var(--cv-text-muted)] transition-colors hover:text-[var(--cv-primary)]"
             >
-                <ArrowLeft className="w-3.5 h-3.5" /> Back to Drive
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Back to Drive
             </button>
-            <h1 className="text-[28px] font-bold text-[#1A202C]">User Settings</h1>
+            <h1 className="text-3xl font-semibold tracking-tight text-[var(--cv-text)]">User Settings</h1>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8 items-start">
+        <div className="flex flex-col items-start gap-6 lg:flex-row lg:gap-8">
             
             {/* Sidebar Navigation */}
-            <div className="w-full md:w-[260px] shrink-0 space-y-6">
-                <Card className="p-4 flex flex-col gap-2">
+            <aside className="w-full shrink-0 space-y-4 lg:w-64">
+                <Card className="flex flex-col gap-2 p-3">
                    {tabs.map((tab) => {
                        const isActive = activeTab === tab.id;
                        return (
                            <button
                                key={tab.id}
                                onClick={() => setActiveTab(tab.id)}
-                               className={`w-full flex items-center gap-3 px-4 py-3 rounded-[10px] text-[14px] font-semibold transition-all ${
-                                   isActive ? 'bg-[#F7FFFE] text-[#2D8B8B] border border-[#A8D8D8]' : 'text-[#718096] hover:bg-[#F0F2F5] border border-transparent'
+                               aria-current={isActive ? "page" : undefined}
+                               className={`settings-tab min-h-11 w-full rounded-lg border px-4 py-3 text-left text-sm font-medium transition-colors ${
+                                   isActive ? 'border-[var(--cv-primary)]/30 bg-[var(--cv-primary)]/5 text-[var(--cv-primary)]' : 'border-transparent text-[var(--cv-text-muted)] hover:bg-[var(--cv-surface-muted)] hover:text-[var(--cv-text)]'
                                }`}
                            >
-                               <tab.icon className={`w-4 h-4 ${isActive ? 'text-[#2D8B8B]' : 'text-[#718096]'}`} />
+                               <tab.icon className="mr-3 inline h-4 w-4" aria-hidden="true" />
                                {tab.label}
                            </button>
                        );
@@ -316,22 +316,22 @@ export default function UserSettings() {
 
                 {/* Storage Mini Widget */}
                 <Card className="p-5">
-                    <h4 className="text-[14px] font-semibold mb-3">Storage Link</h4>
-                    <div className="h-2 w-full bg-[#E2E8F0] rounded-full overflow-hidden mb-2">
+                    <h4 className="mb-3 text-sm font-semibold">Storage Link</h4>
+                    <div className="mb-2 h-2 w-full overflow-hidden rounded-full bg-[var(--cv-surface-muted)]">
                         <div 
-                           className="h-full bg-[#2D8B8B] rounded-full transition-all duration-500" 
+                           className="h-full rounded-full bg-[var(--cv-primary)] transition-[width] duration-200"
                            style={{ width: `${usagePercentage}%` }} 
                         />
                     </div>
-                    <div className="flex justify-between text-[12px] text-[#718096]">
+                    <div className="flex justify-between text-xs text-[var(--cv-text-muted)]">
                         <span>{formatStorage(usedStorageInBytes)}</span>
                         <span>{formatStorage(maxStorageLimit)}</span>
                     </div>
                 </Card>
-            </div>
+            </aside>
 
             {/* Main Content Area */}
-            <div className="flex-1 w-full space-y-6">
+            <div className="w-full min-w-0 flex-1 space-y-6">
                 
                 {/* ── PROFILE TAB ────────────────────────────────────────── */}
                 {activeTab === "profile" && (
@@ -340,41 +340,43 @@ export default function UserSettings() {
                             <SectionHeader title="Profile Picture" description="Update your personal photo identifying your account." />
                             <div className="flex items-center gap-6">
                                 <div className="relative group">
-                                    <div className="w-20 h-20 rounded-full bg-[#F0F2F5] border border-[#E2E8F0] overflow-hidden flex items-center justify-center">
+                                    <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-[var(--cv-border)] bg-[var(--cv-surface-muted)]">
                                         {profilePicture ? (
                                             <img src={profilePicture} alt="Avatar" className="w-full h-full object-cover" />
                                         ) : (
-                                            <User className="w-8 h-8 text-[#A0AEC0]" />
+                                            <User className="h-8 w-8 text-[var(--cv-text-muted)]" aria-hidden="true" />
                                         )}
                                     </div>
                                     <button 
                                         onClick={() => fileInputRef.current?.click()}
                                         disabled={updatingProfile}
-                                        className="absolute bottom-0 right-0 p-1.5 bg-[#2D8B8B] text-white rounded-full shadow-sm hover:scale-110 transition-transform disabled:opacity-50"
+                                        aria-label="Upload a new profile picture"
+                                        className="absolute bottom-0 right-0 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--cv-primary)] text-white shadow-sm transition-colors hover:bg-[var(--cv-primary-hover)] disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        <Camera className="w-3.5 h-3.5" />
+                                        <Camera className="h-4 w-4" aria-hidden="true" />
                                     </button>
                                 </div>
-                                <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+                                <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleFileChange} aria-label="Choose a profile picture" />
                                 <div>
-                                    <p className="text-[14px] text-[#1A202C] font-semibold mb-1">Upload a new picture</p>
-                                    <p className="text-[12px] text-[#718096]">JPEG or PNG, less than 5MB.</p>
+                                    <p className="mb-1 text-sm font-semibold text-[var(--cv-text)]">Upload a new picture</p>
+                                    <p className="text-sm leading-5 text-[var(--cv-text-muted)]">JPEG or PNG, less than 5MB.</p>
                                 </div>
                             </div>
                         </Card>
 
                         <Card>
                             <SectionHeader title="User Information" description="Manage your basic account details." />
-                            <div className="space-y-6 max-w-lg">
+                            <div className="max-w-lg space-y-6">
                                 <div>
-                                    <Label>Username</Label>
-                                    <div className="flex gap-3">
+                                    <Label htmlFor="settings-username">Username</Label>
+                                    <div className="flex flex-col gap-3 sm:flex-row">
                                         <input 
+                                            id="settings-username"
                                             type="text" 
                                             value={tempName} 
                                             onChange={(e) => setTempName(e.target.value)}
                                             disabled={!isEditingName || updatingProfile}
-                                            className={`${inputCls} flex-1 ${!isEditingName && 'bg-white border-[#E2E8F0]'}`}
+                                            className={`${inputCls} min-w-0 flex-1 disabled:cursor-not-allowed`}
                                         />
                                         {!isEditingName ? (
                                             <button onClick={() => setIsEditingName(true)} className={btnSecondaryCls}>
@@ -394,15 +396,16 @@ export default function UserSettings() {
                                 </div>
                                 
                                 <div>
-                                    <Label>User Address (Email)</Label>
+                                    <Label htmlFor="settings-email">User Address (Email)</Label>
                                     <input 
+                                        id="settings-email"
                                         type="email" 
                                         value={user?.email || ""} 
                                         disabled
-                                        className={`${inputCls} bg-[#F0F2F5] opacity-70 cursor-not-allowed`}
+                                        className={`${inputCls} cursor-not-allowed bg-[var(--cv-surface-muted)] opacity-80`}
                                     />
-                                    <p className="text-[12px] text-[#718096] mt-1 flex items-center gap-1">
-                                        <Shield className="w-3 h-3" /> Email cannot be changed.
+                                    <p className="mt-2 flex items-center gap-2 text-sm text-[var(--cv-text-muted)]">
+                                        <Shield className="h-4 w-4" aria-hidden="true" /> Email cannot be changed.
                                     </p>
                                 </div>
                             </div>
@@ -411,23 +414,23 @@ export default function UserSettings() {
                         <Card>
                             <SectionHeader title="Connected Accounts" description="Manage your linked login providers." />
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className={`flex items-center justify-between p-4 rounded-[12px] border ${connectedProvider === 'google' ? 'bg-[#F7FFFE] border-[#A8D8D8]' : 'bg-white border-[#E2E8F0]'}`}>
+                                <div className={`flex items-center justify-between rounded-xl border p-4 ${connectedProvider === 'google' ? 'border-[var(--cv-primary)]/30 bg-[var(--cv-primary)]/5' : 'border-[var(--cv-border)] bg-[var(--cv-surface)]'}`}>
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center">
-                                            <FaGoogle className="text-[#DB4437]" />
+                                            <FaGoogle className="text-[#DB4437]" aria-hidden="true" />
                                         </div>
                                         <span className="text-[14px] font-semibold">Google</span>
                                     </div>
-                                    {connectedProvider === 'google' && <CheckCircle2 className="w-5 h-5 text-[#2D8B8B]" />}
+                                    {connectedProvider === 'google' && <CheckCircle2 className="h-5 w-5 text-[var(--cv-primary)]" role="img" aria-label="Connected" />}
                                 </div>
-                                <div className={`flex items-center justify-between p-4 rounded-[12px] border ${connectedProvider === 'github' ? 'bg-[#F7FFFE] border-[#A8D8D8]' : 'bg-white border-[#E2E8F0]'}`}>
+                                <div className={`flex items-center justify-between rounded-xl border p-4 ${connectedProvider === 'github' ? 'border-[var(--cv-primary)]/30 bg-[var(--cv-primary)]/5' : 'border-[var(--cv-border)] bg-[var(--cv-surface)]'}`}>
                                     <div className="flex items-center gap-3">
                                         <div className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center">
-                                            <FaGithub className="text-[#1A202C]" />
+                                            <FaGithub className="text-[var(--cv-text)]" aria-hidden="true" />
                                         </div>
                                         <span className="text-[14px] font-semibold">GitHub</span>
                                     </div>
-                                    {connectedProvider === 'github' && <CheckCircle2 className="w-5 h-5 text-[#2D8B8B]" />}
+                                    {connectedProvider === 'github' && <CheckCircle2 className="h-5 w-5 text-[var(--cv-primary)]" role="img" aria-label="Connected" />}
                                 </div>
                             </div>
                         </Card>
@@ -439,11 +442,11 @@ export default function UserSettings() {
                     <div className="animate-fadeIn space-y-6">
                         <Card>
                             <SectionHeader title="Security" description="Set and reset password." />
-                            <form onSubmit={handlePasswordSubmit} className="space-y-5 max-w-lg">
+                            <form onSubmit={handlePasswordSubmit} className="max-w-lg space-y-5">
                                 
                                 {passwordError && (
-                                    <div className="p-3 bg-[#FEF2F2] border border-[#FECACA] rounded-[10px] flex items-center gap-2 text-[13px] text-[#DC2626]">
-                                         <AlertTriangle className="w-4 h-4 shrink-0" />
+                                    <div className="flex items-center gap-2 rounded-lg border border-[var(--cv-danger)]/25 bg-[var(--cv-danger-background)] p-3 text-sm text-[var(--cv-danger)]">
+                                         <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
                                          {passwordError}
                                     </div>
                                 )}
@@ -451,7 +454,7 @@ export default function UserSettings() {
                                 {!hasPassword && (
                                     <>
                                         <div>
-                                            <Label>Set a password</Label>
+                                            <Label htmlFor="settings-set-password">Set a password</Label>
                                             <PasswordStrengthIndicator
                                                 label=""
                                                 value={newPassword}
@@ -459,11 +462,11 @@ export default function UserSettings() {
                                                 showScore={true}
                                                 showVisibilityToggle={true}
                                                 placeholder="Min. 4 characters"
-                                                inputProps={{ className: inputCls, disabled: submitting }}
+                                                inputProps={{ id: "settings-set-password", className: inputCls, disabled: submitting }}
                                             />
                                         </div>
                                         <div>
-                                            <Label>Re-type the password</Label>
+                                            <Label htmlFor="settings-confirm-set-password">Re-type the password</Label>
                                             <PasswordStrengthIndicator
                                                 label=""
                                                 value={confirmPassword}
@@ -471,7 +474,7 @@ export default function UserSettings() {
                                                 onChange={(val) => setConfirmPassword(val)}
                                                 showVisibilityToggle={true}
                                                 placeholder="Retype password"
-                                                inputProps={{ className: inputCls, disabled: submitting }}
+                                                inputProps={{ id: "settings-confirm-set-password", className: inputCls, disabled: submitting }}
                                             />
                                         </div>
                                     </>
@@ -479,9 +482,10 @@ export default function UserSettings() {
                                 {hasPassword && (
                                     <>
                                         <div>
-                                            <Label>Current Password</Label>
+                                            <Label htmlFor="settings-current-password">Current Password</Label>
                                             <div className="relative">
                                                 <input
+                                                    id="settings-current-password"
                                                     type={showCurrentPassword ? "text" : "password"}
                                                     value={currentPassword}
                                                     onChange={(e) => setCurrentPassword(e.target.value)}
@@ -493,14 +497,15 @@ export default function UserSettings() {
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#718096] hover:text-[#1A202C]"
+                                                    aria-label={showCurrentPassword ? "Hide current password" : "Show current password"}
+                                                    className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-md text-[var(--cv-text-muted)] hover:text-[var(--cv-text)]"
                                                 >
                                                     {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                                 </button>
                                             </div>
                                         </div>
                                         <div>
-                                            <Label>New password</Label>
+                                            <Label htmlFor="settings-new-password">New password</Label>
                                             <PasswordStrengthIndicator
                                                 label=""
                                                 value={newPassword}
@@ -508,11 +513,11 @@ export default function UserSettings() {
                                                 showScore={true}
                                                 showVisibilityToggle={true}
                                                 placeholder="Min. 4 characters"
-                                                inputProps={{ className: inputCls, disabled: submitting }}
+                                                inputProps={{ id: "settings-new-password", className: inputCls, disabled: submitting }}
                                             />
                                         </div>
                                         <div>
-                                            <Label>Confirm new password</Label>
+                                            <Label htmlFor="settings-confirm-password">Confirm new password</Label>
                                             <PasswordStrengthIndicator
                                                 label=""
                                                 value={confirmPassword}
@@ -520,7 +525,7 @@ export default function UserSettings() {
                                                 onChange={(val) => setConfirmPassword(val)}
                                                 showVisibilityToggle={true}
                                                 placeholder="Confirm new password"
-                                                inputProps={{ className: inputCls, disabled: submitting }}
+                                                inputProps={{ id: "settings-confirm-password", className: inputCls, disabled: submitting }}
                                             />
                                         </div>
                                     </>
@@ -541,22 +546,22 @@ export default function UserSettings() {
 
                         <Card>
                             <SectionHeader title="Session Management" description="Manage your active sessions and devices." />
-                            <div className="space-y-4 max-w-lg">
-                                <div className="flex items-center justify-between p-4 bg-[#F0F2F5] rounded-[10px]">
+                            <div className="max-w-lg space-y-4">
+                                <div className="flex flex-col justify-between gap-4 rounded-xl bg-[var(--cv-surface-muted)] p-4 sm:flex-row sm:items-center">
                                     <div>
-                                        <p className="text-[14px] font-semibold text-[#1A202C]">Log out of current device</p>
-                                        <p className="text-[12px] text-[#718096]">End your session on this browser.</p>
+                                        <p className="text-sm font-semibold text-[var(--cv-text)]">Log out of current device</p>
+                                        <p className="mt-1 text-sm text-[var(--cv-text-muted)]">End your session on this browser.</p>
                                     </div>
-                                    <button onClick={handleLogout} className={btnSecondaryCls}>
+                                    <button onClick={handleLogout} className={`${btnSecondaryCls} w-full sm:w-auto`}>
                                         <LogOut className="w-4 h-4" /> Log out
                                     </button>
                                 </div>
-                                <div className="flex items-center justify-between p-4 bg-[#FEF2F2] rounded-[10px]">
+                                <div className="flex flex-col justify-between gap-4 rounded-xl border border-[var(--cv-danger)]/20 bg-[var(--cv-danger-background)] p-4 sm:flex-row sm:items-center">
                                     <div>
-                                        <p className="text-[14px] font-semibold text-[#DC2626]">Log out everywhere</p>
-                                        <p className="text-[12px] text-[#DC2626]/80">If you noticed suspicious activity.</p>
+                                        <p className="text-sm font-semibold text-[var(--cv-danger)]">Log out everywhere</p>
+                                        <p className="mt-1 text-sm text-[var(--cv-danger)]">If you noticed suspicious activity.</p>
                                     </div>
-                                    <button onClick={handleLogoutAll} className={btnDangerCls}>
+                                    <button onClick={handleLogoutAll} className={`${btnDangerCls} w-full sm:w-auto`}>
                                         <ShieldAlert className="w-4 h-4" /> Secure Account
                                     </button>
                                 </div>
@@ -571,22 +576,22 @@ export default function UserSettings() {
                         <Card>
                             <SectionHeader title="Storage Overview" description="View and manage your account storage limits." />
                             <div className="py-2">
-                                <div className="flex items-end gap-3 mb-6">
-                                     <h3 className="text-[40px] font-bold text-[#1A202C] leading-none">{formatStorage(usedStorageInBytes)}</h3>
-                                     <span className="text-[14px] text-[#718096] pb-1">used of {formatStorage(maxStorageLimit)}</span>
+                                <div className="mb-6 flex flex-wrap items-end gap-x-3 gap-y-2">
+                                     <h3 className="text-4xl font-semibold leading-none tracking-tight text-[var(--cv-text)]">{formatStorage(usedStorageInBytes)}</h3>
+                                     <span className="pb-1 text-sm text-[var(--cv-text-muted)]">used of {formatStorage(maxStorageLimit)}</span>
                                 </div>
                                 
-                                <div className="w-full bg-[#F0F2F5] rounded-full h-3 mb-3 shrink-0 overflow-hidden">
+                                <div className="mb-3 h-3 w-full shrink-0 overflow-hidden rounded-full bg-[var(--cv-surface-muted)]">
                                      <div 
-                                         className={`h-full rounded-full transition-all duration-500`}
+                                         className="h-full rounded-full transition-[width] duration-200"
                                          style={{ 
                                              width: `${Math.max(usagePercentage, 1)}%`,
-                                             backgroundColor: usagePercentage > 90 ? '#DC2626' : '#2D8B8B'
+                                             backgroundColor: usagePercentage > 90 ? "var(--cv-danger)" : "var(--cv-primary)"
                                          }} 
                                      />
                                 </div>
                                 
-                                <p className="text-[13px] text-[#718096]">
+                                <p className="text-sm text-[var(--cv-text-muted)]">
                                     You have used {usagePercentage.toFixed(1)}% of your available storage.
                                 </p>
                             </div>
@@ -594,10 +599,10 @@ export default function UserSettings() {
 
                         <Card>
                             <SectionHeader title="Upgrade Your Plan" description="Need more space? Upgrade to a higher tier plan." />
-                            <div className="flex flex-col sm:flex-row items-center justify-between p-5 bg-[#F7FFFE] border border-[#A8D8D8] rounded-[12px] gap-4">
+                            <div className="flex flex-col justify-between gap-4 rounded-xl border border-[var(--cv-primary)]/30 bg-[var(--cv-primary)]/5 p-5 sm:flex-row sm:items-center">
                                 <div>
-                                    <h4 className="text-[15px] font-bold text-[#1A202C]">Current Plan: {user?.subscriptionPlan || "Basic"}</h4>
-                                    <p className="text-[13px] text-[#718096] mt-1">
+                                    <h4 className="text-base font-semibold text-[var(--cv-text)]">Current Plan: {user?.subscriptionPlan || "Basic"}</h4>
+                                    <p className="mt-1 text-sm text-[var(--cv-text-muted)]">
                                         Unlock advanced features and more storage space.
                                     </p>
                                 </div>
@@ -605,7 +610,7 @@ export default function UserSettings() {
                                     onClick={() => navigate("/plans")}
                                     className={btnPrimaryCls}
                                 >
-                                    View Plans <ChevronRight className="w-4 h-4" />
+                                    View Plans <ChevronRight className="h-4 w-4" aria-hidden="true" />
                                 </button>
                             </div>
                         </Card>
@@ -613,14 +618,14 @@ export default function UserSettings() {
                 )}
             </div>
         </div>
-      </div>
+      </main>
 
       {/* ── Modals & Notifications ─────────────────── */}
       {showConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm">
-          <div className="bg-white rounded-[16px] shadow-xl w-full max-w-sm p-6 animate-scaleIn">
-            <h3 className="text-[18px] font-bold text-[#1A202C] mb-2">Change Password?</h3>
-            <p className="text-[14px] text-[#718096] mb-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm">
+          <div role="dialog" aria-modal="true" aria-labelledby="change-password-title" className="settings-card w-full max-w-sm rounded-2xl border p-6 shadow-xl animate-scaleIn">
+            <h3 id="change-password-title" className="mb-2 text-lg font-semibold text-[var(--cv-text)]">Change Password?</h3>
+            <p className="mb-6 text-sm leading-6 text-[var(--cv-text-muted)]">
                 Are you sure you want to update your password? You might need to sign in again on other devices.
             </p>
             <div className="flex gap-3">
@@ -632,16 +637,16 @@ export default function UserSettings() {
       )}
 
       {showNotification.show && (
-        <div className="fixed bottom-6 right-6 z-50 animate-slideUp">
-           <div className={`bg-white rounded-[12px] shadow-lg p-4 flex items-center gap-3 border ${showNotification.type === 'error' ? 'border-[#FECACA]' : 'border-[#A8D8D8]'}`}>
+        <div className="fixed bottom-4 right-4 z-50 max-w-[calc(100vw-2rem)] animate-slideUp sm:bottom-6 sm:right-6">
+           <div role="status" aria-live="polite" className={`settings-card flex items-center gap-3 rounded-xl border p-4 shadow-lg ${showNotification.type === 'error' ? 'border-[var(--cv-danger)]/25' : 'border-[var(--cv-primary)]/30'}`}>
                 {showNotification.type === 'error' ? (
-                     <AlertTriangle className="w-5 h-5 text-[#DC2626]" />
+                     <AlertTriangle className="h-5 w-5 shrink-0 text-[var(--cv-danger)]" aria-hidden="true" />
                 ) : (
-                     <CheckCircle2 className="w-5 h-5 text-[#2D8B8B]" />
+                     <CheckCircle2 className="h-5 w-5 shrink-0 text-[var(--cv-primary)]" aria-hidden="true" />
                 )}
-                <p className="text-[14px] font-medium text-[#1A202C]">{showNotification.message}</p>
-                <button onClick={() => setShowNotification({ ...showNotification, show: false })} className="ml-2 text-[#718096] hover:text-[#1A202C]">
-                  <X className="w-4 h-4" />
+                <p className="text-sm font-medium text-[var(--cv-text)]">{showNotification.message}</p>
+                <button aria-label="Dismiss notification" onClick={() => setShowNotification({ ...showNotification, show: false })} className="ml-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-md text-[var(--cv-text-muted)] hover:text-[var(--cv-text)]">
+                  <X className="h-4 w-4" aria-hidden="true" />
                 </button>
            </div>
         </div>
