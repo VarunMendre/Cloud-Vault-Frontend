@@ -5,41 +5,6 @@
   background: var(--cv-background);
 }
 
-.drive-page > header {
-  border-color: var(--cv-border);
-  background: var(--cv-surface);
-  box-shadow: 0 1px 3px rgb(15 23 42 / 5%);
-}
-
-.drive-page > header > div {
-  width: min(100% - 48px, 1200px);
-  padding-inline: 0;
-}
-
-.drive-page > header button,
-.drive-page > header [role="button"] {
-  min-height: 44px;
-  border-radius: 10px;
-  font-weight: 600;
-  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-}
-
-.drive-page > header .bg-primary,
-.drive-page > header button.bg-button {
-  background-color: var(--cv-primary);
-}
-
-.drive-page > header button.bg-primary:hover,
-.drive-page > header button.bg-button:hover {
-  background-color: var(--cv-primary-hover);
-}
-
-.drive-page > header .text-primary {
-  color: var(--cv-primary);
-}
-
-.drive-page > header button:focus-visible,
-.drive-page > header [role="button"]:focus-visible,
 .drive-page :where(a, button, input, select):focus-visible {
   outline: 3px solid var(--cv-focus);
   outline-offset: 3px;
@@ -394,10 +359,6 @@
 }
 
 @media (max-width: 640px) {
-  .drive-page > header > div {
-    width: calc(100% - 32px);
-  }
-
   .drive-page .drive-content-shell,
   .drive-page .drive-items-shell {
     width: calc(100% - 32px);

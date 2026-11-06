@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Cloud, Crown, Share2, Users, Settings } from "lucide-react";
+import "./DirectoryHeader.css";
 
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -22,7 +23,7 @@ function DirectoryHeader({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 bg-background border-b border-border shadow-soft">
+    <header className="directory-header fixed top-0 left-0 right-0 z-40 bg-background border-b border-border shadow-soft">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side: Logo */}

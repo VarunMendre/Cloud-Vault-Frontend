@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { PasswordStrengthIndicator } from "./components/lightswind/password-strength-indicator";
+import { getSubscriptionDetails } from "./apis/subscriptionApi";
 import "./UserSettingsVisual.css";
 
 const Card = ({ children, className = "" }) => (
@@ -62,6 +63,7 @@ export default function UserSettings() {
   // Storage info
   const maxStorageLimit = user?.maxStorageLimit || 1073741824;
   const usedStorageInBytes = user?.usedStorageInBytes || 0;
+  const [currentPlanName, setCurrentPlanName] = useState("");
 
   // Connected accounts
   const [connectedProvider, setConnectedProvider] = useState(null);
@@ -140,6 +142,34 @@ export default function UserSettings() {
       setProfilePicture(user.picture || "");
     }
   }, [user]);
+
+  useEffect(() => {
+    let isCurrent = true;
+    const fallbackPlanName = user?.subscriptionPlan || (user?.subscriptionId ? "Subscription" : "Free");
+    setCurrentPlanName(fallbackPlanName);
+
+    if (!user?.subscriptionId) {
+      return () => {
+        isCurrent = false;
+      };
+    }
+
+    async function loadCurrentPlan() {
+      try {
+        const details = await getSubscriptionDetails();
+        if (isCurrent && details?.activePlan?.name) {
+          setCurrentPlanName(details.activePlan.name);
+        }
+      } catch (error) {
+        console.error("Failed to load current subscription plan:", error);
+      }
+    }
+
+    loadCurrentPlan();
+    return () => {
+      isCurrent = false;
+    };
+  }, [user?.subscriptionId, user?.subscriptionPlan]);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -274,8 +304,8 @@ export default function UserSettings() {
   return (
     <div className="settings-page min-h-screen font-sans text-[var(--cv-text)]">
       <DirectoryHeader
-        userName={user?.name || "User"}
-        userEmail={user?.email || ""}
+        userName={user?.name || "Guest User"}
+        userEmail={user?.email || "guest@example.com"}
         userPicture={user?.picture || ""}
         userRole={user?.role || "User"}
         subscriptionId={user?.subscriptionId}
@@ -605,7 +635,7 @@ export default function UserSettings() {
                             <SectionHeader title="Upgrade Your Plan" description="Need more space? Upgrade to a higher tier plan." />
                             <div className="flex flex-col justify-between gap-4 rounded-xl border border-[var(--cv-primary)]/30 bg-[var(--cv-primary)]/5 p-5 sm:flex-row sm:items-center">
                                 <div>
-                                    <h4 className="text-base font-semibold text-[var(--cv-text)]">Current Plan: {user?.subscriptionPlan || "Basic"}</h4>
+                                    <h4 className="text-base font-semibold text-[var(--cv-text)]">Current Plan: {currentPlanName || "Loading plan..."}</h4>
                                     <p className="mt-1 text-sm text-[var(--cv-text-muted)]">
                                         Unlock advanced features and more storage space.
                                     </p>

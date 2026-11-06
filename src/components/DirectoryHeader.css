@@ -1,0 +1,43 @@
+.directory-header {
+  border-color: var(--cv-border);
+  background: var(--cv-surface);
+  box-shadow: 0 1px 3px rgb(15 23 42 / 5%);
+}
+
+.directory-header > div {
+  width: min(100% - 48px, 1200px);
+  padding-inline: 0;
+}
+
+.directory-header button,
+.directory-header [role="button"] {
+  min-height: 44px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.directory-header .bg-primary,
+.directory-header button.bg-button {
+  background-color: var(--cv-primary);
+}
+
+.directory-header button.bg-primary:hover,
+.directory-header button.bg-button:hover {
+  background-color: var(--cv-primary-hover);
+}
+
+.directory-header .text-primary {
+  color: var(--cv-primary);
+}
+
+.directory-header :where(button, [role="button"]):focus-visible {
+  outline: 3px solid var(--cv-focus);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .directory-header > div {
+    width: calc(100% - 32px);
+  }
+}
