@@ -139,7 +139,7 @@ export default function SubscriptionDetails() {
         subscriptionStatus={user?.subscriptionStatus || "active"}
       />
 
-      <main className="subscription-content mx-auto max-w-7xl px-4 pb-20 pt-6 sm:px-6 lg:px-8">
+      <main className="subscription-content mx-auto max-w-7xl px-4 pb-20 pt-24 sm:px-6 lg:px-8">
 
         {/* Error Notification */}
         {errorMessage && (
