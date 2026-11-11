@@ -1,0 +1,98 @@
+.change-plan-page {
+  min-height: 100svh;
+  color: var(--cv-text);
+  background: var(--cv-background);
+}
+
+.change-plan-content {
+  width: min(100%, 1200px);
+  margin-inline: auto;
+}
+
+.change-plan-page :where(a, button):focus-visible {
+  outline: 3px solid var(--cv-focus);
+  outline-offset: 3px;
+}
+
+.change-plan-page button {
+  min-height: 44px;
+}
+
+.change-plan-page button:disabled {
+  cursor: not-allowed;
+}
+
+.change-plan-current-card,
+.change-plan-plan-card {
+  border-color: var(--cv-border);
+  background: var(--cv-surface);
+  box-shadow: 0 2px 8px rgb(15 23 42 / 4%);
+}
+
+.change-plan-current-card {
+  border-left-color: var(--cv-primary);
+}
+
+.change-plan-plan-card {
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.change-plan-plan-card:hover {
+  border-color: var(--cv-primary);
+  box-shadow: 0 8px 20px rgb(15 23 42 / 7%);
+  transform: translateY(-2px);
+}
+
+.change-plan-plan-action {
+  min-height: 44px;
+}
+
+.change-plan-overlay {
+  background: rgb(15 23 42 / 52%);
+  backdrop-filter: blur(8px);
+  animation: change-plan-overlay-enter 160ms ease-out both;
+}
+
+.change-plan-dialog {
+  border-color: var(--cv-border);
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  box-shadow: 0 20px 48px rgb(15 23 42 / 20%);
+  animation: change-plan-dialog-enter 180ms ease-out both;
+}
+
+@keyframes change-plan-overlay-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes change-plan-dialog-enter {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 640px) {
+  .change-plan-content {
+    padding-bottom: 32px;
+  }
+
+  .change-plan-dialog {
+    max-height: calc(100svh - 32px);
+    overflow-y: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .change-plan-page *,
+  .change-plan-page *::before,
+  .change-plan-page *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .change-plan-plan-card:hover {
+    transform: none;
+  }
+}

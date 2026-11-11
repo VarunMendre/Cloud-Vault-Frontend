@@ -18,6 +18,7 @@ import { getSubscriptionDetails, getEligiblePlans, upgradeSubscription, checkSub
 import SubscriptionAlert from "./components/SubscriptionAlert";
 import DirectoryHeader from "./components/DirectoryHeader";
 import { useAuth } from "./context/AuthContext";
+import "./ChangePlan.css";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -113,9 +114,9 @@ export default function ChangePlan() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-[#F8F9FA] gap-3">
-        <div className="w-8 h-8 border-2 border-[#E5E7EB] border-t-[#2B8B8F] rounded-full animate-spin"></div>
-        <p className="text-xs font-medium text-[#6B7280] tracking-widest uppercase">Scanning Grid...</p>
+      <div className="change-plan-page flex min-h-screen flex-col items-center justify-center gap-3 bg-[var(--cv-background)]">
+        <div className="w-8 h-8 border-2 border-[var(--cv-border)] border-t-[var(--cv-primary)] rounded-full animate-spin"></div>
+        <p className="text-sm font-medium text-[var(--cv-text-muted)]">Scanning Grid...</p>
       </div>
     );
   }
@@ -123,7 +124,7 @@ export default function ChangePlan() {
   if (!currentPlan) return null;
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
+    <div className="change-plan-page min-h-screen bg-[var(--cv-background)]">
       <DirectoryHeader
         userName={user?.name || "Guest User"}
         userEmail={user?.email || "guest@example.com"}
@@ -133,27 +134,27 @@ export default function ChangePlan() {
         subscriptionStatus={user?.subscriptionStatus || "active"}
       />
 
-      <div className="py-16 px-4 pt-32 sm:px-6 lg:px-8">
+      <main className="change-plan-content px-4 pb-16 pt-28 sm:px-6 sm:pt-32 lg:px-8">
         <div className="max-w-5xl mx-auto">
 
           {/* Error Alert */}
           {errorAlert.show && (
-            <div className="mb-8">
-              <div className="bg-white rounded-2xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+            <div className="mb-8" role="alert" aria-live="polite">
+              <div className="bg-white rounded-2xl border border-[var(--cv-border)] shadow-sm overflow-hidden">
                 <div className="p-5 flex items-start gap-4">
-                  <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center shrink-0 border border-red-100">
-                    <ShieldCheck className="w-4 h-4 text-[#E53E3E]" />
+                  <div className="w-10 h-10 bg-[var(--cv-danger-background)] rounded-xl flex items-center justify-center shrink-0 border border-[color-mix(in_srgb,var(--cv-danger)_18%,white)]">
+                    <ShieldCheck className="w-4 h-4 text-[var(--cv-danger)]" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-sm font-semibold text-[#1D1D1D] mb-1">{errorAlert.title}</h3>
-                    <p className="text-xs text-[#6B7280] leading-relaxed">{errorAlert.message}</p>
+                    <h3 className="text-sm font-semibold text-[var(--cv-text)] mb-1">{errorAlert.title}</h3>
+                    <p className="text-sm text-[var(--cv-text-muted)] leading-relaxed">{errorAlert.message}</p>
                     {errorAlert.tip && (
-                      <div className="mt-3 p-3 bg-[#F8F9FA] rounded-xl border border-[#E5E7EB] text-xs text-[#6B7280] italic leading-relaxed">
+                      <div className="mt-3 p-3 bg-[var(--cv-background)] rounded-xl border border-[var(--cv-border)] text-sm text-[var(--cv-text-muted)] italic leading-relaxed">
                         Tip: {errorAlert.tip}
                       </div>
                     )}
                   </div>
-                  <button onClick={() => setErrorAlert({ ...errorAlert, show: false })} className="text-[#6B7280] hover:text-[#1D1D1D] transition-colors p-0.5">
+                  <button type="button" aria-label="Dismiss upgrade error" onClick={() => setErrorAlert({ ...errorAlert, show: false })} className="h-11 w-11 rounded-xl p-2 text-[var(--cv-text-muted)] transition-colors hover:bg-[var(--cv-background)] hover:text-[var(--cv-text)]">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
@@ -162,78 +163,79 @@ export default function ChangePlan() {
           )}
 
           {/* Page Header */}
-          <header className="mb-10">
+          <header className="change-plan-header mb-8 sm:mb-10">
             <button
+              type="button"
               onClick={() => navigate(-1)}
-              className="group flex items-center gap-2 mb-5 text-sm font-medium text-[#6B7280] hover:text-[#1D1D1D] transition-colors"
+              className="group mb-4 flex min-h-11 items-center gap-2 rounded-lg pr-2 text-sm font-medium text-[var(--cv-text-muted)] transition-colors hover:text-[var(--cv-text)] sm:mb-5"
             >
               <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
               Return to Plans
             </button>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-9 h-9 bg-white rounded-xl border border-[#E5E7EB] shadow-sm flex items-center justify-center">
-                <Star className="w-4 h-4 text-[#2B8B8F]" />
+              <div className="w-9 h-9 bg-white rounded-xl border border-[var(--cv-border)] shadow-sm flex items-center justify-center">
+                <Star className="w-4 h-4 text-[var(--cv-primary)]" />
               </div>
-              <h1 className="text-xl font-semibold text-[#1D1D1D] tracking-tight">Change Plan</h1>
+              <h1 className="text-2xl font-semibold leading-tight tracking-tight text-[var(--cv-text)] sm:text-3xl">Change Plan</h1>
             </div>
-            <p className="text-sm text-[#6B7280] leading-relaxed max-w-xl ml-12">
+            <p className="ml-12 max-w-xl text-base leading-relaxed text-[var(--cv-text-muted)]">
               Adjust your plan nodes. We'll automatically prorate any remaining credit from your current billing cycle.
             </p>
           </header>
 
           {/* Current Plan Card */}
-          <div className="bg-white rounded-2xl border-l-4 border-l-[#2B8B8F] border border-[#E5E7EB] shadow-sm overflow-hidden mb-8">
-            <div className="p-7 sm:p-9">
+          <section className="change-plan-current-card mb-8 overflow-hidden rounded-2xl border border-l-4 border-[var(--cv-border)] border-l-[var(--cv-primary)] bg-white shadow-sm" aria-labelledby="current-plan-heading">
+            <div className="p-5 sm:p-8 lg:p-9">
               <div className="flex flex-col sm:flex-row justify-between items-start gap-6 mb-9">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-[#E0F5F3] text-[#2B8B8F] uppercase tracking-wider border border-[#2B8B8F]/20">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#2B8B8F] animate-pulse"></div>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-[var(--cv-surface-muted)] text-[var(--cv-primary)] uppercase tracking-wider border border-[var(--cv-primary)]/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-[var(--cv-primary)]"></div>
                       Current Plan
                     </span>
-                    <span className="text-[10px] font-medium text-[#6B7280] uppercase tracking-wider">
+                    <span className="text-xs font-medium text-[var(--cv-text-muted)] uppercase tracking-wider">
                       ID: {currentPlan.activePlan.planId.slice(-6).toUpperCase()}
                     </span>
                   </div>
                   <div>
-                    <h2 className="text-3xl font-semibold text-[#1D1D1D] tracking-tight mb-1">{currentPlan.activePlan.name}</h2>
-                    <p className="text-sm text-[#6B7280]">{currentPlan.activePlan.tagline}</p>
+                    <h2 id="current-plan-heading" className="text-3xl font-semibold text-[var(--cv-text)] tracking-tight mb-1">{currentPlan.activePlan.name}</h2>
+                    <p className="text-sm text-[var(--cv-text-muted)]">{currentPlan.activePlan.tagline}</p>
                   </div>
                 </div>
-                <div className="w-12 h-12 bg-[#F8F9FA] rounded-xl border border-[#E5E7EB] flex items-center justify-center text-[#2B8B8F]">
+                <div className="w-12 h-12 bg-[var(--cv-background)] rounded-xl border border-[var(--cv-border)] flex items-center justify-center text-[var(--cv-primary)]">
                   <Zap className="w-5 h-5" />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-9">
-                <div className="bg-[#F8F9FA] rounded-xl p-4 border border-[#E5E7EB]">
+                <div className="bg-[var(--cv-background)] rounded-xl p-4 border border-[var(--cv-border)]">
                   <div className="flex items-center gap-2 mb-3">
-                    <CreditCard className="w-3.5 h-3.5 text-[#2B8B8F]" />
-                    <span className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Billing Rate</span>
+                    <CreditCard className="w-3.5 h-3.5 text-[var(--cv-primary)]" />
+                    <span className="text-xs font-semibold text-[var(--cv-text-muted)] uppercase tracking-wider">Billing Rate</span>
                   </div>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-semibold text-[#1D1D1D] tracking-tight">₹{currentPlan.activePlan.billingAmount}</span>
-                    <span className="text-xs font-medium text-[#6B7280] uppercase">/{currentPlan.activePlan.billingPeriod}</span>
+                    <span className="text-2xl font-semibold text-[var(--cv-text)] tracking-tight">₹{currentPlan.activePlan.billingAmount}</span>
+                    <span className="text-xs font-medium text-[var(--cv-text-muted)] uppercase">/{currentPlan.activePlan.billingPeriod}</span>
                   </div>
                 </div>
-                <div className="bg-[#F8F9FA] rounded-xl p-4 border border-[#E5E7EB]">
+                <div className="bg-[var(--cv-background)] rounded-xl p-4 border border-[var(--cv-border)]">
                   <div className="flex items-center gap-2 mb-3">
-                    <Clock className="w-3.5 h-3.5 text-[#2B8B8F]" />
-                    <span className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Next Renewal</span>
+                    <Clock className="w-3.5 h-3.5 text-[var(--cv-primary)]" />
+                    <span className="text-xs font-semibold text-[var(--cv-text-muted)] uppercase tracking-wider">Next Renewal</span>
                   </div>
-                  <div className="text-2xl font-semibold text-[#1D1D1D] tracking-tight">
+                  <div className="text-2xl font-semibold text-[var(--cv-text)] tracking-tight">
                     {["created", "pending"].includes(currentPlan.activePlan.status) ? "Pending" : currentPlan.activePlan.nextBillingDate}
                   </div>
-                  <span className="inline-block mt-2 text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-lg">
+                  <span className="inline-block mt-2 text-xs font-semibold text-[var(--cv-text)] bg-[color-mix(in_srgb,var(--cv-accent)_8%,white)] border border-[color-mix(in_srgb,var(--cv-accent)_24%,white)] px-2 py-1 rounded-lg">
                     {["created", "pending"].includes(currentPlan.activePlan.status) ? "Awaiting Activation" : `Terminating in ${currentPlan.activePlan.daysLeft} days`}
                   </span>
                 </div>
               </div>
 
-              <div className="h-px bg-[#E5E7EB] mb-7" />
+              <div className="h-px bg-[var(--cv-border)] mb-7" />
 
               <div>
-                <div className="text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Active Privileges</div>
+                <div className="mb-4 text-xs font-semibold uppercase tracking-wider text-[var(--cv-text-muted)]">Active Privileges</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-3">
                   <FeatureItem label={`${currentPlan.storage.totalLabel} Secure Grid`} />
                   <FeatureItem label={`Max Payload: ${currentPlan.limits.maxFileSize}`} />
@@ -244,33 +246,33 @@ export default function ChangePlan() {
                 </div>
               </div>
             </div>
-          </div>
+          </section>
 
           {/* Proration Banner */}
-          <div className="bg-[#E0F5F3] rounded-2xl p-4 flex items-center gap-4 mb-10 border border-[#2B8B8F]/20">
-            <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center shrink-0 border border-[#2B8B8F]/20 shadow-sm">
-              <Info className="w-4 h-4 text-[#2B8B8F]" />
+          <aside className="mb-8 flex items-start gap-3 rounded-2xl border border-[var(--cv-primary)]/20 bg-[var(--cv-surface-muted)] p-4 sm:mb-10 sm:items-center sm:gap-4">
+            <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center shrink-0 border border-[var(--cv-primary)]/20 shadow-sm">
+              <Info className="w-4 h-4 text-[var(--cv-primary)]" />
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-[#1D1D1D] mb-0.5">Prorated Upgrade Logic Active</h3>
-              <p className="text-xs text-[#6B7280] leading-relaxed max-w-2xl">
+              <h3 className="text-sm font-semibold text-[var(--cv-text)] mb-0.5">Prorated Upgrade Logic Active</h3>
+              <p className="text-sm text-[var(--cv-text-muted)] leading-relaxed max-w-2xl">
                 Our system calculates the precise value of your remaining days. This credit is applied instantly at checkout, reducing the total upgrade cost.
               </p>
             </div>
-            <span className="hidden sm:block text-[10px] font-semibold text-[#2B8B8F] uppercase tracking-wider bg-white px-3 py-1.5 rounded-xl border border-[#2B8B8F]/20 shadow-sm">
+            <span className="hidden sm:block text-xs font-semibold text-[var(--cv-primary)] uppercase tracking-wider bg-white px-3 py-1.5 rounded-xl border border-[var(--cv-primary)]/20 shadow-sm">
               Auto-Credit
             </span>
-          </div>
+          </aside>
 
           {/* Available Plans */}
-          <div className="mb-20">
+          <section className="mb-12 sm:mb-20" aria-labelledby="available-plans-heading">
             <div className="mb-7">
-              <h3 className="text-lg font-semibold text-[#1D1D1D] tracking-tight">Available Plans</h3>
-              <p className="text-sm text-[#6B7280]">{eligiblePlans.length} plans available for transition</p>
+              <h2 id="available-plans-heading" className="text-xl font-semibold tracking-tight text-[var(--cv-text)] sm:text-2xl">Available Plans</h2>
+              <p className="text-base text-[var(--cv-text-muted)]">{eligiblePlans.length} plans available for transition</p>
             </div>
 
             {eligiblePlans.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {eligiblePlans.map((plan) => (
                   <UpgradePlanCard
                     key={plan.id}
@@ -282,17 +284,17 @@ export default function ChangePlan() {
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border-2 border-dashed border-[#E5E7EB] p-16 text-center">
-                <div className="w-16 h-16 bg-[#F8F9FA] rounded-2xl flex items-center justify-center mx-auto mb-5 border border-[#E5E7EB]">
-                  <Gem className="w-7 h-7 text-[#6B7280]" />
+              <div className="rounded-2xl border-2 border-dashed border-[var(--cv-border)] bg-white p-8 text-center sm:p-12">
+                <div className="w-16 h-16 bg-[var(--cv-background)] rounded-2xl flex items-center justify-center mx-auto mb-5 border border-[var(--cv-border)]">
+                  <Gem className="w-7 h-7 text-[var(--cv-text-muted)]" />
                 </div>
-                <h4 className="text-base font-semibold text-[#1D1D1D] mb-2">Ultimate Plan Reached</h4>
-                <p className="text-sm text-[#6B7280] max-w-xs mx-auto leading-relaxed">
+                <h4 className="text-base font-semibold text-[var(--cv-text)] mb-2">Ultimate Plan Reached</h4>
+                <p className="text-sm text-[var(--cv-text-muted)] max-w-xs mx-auto leading-relaxed">
                   {emptyMessage || "You are currently running the standard max configuration. No further upgrades are required at this time."}
                 </p>
               </div>
             )}
-          </div>
+          </section>
         </div>
 
         {/* Modals */}
@@ -313,7 +315,7 @@ export default function ChangePlan() {
             onClose={() => navigate("/subscription")}
           />
         )}
-      </div>
+      </main>
     </div>
   );
 }
@@ -331,10 +333,10 @@ function calculateNextBillingDate(days) {
 function FeatureItem({ label }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="w-4 h-4 bg-green-50 text-[#22C55E] rounded-full flex items-center justify-center border border-green-100 shrink-0">
+      <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--cv-success)_18%,white)] bg-[var(--cv-success-background)] text-[var(--cv-success)]">
         <CheckCircle2 className="w-2.5 h-2.5" />
       </div>
-      <span className="text-sm font-medium text-[#1D1D1D]">{label}</span>
+      <span className="text-sm font-medium text-[var(--cv-text)]">{label}</span>
     </div>
   );
 }
@@ -344,14 +346,14 @@ function UpgradePlanCard({ plan, onUpgrade, isProcessing, disabled }) {
 
   return (
     <div className={classNames(
-      "relative flex flex-col rounded-2xl bg-white transition-all duration-200 hover:shadow-md overflow-hidden",
+      "change-plan-plan-card relative flex min-w-0 flex-col overflow-hidden rounded-2xl bg-white transition-all duration-200 hover:shadow-md",
       isPremium
-        ? "border-2 border-[#2B8B8F] shadow-sm"
-        : "border border-[#E5E7EB] shadow-sm"
+        ? "border-2 border-[var(--cv-primary)] shadow-sm"
+        : "border border-[var(--cv-border)] shadow-sm"
     )}>
       {/* Card top accent for recommended */}
       {isPremium && (
-        <div className="h-1 w-full bg-[#2B8B8F]" />
+        <div className="h-1 w-full bg-[var(--cv-primary)]" />
       )}
 
       <div className="p-6 flex flex-col flex-1">
@@ -361,18 +363,18 @@ function UpgradePlanCard({ plan, onUpgrade, isProcessing, disabled }) {
             <div className={classNames(
               "w-9 h-9 rounded-xl flex items-center justify-center border shrink-0",
               isPremium
-                ? "bg-[#E0F5F3] border-[#2B8B8F]/20 text-[#2B8B8F]"
-                : "bg-[#F8F9FA] border-[#E5E7EB] text-[#6B7280]"
+                ? "bg-[var(--cv-surface-muted)] border-[var(--cv-primary)]/20 text-[var(--cv-primary)]"
+                : "bg-[var(--cv-background)] border-[var(--cv-border)] text-[var(--cv-text-muted)]"
             )}>
               {isPremium ? <Gem className="w-4 h-4" /> : <Zap className="w-4 h-4" />}
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[#1D1D1D] tracking-tight leading-tight">{plan.name}</h3>
-              <p className="text-[10px] font-medium text-[#6B7280] uppercase tracking-wider mt-0.5">{plan.tagline}</p>
+              <h3 className="text-lg font-semibold leading-tight tracking-tight text-[var(--cv-text)]">{plan.name}</h3>
+              <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[var(--cv-text-muted)]">{plan.tagline}</p>
             </div>
           </div>
           {isPremium && (
-            <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#E0F5F3] text-[#2B8B8F] px-2.5 py-1 rounded-lg border border-[#2B8B8F]/20 shrink-0">
+            <span className="text-xs font-semibold uppercase tracking-wider bg-[var(--cv-surface-muted)] text-[var(--cv-primary)] px-2.5 py-1 rounded-lg border border-[var(--cv-primary)]/20 shrink-0">
               Recommended
             </span>
           )}
@@ -380,29 +382,29 @@ function UpgradePlanCard({ plan, onUpgrade, isProcessing, disabled }) {
 
         {/* Price */}
         <div className="flex items-baseline gap-1 mb-4">
-          <span className="text-3xl font-semibold text-[#1D1D1D] tracking-tight">
+          <span className="text-3xl font-semibold text-[var(--cv-text)] tracking-tight">
             ₹{plan.billingPeriod === "Yearly" ? Math.floor(plan.price / 12) : plan.price}
           </span>
-          <span className="text-sm font-medium text-[#6B7280]">/mo</span>
+          <span className="text-base font-medium text-[var(--cv-text-muted)]">/mo</span>
         </div>
 
         {/* Bonus days */}
         {plan.cappedBonusDays > 0 && (
-          <div className="flex items-center gap-1.5 p-2.5 bg-green-50 rounded-xl border border-green-100 mb-4">
-            <Star className="w-3 h-3 text-[#22C55E] fill-[#22C55E] shrink-0" />
-            <span className="text-[10px] font-semibold text-[#22C55E] uppercase tracking-wider">
+          <div className="flex items-center gap-1.5 p-2.5 bg-[var(--cv-success-background)] rounded-xl border border-[color-mix(in_srgb,var(--cv-success)_18%,white)] mb-4">
+            <Star className="w-3 h-3 text-[var(--cv-success)] fill-[var(--cv-success)] shrink-0" />
+            <span className="text-xs font-semibold text-[var(--cv-success)] uppercase tracking-wider">
               {plan.cappedBonusDays} Days Complementary Access
             </span>
           </div>
         )}
 
-        <div className="h-px bg-[#E5E7EB] mb-4" />
+        <div className="h-px bg-[var(--cv-border)] mb-4" />
 
         {/* Features */}
         <ul className="space-y-2 mb-6 flex-1">
           {plan.features.slice(0, 5).map((f, i) => (
-            <li key={i} className="flex items-center gap-2 text-xs text-[#6B7280]">
-              <CheckCircle2 className="w-3.5 h-3.5 text-[#2B8B8F] shrink-0" />
+            <li key={i} className="flex items-start gap-2 text-sm leading-relaxed text-[var(--cv-text-muted)]">
+              <CheckCircle2 className="w-3.5 h-3.5 text-[var(--cv-primary)] shrink-0" />
               <span>{f}</span>
             </li>
           ))}
@@ -413,10 +415,10 @@ function UpgradePlanCard({ plan, onUpgrade, isProcessing, disabled }) {
           onClick={() => onUpgrade(plan.id)}
           disabled={disabled}
           className={classNames(
-            "w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-colors",
+            "change-plan-plan-action flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors",
             isPremium
-              ? "bg-[#2B8B8F] text-white hover:bg-[#237375]"
-              : "bg-[#F8F9FA] text-[#1D1D1D] border border-[#E5E7EB] hover:bg-[#E5E7EB]",
+              ? "bg-[var(--cv-primary)] text-white hover:bg-[var(--cv-primary-hover)]"
+              : "bg-[var(--cv-background)] text-[var(--cv-text)] border border-[var(--cv-border)] hover:bg-[var(--cv-border)]",
             "disabled:opacity-50 disabled:cursor-not-allowed"
           )}
         >
@@ -455,14 +457,14 @@ function SuccessModal({ subscriptionId, onClose }) {
   }, [subscriptionId, onClose]);
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#1D1D1D]/40 backdrop-blur-sm"></div>
-      <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl p-10 text-center border border-[#E5E7EB] overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-[#E5E7EB] overflow-hidden">
-          {activating && <div className="h-full bg-[#2B8B8F] animate-pulse w-full"></div>}
+    <div className="change-plan-overlay fixed inset-0 z-[200] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="change-plan-success-title">
+      <div className="absolute inset-0 bg-[var(--cv-text)]/40 backdrop-blur-sm" aria-hidden="true"></div>
+      <div className="change-plan-dialog relative w-full max-w-md overflow-hidden rounded-2xl border border-[var(--cv-border)] bg-white p-6 text-center shadow-xl sm:p-10">
+        <div className="absolute top-0 left-0 w-full h-1 bg-[var(--cv-border)] overflow-hidden">
+          {activating && <div className="h-full bg-[var(--cv-primary)] animate-pulse w-full"></div>}
         </div>
-        <div className={`mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl transition-all duration-500 ${activating ? 'bg-[#F8F9FA] border border-[#E5E7EB]' : 'bg-green-50 border border-green-100'}`}>
-          <div className={`flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-sm transition-colors duration-500 ${activating ? 'bg-[#2B8B8F]' : 'bg-[#22C55E]'}`}>
+        <div className={`mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl transition-all duration-500 ${activating ? 'bg-[var(--cv-background)] border border-[var(--cv-border)]' : 'bg-[var(--cv-success-background)] border border-[color-mix(in_srgb,var(--cv-success)_18%,white)]'}`}>
+          <div className={`flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-sm transition-colors duration-500 ${activating ? 'bg-[var(--cv-primary)]' : 'bg-[var(--cv-success)]'}`}>
             {activating ? (
               <Clock className="w-5 h-5 animate-spin" />
             ) : (
@@ -470,18 +472,18 @@ function SuccessModal({ subscriptionId, onClose }) {
             )}
           </div>
         </div>
-        <h2 className="text-xl font-semibold text-[#1D1D1D] mb-2 tracking-tight">
+        <h2 id="change-plan-success-title" className="mb-2 text-xl font-semibold tracking-tight text-[var(--cv-text)]">
           {activating ? "Activating your plan..." : "You're All Set!"}
         </h2>
-        <p className="text-sm text-[#6B7280] mb-8 max-w-[260px] mx-auto leading-relaxed">
+        <p className="text-sm text-[var(--cv-text-muted)] mb-8 max-w-[260px] mx-auto leading-relaxed">
           {activating
             ? "Please wait while we set up your new workspace and apply your plan limits."
             : "Your premium access is now live. Enjoy your new features."}
         </p>
         {!activating && (
-          <div className="p-3 rounded-xl bg-[#F8F9FA] border border-[#E5E7EB] flex items-center justify-center gap-2">
-            <Clock className="w-4 h-4 text-[#6B7280] animate-spin" />
-            <span className="text-xs font-medium text-[#1D1D1D]">Redirecting to Dashboard</span>
+          <div className="p-3 rounded-xl bg-[var(--cv-background)] border border-[var(--cv-border)] flex items-center justify-center gap-2">
+            <Clock className="w-4 h-4 text-[var(--cv-text-muted)] animate-spin" />
+            <span className="text-xs font-medium text-[var(--cv-text)]">Redirecting to Dashboard</span>
           </div>
         )}
       </div>
@@ -491,42 +493,45 @@ function SuccessModal({ subscriptionId, onClose }) {
 
 function CountdownModal({ countdown, onCancel }) {
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-[#1D1D1D]/40 backdrop-blur-sm"></div>
-      <div className="relative w-full max-w-sm bg-white rounded-2xl shadow-xl overflow-hidden border border-[#E5E7EB]">
+    <div className="change-plan-overlay fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="change-plan-checkout-title">
+      <div className="absolute inset-0 bg-[var(--cv-text)]/40 backdrop-blur-sm" aria-hidden="true"></div>
+      <div className="change-plan-dialog relative w-full max-w-sm overflow-hidden rounded-2xl border border-[var(--cv-border)] bg-white shadow-xl">
         <div className="p-8 text-center">
           <button
             onClick={onCancel}
-            className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-[#6B7280] hover:text-[#1D1D1D] hover:bg-[#F8F9FA] rounded-xl transition-all"
+            type="button"
+            aria-label="Close secure checkout"
+            className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-xl text-[var(--cv-text-muted)] transition-colors hover:bg-[var(--cv-background)] hover:text-[var(--cv-text)] sm:right-4 sm:top-4"
           >
             <X className="w-4 h-4" />
           </button>
 
-          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E0F5F3] border border-[#2B8B8F]/20">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl text-white bg-[#2B8B8F]">
+          <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--cv-surface-muted)] border border-[var(--cv-primary)]/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl text-white bg-[var(--cv-primary)]">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
 
-          <h2 className="text-xl font-semibold text-[#1D1D1D] mb-1.5 tracking-tight">Secure Checkout</h2>
-          <p className="text-sm text-[#6B7280] mb-7 leading-relaxed">
+          <h2 id="change-plan-checkout-title" className="mb-1.5 text-xl font-semibold tracking-tight text-[var(--cv-text)]">Secure Checkout</h2>
+          <p className="text-sm text-[var(--cv-text-muted)] mb-7 leading-relaxed">
             Connecting to our secure payment gateway...
           </p>
 
           <div className="mb-7 flex justify-center">
-            <div className="w-16 h-16 rounded-2xl bg-[#F8F9FA] border border-[#E5E7EB] flex items-center justify-center">
-              <span className="text-3xl font-semibold text-[#1D1D1D]">{countdown}</span>
+            <div className="w-16 h-16 rounded-2xl bg-[var(--cv-background)] border border-[var(--cv-border)] flex items-center justify-center">
+              <span className="text-3xl font-semibold text-[var(--cv-text)]">{countdown}</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-3 items-center">
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-[#F8F9FA] text-[#1D1D1D] rounded-xl border border-[#E5E7EB]">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#6B7280]" />
-              <span className="text-xs font-medium">Secure connection established</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--cv-background)] text-[var(--cv-text)] rounded-xl border border-[var(--cv-border)]">
+              <ShieldCheck className="w-3.5 h-3.5 text-[var(--cv-text-muted)]" />
+              <span className="text-sm font-medium">Secure connection established</span>
             </div>
             <button
+              type="button"
               onClick={onCancel}
-              className="text-xs font-medium text-[#6B7280] hover:text-[#1D1D1D] transition-colors"
+              className="min-h-11 rounded-lg px-3 text-sm font-medium text-[var(--cv-text-muted)] transition-colors hover:text-[var(--cv-text)]"
             >
               Cancel Checkout
             </button>
