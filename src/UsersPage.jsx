@@ -241,7 +241,13 @@ export default function UsersPage() {
 
   const handleDeleteClick = (user) => {
     setSelectedUser(user);
+    setShowHardDeleteConfirm(false);
     setShowDeleteModal(true);
+  };
+
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setShowHardDeleteConfirm(false);
   };
 
   const handleSoftDelete = async () => {
@@ -253,7 +259,7 @@ export default function UsersPage() {
         credentials: "include",
       });
       if (response.ok) {
-        setShowDeleteModal(false);
+        closeDeleteModal();
         showToast("User deleted successfully", "info");
         fetchUsers();
       }
@@ -273,7 +279,7 @@ export default function UsersPage() {
         credentials: "include",
       });
       if (response.ok) {
-        setShowHardDeleteConfirm(false);
+        closeDeleteModal();
         showToast("User permanently deleted", "info");
         fetchUsers();
       }
@@ -787,11 +793,11 @@ function Modals({
 
       {/* Delete/Purge Modal */}
       {showDeleteModal && (
-        <ModalWrapper onClose={() => setShowDeleteModal(false)}>
+        <ModalWrapper onClose={() => { setShowDeleteModal(false); setShowHardDeleteConfirm(false); }}>
            <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-[#1A202C]">Delete User</h3>
-                  <button onClick={() => setShowDeleteModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors"><X className="w-5 h-5" /></button>
+                  <button onClick={() => { setShowDeleteModal(false); setShowHardDeleteConfirm(false); }} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors"><X className="w-5 h-5" /></button>
               </div>
               <p className="text-sm text-[#718096] mb-6">Are you sure you want to delete <span className="font-semibold text-[#1A202C]">{selectedUser.name}</span>?</p>
               
@@ -809,7 +815,7 @@ function Modals({
                 >
                   Permanently Delete
                 </button>
-                <button onClick={() => setShowDeleteModal(false)} className="w-full py-2.5 bg-white border border-[#E2E8F0] text-[#1A202C] hover:bg-[#F0F2F5] rounded-[10px] font-semibold text-sm transition-colors">Cancel</button>
+                <button onClick={() => { setShowDeleteModal(false); setShowHardDeleteConfirm(false); }} className="w-full py-2.5 bg-white border border-[#E2E8F0] text-[#1A202C] hover:bg-[#F0F2F5] rounded-[10px] font-semibold text-sm transition-colors">Cancel</button>
               </div>
            </div>
 

@@ -258,15 +258,33 @@ export default function UserSettings() {
         setCurrentPassword(""); setNewPassword(""); setConfirmPassword("");
         showNotify("Password updated successfully");
       } else {
-        const data = await response.json();
-        const errorMessage = data.error || data.message || "Failed to update password";
+        const responseText = await response.text();
+        let data = null;
+        try {
+          data = responseText ? JSON.parse(responseText) : null;
+        } catch {
+          // Rate-limit responses may be plain text rather than JSON.
+        }
+
+        const responseMessage =
+          data?.error ||
+          data?.message ||
+          (responseText && !response.headers.get("content-type")?.includes("text/html")
+            ? responseText.trim()
+            : "");
+        const errorMessage =
+          responseMessage ||
+          (response.status === 429
+            ? "Too many password attempts. Please try again later."
+            : `Failed to update password (HTTP ${response.status}).`);
         setPasswordError(errorMessage);
         if (errorMessage.toLowerCase().includes("already set")) {
           setHasPassword(true);
         }
       }
     } catch (err) {
-      setPasswordError("An error occurred while updating the password");
+      console.error("Password update request failed:", err);
+      setPasswordError("Unable to reach the server while updating the password. Please try again.");
     } finally {
       setSubmitting(false);
     }

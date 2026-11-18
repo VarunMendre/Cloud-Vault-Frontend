@@ -1,11 +1,48 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Check, Cloud, Folder, HardDrive, Link2, Share2 } from "lucide-react";
+import { ArrowRight, Check, Cloud, Folder, HardDrive, Link2, Pause, Play, Share2 } from "lucide-react";
 import "./LandingPage.css";
 
 import dashboardImage from "./assets/screenshots/cloudvault-drive-dashboard.png";
-import settingsImage from "./assets/screenshots/settings.png";
-import subscriptionImage from "./assets/screenshots/subscription.png";
+import sharingDashboardImage from "./assets/screenshots/sharing-dashboard.png";
+import settingsProfileImage from "./assets/screenshots/settings-profile.png";
+import planDetailsImage from "./assets/screenshots/plan-details.png";
+import sharePermissionsImage from "./assets/screenshots/share-permissions.png";
+
+const productScreens = [
+  {
+    id: "sharing-dashboard",
+    src: sharingDashboardImage,
+    alt: "CloudVault sharing dashboard with shared files, collaborators, and quick actions",
+    caption: "Sharing dashboard",
+    width: 1341,
+    height: 768,
+  },
+  {
+    id: "settings-profile",
+    src: settingsProfileImage,
+    alt: "CloudVault user settings with profile picture and account information",
+    caption: "Profile and account settings",
+    width: 1199,
+    height: 768,
+  },
+  {
+    id: "plan-details",
+    src: planDetailsImage,
+    alt: "CloudVault plan details with subscription, storage usage, and activity statistics",
+    caption: "Plan and storage overview",
+    width: 1103,
+    height: 768,
+  },
+  {
+    id: "share-permissions",
+    src: sharePermissionsImage,
+    alt: "CloudVault share dialog with link access and viewer or editor permission options",
+    caption: "Sharing and permissions",
+    width: 1336,
+    height: 768,
+  },
+];
 
 const plans = [
   {
@@ -74,6 +111,7 @@ const faqs = [
 const LandingPage = () => {
   const navigate = useNavigate();
   const [billingPeriod, setBillingPeriod] = useState("monthly");
+  const [isProductMotionPaused, setIsProductMotionPaused] = useState(false);
 
   const handleGetStarted = () => {
     const isLandingDomain =
@@ -184,19 +222,50 @@ const LandingPage = () => {
               <h2 id="product-title">A workspace that stays easy to understand.</h2>
               <p>See your shared files, account settings, and subscription details in the product.</p>
             </div>
-            <div className="landing-product-grid">
-              <figure className="landing-product-shot">
-                <div className="landing-image-frame">
-                  <img src={settingsImage} alt="CloudVault account settings and storage usage" width="1024" height="412" loading="lazy" />
-                </div>
-                <figcaption>Account and storage settings</figcaption>
-              </figure>
-              <figure className="landing-product-shot">
-                <div className="landing-image-frame">
-                  <img src={subscriptionImage} alt="CloudVault subscription and storage overview" width="1024" height="633" loading="lazy" />
-                </div>
-                <figcaption>Plan and usage overview</figcaption>
-              </figure>
+            <div className="landing-product-controls">
+              <button
+                className="landing-product-motion-control"
+                type="button"
+                aria-label={isProductMotionPaused ? "Resume screenshot motion" : "Pause screenshot motion"}
+                onClick={() => setIsProductMotionPaused((paused) => !paused)}
+              >
+                {isProductMotionPaused ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
+                <span>{isProductMotionPaused ? "Resume motion" : "Pause motion"}</span>
+              </button>
+            </div>
+            <div
+              className="landing-product-carousel"
+              role="region"
+              aria-roledescription="carousel"
+              aria-label="CloudVault product screenshots"
+            >
+              <div className={`landing-product-track${isProductMotionPaused ? " is-paused" : ""}`}>
+                {[false, true].map((isDuplicate) => (
+                  <ul
+                    className="landing-product-group"
+                    key={isDuplicate ? "duplicate" : "original"}
+                    aria-hidden={isDuplicate || undefined}
+                  >
+                    {productScreens.map((screen) => (
+                      <li key={screen.id}>
+                        <figure className="landing-product-shot">
+                          <div className="landing-image-frame">
+                            <img
+                              src={screen.src}
+                              alt={screen.alt}
+                              width={screen.width}
+                              height={screen.height}
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          </div>
+                          <figcaption>{screen.caption}</figcaption>
+                        </figure>
+                      </li>
+                    ))}
+                  </ul>
+                ))}
+              </div>
             </div>
           </div>
         </section>

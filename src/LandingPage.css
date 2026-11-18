@@ -323,11 +323,66 @@
   line-height: 1.65;
 }
 
-.landing-product-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
+.landing-product-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin: -18px 0 16px;
+}
+
+.landing-product-motion-control {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid var(--cv-border);
+  border-radius: 8px;
+  color: var(--cv-text);
+  background: var(--cv-surface);
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.landing-product-motion-control:hover {
+  border-color: var(--cv-primary);
+  color: var(--cv-primary);
+  background: var(--cv-surface);
+}
+
+.landing-product-carousel {
+  overflow: hidden;
+  margin-block: -12px -24px;
+  padding-block: 12px 24px;
+}
+
+.landing-product-track {
+  display: flex;
+  width: max-content;
+  animation: landing-product-marquee 64s linear infinite;
+}
+
+.landing-product-track:hover,
+.landing-product-track:focus-within,
+.landing-product-track.is-paused {
+  animation-play-state: paused;
+}
+
+.landing-product-group {
+  display: flex;
+  flex: 0 0 auto;
   gap: 24px;
+  width: max-content;
+  margin: 0;
+  padding: 0 24px 0 0;
+  list-style: none;
+}
+
+.landing-product-group li {
+  flex: 0 0 clamp(280px, 42vw, 520px);
 }
 
 .landing-product-shot {
@@ -337,14 +392,24 @@
 
 .landing-product-shot .landing-image-frame {
   display: grid;
-  min-height: 210px;
   place-items: center;
   box-shadow: 0 8px 26px rgb(15 23 42 / 7%);
 }
 
 .landing-product-shot img {
+  display: block;
+  width: 100%;
   max-height: 420px;
   object-fit: contain;
+}
+
+@keyframes landing-product-marquee {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 .landing-steps {
@@ -781,11 +846,14 @@
     margin-bottom: 32px;
   }
 
-  .landing-product-grid,
   .landing-step-list,
   .landing-plan-grid,
   .landing-faq-layout {
     grid-template-columns: 1fr;
+  }
+
+  .landing-product-group li {
+    flex-basis: clamp(280px, 42vw, 520px);
   }
 
   .landing-step-list {
@@ -855,6 +923,10 @@
     grid-template-columns: 1fr;
   }
 
+  .landing-product-group li {
+    flex-basis: min(78vw, 360px);
+  }
+
   .landing-footer nav {
     gap: 14px;
   }
@@ -868,5 +940,42 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .landing-product-carousel {
+    overflow: visible;
+  }
+
+  .landing-product-track {
+    display: block;
+    width: 100%;
+    animation: none !important;
+    transform: none;
+  }
+
+  .landing-product-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    padding: 0;
+  }
+
+  .landing-product-group[aria-hidden="true"] {
+    display: none;
+  }
+
+  .landing-product-group li {
+    width: 100%;
+  }
+
+  .landing-product-controls {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) and (prefers-reduced-motion: reduce) {
+  .landing-product-group {
+    grid-template-columns: 1fr;
   }
 }
