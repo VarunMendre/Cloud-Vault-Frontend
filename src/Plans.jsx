@@ -18,6 +18,7 @@ import { createSubscription, getSubscriptionDetails } from "./apis/subscriptionA
 import SubscriptionAlert from "./components/SubscriptionAlert";
 import DirectoryHeader from "./components/DirectoryHeader";
 import { useAuth } from "./context/AuthContext";
+import "./Plans.css";
 
 const PLAN_CATALOG = {
   monthly: [
@@ -172,14 +173,14 @@ function AnimatedPrice({ value, isYearly }) {
   }, [value]);
 
   if (displayValue === 0) {
-    return <span className="text-4xl font-bold tracking-tight text-slate-900">Free</span>;
+    return <span className="plans-price-free text-4xl font-bold tracking-tight text-slate-900">Free</span>;
   }
 
   return (
     <>
-      <span className="text-lg font-semibold text-slate-700">₹</span>
-      <span className="text-4xl font-bold tracking-tight text-slate-900">{displayValue}</span>
-      <span className="mb-[6px] text-sm text-slate-500">/month</span>
+      <span className="plans-price-currency text-lg font-semibold text-slate-700">₹</span>
+      <span className="plans-price-value text-4xl font-bold tracking-tight text-slate-900">{displayValue}</span>
+      <span className="plans-price-period mb-[6px] text-sm text-slate-500">/month</span>
     </>
   );
 }
@@ -191,33 +192,25 @@ function PlanCard({ plan, onSelect, isLoading, isDisabled }) {
   return (
     <div
       className={classNames(
-        "relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md",
+        "plans-card relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md",
         plan.popular
-          ? "ring-1"
+          ? "plans-card-popular ring-1"
           : isFree
-          ? "border-green-500 ring-1 ring-green-500/20"
-          : "ring-1"
+          ? "plans-card-free ring-1"
+          : "plans-card-premium ring-1"
       )}
-      style={
-        plan.popular
-          ? { borderColor: "#66B2D6" }
-          : isFree
-          ? undefined
-          : { borderColor: "#D4AF37", "--tw-ring-color": "rgba(212,175,55,0.25)" }
-      }
     >
       {/* Popular badge */}
       {plan.popular && (
         <div
-          className="absolute -top-2 right-4 select-none rounded-full px-2 py-0.5 text-xs font-medium text-white shadow"
-          style={{ backgroundColor: "#66B2D6" }}
+          className="plans-popular-badge absolute -top-2 right-4 select-none rounded-full px-2 py-0.5 text-xs font-medium text-white shadow"
         >
           MOST POPULAR
         </div>
       )}
       {/* Free / current plan badge */}
       {isFree && (
-        <div className="absolute -top-2 right-4 select-none rounded-sm bg-green-600 px-2 py-0.5 text-[10px] font-bold text-white shadow">
+        <div className="plans-current-badge absolute -top-2 right-4 select-none rounded-full bg-green-600 px-2 py-0.5 text-[10px] font-bold text-white shadow">
           CURRENT PLAN
         </div>
       )}
@@ -228,7 +221,7 @@ function PlanCard({ plan, onSelect, isLoading, isDisabled }) {
           <div className="flex items-center gap-2">
             <div
               className={classNames(
-                "p-1.5 rounded-lg",
+                "plans-icon p-1.5 rounded-lg",
                 isFree
                   ? "bg-green-50 text-green-600"
                   : plan.popular
@@ -244,12 +237,12 @@ function PlanCard({ plan, onSelect, isLoading, isDisabled }) {
                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
               )}
             </div>
-            <h3 className="text-lg font-bold text-slate-900">{plan.name}</h3>
+            <h3 className="plans-plan-name text-lg font-bold text-slate-900">{plan.name}</h3>
           </div>
-          <p className="text-xs font-semibold" style={{ color: "#66B2D6" }}>
+          <p className="plans-tagline text-xs font-semibold">
             {plan.tagline}
           </p>
-          <p className="text-[11px] text-slate-500 leading-tight">{plan.description}</p>
+          <p className="plans-description text-[11px] text-slate-500 leading-tight">{plan.description}</p>
         </div>
       </div>
 
@@ -270,21 +263,20 @@ function PlanCard({ plan, onSelect, isLoading, isDisabled }) {
         )}
       </div>
 
-      <div className="h-px bg-slate-100 mb-6" />
+      <div className="plans-divider h-px bg-slate-100 mb-6" />
 
       {/* CTA Button */}
       <button
         onClick={() => !isFree && !isDisabled && onSelect?.(plan)}
         disabled={isDisabled || isFree}
         className={classNames(
-          "mb-6 cursor-pointer inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-bold transition focus:outline-none",
+          "plans-card-action mb-6 cursor-pointer inline-flex w-full items-center justify-center rounded-lg px-4 py-2.5 text-sm font-bold transition focus:outline-none",
           isFree
-            ? "bg-green-600 text-white hover:bg-green-700"
+            ? "plans-action-free bg-green-600 text-white hover:bg-green-700"
             : plan.popular
-            ? "text-white hover:opacity-90"
-            : "bg-slate-900 text-white hover:bg-slate-800"
+            ? "plans-action-primary text-white hover:opacity-90"
+            : "plans-action-secondary bg-slate-900 text-white hover:bg-slate-800"
         )}
-        style={plan.popular && !isFree ? { backgroundColor: "#66B2D6" } : undefined}
       >
         {isFree ? (
           <span className="flex items-center gap-2">
@@ -305,12 +297,12 @@ function PlanCard({ plan, onSelect, isLoading, isDisabled }) {
       </button>
 
       {/* Features list */}
-      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">
+      <div className="plans-includes-label text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">
         What's Included
       </div>
       <ul className="space-y-3 text-[13px] text-slate-600">
         {plan.features.map((f, i) => (
-          <li key={i} className="flex items-start gap-2.5">
+          <li key={i} className="plans-feature flex items-start gap-2.5">
             <svg
               className="mt-0.5 h-3.5 w-3.5 flex-none text-green-500"
               viewBox="0 0 24 24"
@@ -431,7 +423,7 @@ export default function Plans() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="plans-page min-h-screen bg-background">
       <DirectoryHeader
         userName={user?.name || "Guest User"}
         userEmail={user?.email || "guest@example.com"}
@@ -440,7 +432,7 @@ export default function Plans() {
         subscriptionId={user?.subscriptionId}
         subscriptionStatus={user?.subscriptionStatus || "active"}
       />
-      <div className="mx-auto max-w-7xl px-4 py-20 pt-32 relative">
+      <div className="plans-content mx-auto relative">
       {errorAlert.show && (
         <SubscriptionAlert 
           title={errorAlert.title}
@@ -463,23 +455,23 @@ export default function Plans() {
         />
       )}
       
-      <header className="mb-16 text-center relative max-w-3xl mx-auto">
+      <header className="plans-heading text-center relative mx-auto">
         <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-6 tracking-tight leading-tight animate-fadeIn">
           Select Your <span className="text-primary">Cloud Plan</span>
         </h1>
-        <p className="text-lg font-medium text-slate-500 leading-relaxed max-w-2xl mx-auto">
+        <p className="plans-intro text-lg font-medium text-slate-500 leading-relaxed mx-auto">
           Unlock unlimited potential with secure, high-speed storage tailored for your digital life. Simple, transparent pricing.
         </p>
       </header>
 
       {/* Tabs */}
-      <div className="mb-16 flex justify-center sticky top-28 z-30">
-        <div className="inline-flex rounded-[24px] border-2 border-border bg-white p-2 shadow-lg backdrop-blur-xl animate-scaleIn">
+      <div className="plans-billing-wrap flex justify-center">
+        <div className="plans-billing-toggle inline-flex rounded-[24px] border-2 border-border bg-white p-2 shadow-lg backdrop-blur-xl animate-scaleIn">
           <button
             onClick={() => setMode("monthly")}
             className={classNames(
-              "rounded-[18px] px-10 py-3.5 text-sm font-black transition-all duration-300 cursor-pointer",
-              mode === "monthly" ? "bg-primary text-white shadow-md shadow-primary/20" : "text-muted hover:text-text-main"
+              "plans-billing-option rounded-[18px] px-10 py-3.5 text-sm font-black transition-all duration-300 cursor-pointer",
+              mode === "monthly" ? "plans-billing-option-active bg-primary text-white shadow-md shadow-primary/20" : "text-muted hover:text-text-main"
             )}
           >
             Monthly Billing
@@ -487,13 +479,13 @@ export default function Plans() {
           <button
             onClick={() => setMode("yearly")}
             className={classNames(
-              "rounded-[18px] px-10 py-3.5 text-sm font-black transition-all duration-300 cursor-pointer flex items-center gap-3",
-              mode === "yearly" ? "bg-primary text-white shadow-md shadow-primary/20" : "text-muted hover:text-text-main"
+              "plans-billing-option rounded-[18px] px-10 py-3.5 text-sm font-black transition-all duration-300 cursor-pointer flex items-center gap-3",
+              mode === "yearly" ? "plans-billing-option-active bg-primary text-white shadow-md shadow-primary/20" : "text-muted hover:text-text-main"
             )}
           >
             Yearly Billing
             <span className={classNames(
-              "text-[9px] font-black px-2 py-0.5 rounded-full tracking-widest",
+              "plans-savings-badge text-[9px] font-black px-2 py-0.5 rounded-full tracking-widest",
               mode === "yearly" ? "bg-white text-primary" : "bg-accent/10 text-accent"
             )}>
               SAVE 20%
@@ -503,7 +495,7 @@ export default function Plans() {
       </div>
 
       {/* Cards grid */}
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 animate-fadeIn">
+      <div className="plans-grid grid gap-8 sm:grid-cols-2 lg:grid-cols-3 animate-fadeIn">
         {plans.map((plan) => (
           <PlanCard
             key={`${mode}-${plan.id}`}
@@ -516,8 +508,8 @@ export default function Plans() {
       </div>
 
       {/* Small helper text */}
-      <div className="mt-16 text-center">
-        <div className="inline-block p-4 rounded-2xl bg-secondary/30 border border-border/50 max-w-xl">
+      <div className="plans-note-wrap text-center">
+        <div className="plans-note inline-block p-4 rounded-2xl bg-secondary/30 border border-border/50">
           <p className="text-xs font-bold text-muted leading-relaxed">
             Note: All transactions are processed through highly secure payment gateways. Plan limits are refreshed at the beginning of each billing cycle. Need custom storage? <span className="text-primary cursor-pointer hover:underline">Contact Sales</span>.
           </p>
@@ -557,20 +549,19 @@ function SuccessModal({ subscriptionId, onClose }) {
   }, [subscriptionId, onClose]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
+    <div className="plans-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 text-center animate-scaleIn border border-slate-200 overflow-hidden">
+      <div className="plans-modal relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-10 text-center animate-scaleIn border border-slate-200 overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-100 overflow-hidden">
            {activating && <div className="h-full bg-primary animate-progress-indeterminate opacity-80"></div>}
         </div>
 
         {/* Icon Container */}
         <div className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl transition-all duration-500 ${activating ? 'bg-slate-50 border border-slate-100' : 'bg-green-50 border border-green-100'}`}>
-          <div className={`flex h-12 w-12 items-center justify-center rounded-xl text-white shadow-sm transition-colors duration-500`}
-            style={{ backgroundColor: activating ? '#66B2D6' : '#10B981' }}>
+          <div className={`plans-modal-icon flex h-12 w-12 items-center justify-center rounded-xl text-white shadow-sm transition-colors duration-500 ${activating ? "plans-modal-icon-pending" : "plans-modal-icon-active"}`}>
             {activating ? (
                <Loader2 className="w-6 h-6 animate-spin" />
             ) : (
@@ -610,24 +601,25 @@ function CountdownModal({ countdown, onCancel }) {
   }, []);
   
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
+    <div className="plans-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-4 animate-fadeIn">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
       
       {/* Modal Content */}
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden animate-scaleIn border border-slate-200">
+      <div className="plans-modal relative w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden animate-scaleIn border border-slate-200">
         <div className="p-8 text-center">
           {/* Close button */}
           <button
             onClick={onCancel}
             className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all"
+            aria-label="Cancel checkout"
           >
             <X className="w-4 h-4" />
           </button>
 
           {/* Icon */}
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 border border-blue-100">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl text-white bg-[#66B2D6] shadow-sm">
+            <div className="plans-checkout-icon flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-sm">
               <ShieldCheck className="w-5 h-5" />
             </div>
           </div>

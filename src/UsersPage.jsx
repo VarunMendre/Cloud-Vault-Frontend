@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import DirectoryHeader, { BASE_URL } from "./components/DirectoryHeader";
+import "./UsersPage.css";
 import {
   ArrowLeft,
   Users,
@@ -132,17 +133,17 @@ export default function UsersPage() {
   // --- Helpers ---
   const getRoleColor = (role) => {
     switch (role) {
-      case "Owner": return "bg-rose-50 text-rose-600 border border-rose-100";
-      case "Admin": return "bg-[#D1FAF5] text-[#2D8B8B] border border-[#2D8B8B]/20";
-      case "Manager": return "bg-indigo-50 text-indigo-600 border border-indigo-100";
-      default: return "bg-[#F0F2F5] text-[#718096] border border-[#E2E8F0]";
+      case "Owner": return "users-role-owner";
+      case "Admin": return "users-role-admin";
+      case "Manager": return "users-role-manager";
+      default: return "users-role-default";
     }
   };
 
   const getStatusColor = (isLoggedIn, isDeleted) => {
-    if (isDeleted) return "bg-red-50 text-red-600 border border-red-100";
-    if (isLoggedIn) return "bg-emerald-50 text-[#22C55E] border border-[#22C55E]/20";
-    return "bg-[#F0F2F5] text-[#718096] border border-[#E2E8F0]";
+    if (isDeleted) return "users-status-deleted";
+    if (isLoggedIn) return "users-status-online";
+    return "users-status-offline";
   };
 
   const getRolePriority = (role) => {
@@ -382,7 +383,7 @@ export default function UsersPage() {
   // --- Loading Check ---
   if (isAuthenticating || !currentUser) {
     return (
-      <div className="min-h-screen bg-[#F0F2F5] flex flex-col items-center justify-center gap-4">
+      <div className="users-page users-loading min-h-screen flex flex-col items-center justify-center gap-4">
         <Loader2 className="w-8 h-8 text-[#2D8B8B] animate-spin" />
         <p className="text-sm font-medium text-[#718096]">Loading users...</p>
       </div>
@@ -408,7 +409,7 @@ export default function UsersPage() {
   const onlineUsers = filteredUsers.filter(u => u.isLoggedIn && !u.isDeleted).length;
 
   return (
-    <div className="min-h-screen bg-[#F0F2F5] text-[#1A202C] font-sans">
+    <div className="users-page min-h-screen font-sans">
       <DirectoryHeader
         directoryName="Users"
         userName={currentUser?.name || "Admin"}
@@ -417,7 +418,7 @@ export default function UsersPage() {
         userRole={currentUser?.role}
       />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-24 pb-20 space-y-8 animate-fadeIn">
+      <div className="users-content mx-auto animate-fadeIn">
         
         {/* Navigation & Identity */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -431,7 +432,7 @@ export default function UsersPage() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="users-stat-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard icon={<Users />} label="Total Users" value={totalUsers} color="text-indigo-600" bg="bg-indigo-50" />
           <StatCard icon={<CheckCircle />} label="Active Users" value={activeUsers} color="text-[#22C55E]" bg="bg-[#22C55E]/10" />
           <StatCard icon={<Zap />} label="Online Users" value={onlineUsers} color="text-[#2D8B8B]" bg="bg-[#D1FAF5]" />
@@ -439,8 +440,8 @@ export default function UsersPage() {
         </div>
 
         {/* Registry Table */}
-        <div className="bg-white rounded-[16px] overflow-hidden shadow-sm border border-[#E2E8F0]">
-          <div className="px-6 py-5 border-b border-[#E2E8F0] flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="users-registry bg-white rounded-[16px] overflow-hidden shadow-sm border border-[#E2E8F0]">
+          <div className="users-toolbar px-6 py-5 border-b border-[#E2E8F0] flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h2 className="text-[22px] font-bold text-[#1A202C]">User Management</h2>
               <p className="text-sm text-[#718096] mt-1">View and manage system users and roles.</p>
@@ -451,14 +452,15 @@ export default function UsersPage() {
                 <input
                   type="text"
                   placeholder="Search users..."
+                  aria-label="Search users"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full sm:w-[280px] pl-10 pr-4 py-2.5 bg-[#F0F2F5] border border-transparent rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#2D8B8B]/50 transition-all placeholder:text-[#718096] text-[#1A202C]"
+                  className="users-search w-full sm:w-[280px] pl-10 pr-4 py-2.5 bg-[#F0F2F5] border border-transparent rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#2D8B8B]/50 transition-all placeholder:text-[#718096] text-[#1A202C]"
                 />
               </div>
               <button 
                 onClick={() => !processingAction && fetchUsers()}
-                className="px-5 py-2.5 bg-white border border-[#E2E8F0] rounded-[10px] hover:bg-gray-50 transition-colors text-sm font-semibold text-[#1A202C] flex items-center justify-center gap-2 shadow-sm"
+                className="users-refresh px-5 py-2.5 bg-white border border-[#E2E8F0] rounded-[10px] hover:bg-gray-50 transition-colors text-sm font-semibold text-[#1A202C] flex items-center justify-center gap-2 shadow-sm"
               >
                 <RefreshCw className={`w-4 h-4 text-[#2D8B8B] ${isLoading ? 'animate-spin' : ''}`} />
                 <span>Refresh</span>
@@ -467,7 +469,7 @@ export default function UsersPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+            <table className="users-table w-full text-left border-collapse">
               <thead>
                 <tr className="bg-white border-b border-[#E2E8F0] text-[12px] font-semibold text-[#718096] uppercase tracking-wider">
                   <th className="px-6 py-4">User</th>
@@ -546,7 +548,7 @@ export default function UsersPage() {
 
       {/* Toast Notification */}
       {toast.show && (
-        <div className="fixed bottom-6 right-6 z-[200] max-w-sm w-full shadow-lg rounded-[10px] bg-white border border-[#E2E8F0] p-4 flex items-start gap-3 animate-slideInRight">
+        <div className="users-toast fixed bottom-6 right-6 z-[200] max-w-sm w-full shadow-lg rounded-[10px] bg-white border border-[#E2E8F0] p-4 flex items-start gap-3 animate-slideInRight">
           <div className={`mt-0.5 ${
             toast.type === 'error' ? 'text-rose-500' :
             toast.type === 'success' ? 'text-[#22C55E]' :
@@ -560,7 +562,7 @@ export default function UsersPage() {
             <p className="text-sm font-semibold text-[#1A202C]">Notification</p>
             <p className="text-sm text-[#718096] mt-0.5">{toast.message}</p>
           </div>
-          <button onClick={() => setToast({ ...toast, show: false })} className="text-[#A0AEC0] hover:text-[#1A202C]">
+          <button onClick={() => setToast({ ...toast, show: false })} className="text-[#A0AEC0] hover:text-[#1A202C]" aria-label="Dismiss notification">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -573,7 +575,7 @@ export default function UsersPage() {
 
 function StatCard({ icon, label, value, color, bg }) {
   return (
-    <div className="bg-white rounded-[16px] p-6 border border-[#E2E8F0] shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
+    <div className="users-stat-card bg-white rounded-[16px] p-6 border border-[#E2E8F0] shadow-sm hover:shadow-md transition-shadow flex items-center gap-4">
       <div className={`w-12 h-12 rounded-[12px] flex items-center justify-center ${bg} ${color}`}>
         {icon}
       </div>
@@ -634,7 +636,7 @@ function UserRow({ user, currentUser, onView, onRoleChange, onLogout, onDelete, 
               {user.role}
             </span>
             {canChangeRole(user) && (
-              <button onClick={() => onRoleChange(user)} className="p-1 text-[#A0AEC0] hover:text-[#2D8B8B] transition-colors rounded">
+              <button onClick={() => onRoleChange(user)} className="p-1 text-[#A0AEC0] hover:text-[#2D8B8B] transition-colors rounded" aria-label={`Change role for ${user.name}`}>
                 <Pencil className="w-3.5 h-3.5" />
               </button>
             )}
@@ -677,23 +679,23 @@ function UserRow({ user, currentUser, onView, onRoleChange, onLogout, onDelete, 
         </td>
       )}
       <td className="px-6 py-4 text-right">
-        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="users-row-actions flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
            {!user.isDeleted && (
-             <button onClick={() => onView(user)} className="p-2 text-[#718096] hover:text-[#2D8B8B] hover:bg-white rounded-[8px] transition-colors bg-[#F0F2F5] border border-transparent shadow-sm" title="View Files">
+             <button onClick={() => onView(user)} className="p-2 text-[#718096] hover:text-[#2D8B8B] hover:bg-white rounded-[8px] transition-colors bg-[#F0F2F5] border border-transparent shadow-sm" title="View Files" aria-label={`View files for ${user.name}`}>
                <Eye className="w-3.5 h-3.5" />
              </button>
            )}
            {user.isLoggedIn && !user.isDeleted && (
-             <button onClick={() => onLogout(user)} className="p-2 text-[#718096] hover:text-amber-600 hover:bg-white rounded-[8px] transition-colors bg-[#F0F2F5] border border-transparent shadow-sm" title="Logout User">
+             <button onClick={() => onLogout(user)} className="p-2 text-[#718096] hover:text-amber-600 hover:bg-white rounded-[8px] transition-colors bg-[#F0F2F5] border border-transparent shadow-sm" title="Logout User" aria-label={`Log out ${user.name}`}>
                <LogOut className="w-3.5 h-3.5" />
              </button>
            )}
            {!user.isDeleted ? (
-             <button onClick={() => onDelete(user)} className="p-2 text-[#718096] hover:text-rose-600 hover:bg-white rounded-[8px] transition-colors bg-[#F0F2F5] border border-transparent shadow-sm" title="Delete User">
+             <button onClick={() => onDelete(user)} className="p-2 text-[#718096] hover:text-rose-600 hover:bg-white rounded-[8px] transition-colors bg-[#F0F2F5] border border-transparent shadow-sm" title="Delete User" aria-label={`Delete ${user.name}`}>
                <Trash2 className="w-3.5 h-3.5" />
              </button>
            ) : (
-             <button onClick={() => onRecover(user)} className="p-2 text-[#22C55E] bg-[#22C55E]/10 hover:bg-[#22C55E]/20 rounded-[8px] transition-colors shadow-sm" title="Restore User">
+             <button onClick={() => onRecover(user)} className="p-2 text-[#22C55E] bg-[#22C55E]/10 hover:bg-[#22C55E]/20 rounded-[8px] transition-colors shadow-sm" title="Restore User" aria-label={`Restore ${user.name}`}>
                <RotateCcw className="w-3.5 h-3.5" />
              </button>
            )}
@@ -747,8 +749,8 @@ function Modals({
   if (!selectedUser) return null;
 
   const ModalWrapper = ({ children, onClose }) => (
-    <div className="fixed inset-0 bg-[#1A202C]/40 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-fadeIn">
-      <div className="bg-white rounded-[16px] shadow-xl border border-[#E2E8F0] w-full max-w-sm overflow-hidden animate-scaleIn">
+    <div className="users-modal-backdrop fixed inset-0 bg-[#1A202C]/40 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-fadeIn">
+      <div className="users-modal bg-white rounded-[16px] shadow-xl border border-[#E2E8F0] w-full max-w-sm overflow-hidden animate-scaleIn">
         {children}
       </div>
     </div>
@@ -762,7 +764,7 @@ function Modals({
            <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-[#1A202C]">Change Role</h3>
-                  <button onClick={() => setShowRoleModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors"><X className="w-5 h-5" /></button>
+                  <button onClick={() => setShowRoleModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors" aria-label="Close dialog"><X className="w-5 h-5" /></button>
               </div>
               <p className="text-sm text-[#718096] mb-6">Select a new role for <span className="font-semibold text-[#1A202C]">{selectedUser.name}</span>.</p>
               
@@ -797,7 +799,7 @@ function Modals({
            <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-[#1A202C]">Delete User</h3>
-                  <button onClick={() => { setShowDeleteModal(false); setShowHardDeleteConfirm(false); }} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors"><X className="w-5 h-5" /></button>
+                  <button onClick={() => { setShowDeleteModal(false); setShowHardDeleteConfirm(false); }} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors" aria-label="Close dialog"><X className="w-5 h-5" /></button>
               </div>
               <p className="text-sm text-[#718096] mb-6">Are you sure you want to delete <span className="font-semibold text-[#1A202C]">{selectedUser.name}</span>?</p>
               
@@ -845,7 +847,7 @@ function Modals({
            <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-[#1A202C]">Logout User</h3>
-                  <button onClick={() => setShowLogoutModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors"><X className="w-5 h-5" /></button>
+                  <button onClick={() => setShowLogoutModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors" aria-label="Close dialog"><X className="w-5 h-5" /></button>
               </div>
               <p className="text-sm text-[#718096] mb-6">Force logout the active session for <span className="font-semibold text-[#1A202C]">{selectedUser.name}</span>?</p>
               <div className="flex flex-col gap-3">
@@ -864,7 +866,7 @@ function Modals({
            <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-[#1A202C]">Restore User</h3>
-                  <button onClick={() => setShowRecoverModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors"><X className="w-5 h-5" /></button>
+                  <button onClick={() => setShowRecoverModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors" aria-label="Close dialog"><X className="w-5 h-5" /></button>
               </div>
               <p className="text-sm text-[#718096] mb-6">Restore account access for <span className="font-semibold text-[#1A202C]">{selectedUser.name}</span>?</p>
               <div className="flex flex-col gap-3">
@@ -883,7 +885,7 @@ function Modals({
            <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-[#1A202C]">Pause Subscription</h3>
-                  <button onClick={() => setShowPauseModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors"><X className="w-5 h-5" /></button>
+                  <button onClick={() => setShowPauseModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors" aria-label="Close dialog"><X className="w-5 h-5" /></button>
               </div>
               <p className="text-sm text-[#718096] mb-6">Pause billing plan for <span className="font-semibold text-[#1A202C]">{selectedUser.name}</span>?</p>
               <div className="flex flex-col gap-3">
@@ -902,7 +904,7 @@ function Modals({
            <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-bold text-[#1A202C]">Resume Subscription</h3>
-                  <button onClick={() => setShowResumeModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors"><X className="w-5 h-5" /></button>
+                  <button onClick={() => setShowResumeModal(false)} className="text-[#A0AEC0] hover:text-[#1A202C] transition-colors" aria-label="Close dialog"><X className="w-5 h-5" /></button>
               </div>
               <p className="text-sm text-[#718096] mb-6">Resume billing plan for <span className="font-semibold text-[#1A202C]">{selectedUser.name}</span>?</p>
               <div className="flex flex-col gap-3">
