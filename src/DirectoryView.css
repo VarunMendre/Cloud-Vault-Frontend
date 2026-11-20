@@ -241,11 +241,13 @@
 
 .drive-page .drive-list {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
   margin-top: 24px;
 }
 
 .drive-page .drive-list-row {
+  min-width: 0;
   min-height: 64px;
   gap: 16px;
   border-color: var(--cv-border);
