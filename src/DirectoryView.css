@@ -376,6 +376,11 @@
     margin-top: 20px;
   }
 
+  .drive-page .drive-toolbar input,
+  .drive-page .drive-toolbar select {
+    font-size: 16px;
+  }
+
   .drive-page .drive-breadcrumb {
     margin-top: 12px;
   }

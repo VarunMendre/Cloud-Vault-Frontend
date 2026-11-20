@@ -938,6 +938,11 @@
     padding: 12px;
   }
 
+  .cv-rename-field input,
+  .cv-share-search {
+    font-size: 16px;
+  }
+
   .cv-rename-dialog,
   .cv-share-dialog {
     width: 100%;
